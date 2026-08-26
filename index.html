@@ -67,6 +67,19 @@
     border:1px solid var(--paper-line); border-radius:14px; box-shadow:0 12px 26px rgba(18,60,102,0.12);
     padding:8px; display:none; z-index:50; overflow:hidden;
   }
+  .menu-brand{
+    display:flex; align-items:center; gap:8px; padding:8px 8px 12px; border-bottom:1px solid rgba(18,60,102,0.08); margin-bottom:8px;
+  }
+  .menu-brand .logo-img{
+    height:28px; width:auto; max-width:90px;
+  }
+  .menu-brand .menu-brand-name{
+    font-family:'Tiro Bangla', serif; font-weight:900; color:var(--pine); font-size:13px; line-height:1.1;
+    letter-spacing:0.15px;
+  }
+  .menu-brand .menu-brand-sub{
+    display:block; font-size:8.5px; font-weight:700; letter-spacing:0.6px; opacity:0.8; margin-top:2px;
+  }
   .menu-wrap[open] .menu-panel{ display:block; }
   .menu-panel a{
     display:flex; align-items:center; justify-content:flex-start; text-decoration:none;
@@ -90,6 +103,31 @@
     height:42px; width:auto; max-width:180px;
     object-fit:contain; display:block; background:transparent; padding:0;
     justify-self:center;
+  }
+  .brand-block{
+    justify-self:center; display:flex; align-items:center; gap:10px; text-align:left;
+    max-width:100%; min-width:0; overflow:visible;
+  }
+  .logo-text{
+    font-family:'Tiro Bangla', serif;
+    font-weight:900;
+    letter-spacing:0.2px;
+    color:#123c66;
+    font-size:16px;
+    line-height:1.08;
+    text-shadow:0 1px 0 rgba(18,60,102,0.08);
+    white-space:nowrap;
+    overflow:visible;
+    padding:2px 0;
+  }
+  .logo-text .sub-brand{
+    display:block;
+    font-size:9.5px;
+    letter-spacing:0.7px;
+    font-weight:700;
+    opacity:0.82;
+    margin-top:2px;
+    white-space:nowrap;
   }
   .nav-icons{ display:flex; align-items:center; gap:10px; justify-self:end; }
   .nav-icons button{
@@ -640,15 +678,19 @@
         <span class="bars"><span></span></span>
       </summary>
       <nav class="menu-panel" aria-label="Menu links">
+        <div class="menu-brand">
+          <img class="logo-img" src="logo.svg" alt="সুফ্ফা সুপারশপ" style="height:28px; width:auto; object-fit:contain; display:block;" onerror="this.style.display='none'">
+          <div class="menu-brand-name">সুফ্ফা সুপারশপ<span class="menu-brand-sub">মেহেরপুর</span></div>
+        </div>
         <a href="about.html">About Us</a>
         <a href="contact.html">Contact Us</a>
         <a href="gallery.html">Gallery</a>
         <button type="button" id="menuAdminBtn" style="background:none; border:none; color:var(--pine); font:inherit; text-align:left; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:700;">Admin Panel</button>
       </nav>
     </details>
-    <div class="brand-block" style="justify-self:center; display:flex; align-items:center; gap:10px; text-align:left;">
-      <img class="logo-img" src="logo.svg" alt="সুফফা সুপারশপ" style="height:40px; width:auto; object-fit:contain; display:block;" onerror="this.style.display='none'">
-      <div class="logo-text" style="font-weight:900; letter-spacing:0.4px; color:#123c66; font-size:18px; font-family:'Tiro Bangla', serif; line-height:1.2;">সুফফা সুপারশপ<br><span style="font-size:11px; letter-spacing:0.6px; font-weight:700; opacity:0.8;">মেহেরপুর</span></div>
+    <div class="brand-block">
+      <img class="logo-img" src="logo.svg" alt="সুফ্ফা সুপারশপ" style="height:40px; width:auto; object-fit:contain; display:block;" onerror="this.style.display='none'">
+      <div class="logo-text">সুফ্ফা সুপারশপ <span class="sub-brand">মেহেরপুর শাখা</span></div>
     </div>
     <div class="nav-icons" style="justify-self:end;">
       <button data-nav="bag" id="cartPillBtn">
