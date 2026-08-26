@@ -10,24 +10,25 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root{
-    --pine:#0D3060;
-    --pine-2:#1B4A8C;
-    --leaf:#0F6B2E;
-    --leaf-light:#3E9153;
-    --cream:#FFFEFC;
-    --cream-2:#F9F5EE;
-    --mustard:#C89B5C;
-    --mustard-dark:#A67C3D;
-    --sindoor:#5C3517;
-    --ink:#211D18;
-    --paper-line:#F0E9DF;
-    --shadow: 0 8px 20px rgba(13,48,96,0.04);
+    --pine:#123C66;
+    --pine-2:#1A537F;
+    --leaf:#1F7A46;
+    --leaf-light:#5FA46B;
+    --cream:#FFFDF9;
+    --cream-2:#F6EFE2;
+    --mustard:#D9A863;
+    --mustard-dark:#BB8B45;
+    --sindoor:#7C4732;
+    --ink:#221D1A;
+    --paper-line:#E8DDCB;
+    --warm-soft:#FDF4E6;
+    --shadow: 0 10px 24px rgba(18,60,102,0.08);
   }
   *{box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
     margin:0;
-    background:var(--cream);
+    background:linear-gradient(180deg, #fffdf9 0%, #f8f2ea 100%);
     color:var(--ink);
     font-family:'Hind Siliguri', sans-serif;
     -webkit-font-smoothing:antialiased;
@@ -40,11 +41,51 @@
   /* ---------- Header ---------- */
   header.topbar{
     position:sticky; top:0; z-index:40;
-    background:#FCFAF4;
+    background:linear-gradient(180deg, rgba(18,60,102,0.06), rgba(255,253,249,0.96));
     padding:4px 12px 4px;
-    box-shadow:0 2px 10px rgba(13,48,96,0.06);
+    box-shadow:0 2px 10px rgba(18,60,102,0.06);
   }
   .topbar-row{ display:grid; align-items:center; gap:6px; }
+  .menu-wrap{ position:relative; justify-self:start; }
+  .menu-button{
+    display:flex; align-items:center; justify-content:center; width:34px; height:34px;
+    border:none; border-radius:10px; background:rgba(18,60,102,0.06); color:var(--pine);
+    cursor:pointer; padding:0; box-shadow:inset 0 0 0 1px rgba(18,60,102,0.08);
+  }
+  .menu-button .bars{
+    width:16px; height:12px; position:relative; display:block;
+  }
+  .menu-button .bars::before, .menu-button .bars::after, .menu-button .bars span{
+    content:""; position:absolute; left:0; width:100%; height:2px; background:currentColor;
+    border-radius:10px;
+  }
+  .menu-button .bars::before{ top:0; }
+  .menu-button .bars span{ top:5px; }
+  .menu-button .bars::after{ bottom:0; }
+  .menu-panel{
+    position:absolute; top:42px; left:0; min-width:176px; background:linear-gradient(180deg, #ffffff, #fffaf4);
+    border:1px solid var(--paper-line); border-radius:14px; box-shadow:0 12px 26px rgba(18,60,102,0.12);
+    padding:8px; display:none; z-index:50; overflow:hidden;
+  }
+  .menu-wrap[open] .menu-panel{ display:block; }
+  .menu-panel a{
+    display:flex; align-items:center; justify-content:flex-start; text-decoration:none;
+    font-size:12.5px; font-weight:700; letter-spacing:0.15px; padding:11px 12px; border-radius:10px;
+    line-height:1.2; margin:2px 0; transition:all .15s ease; border:1px solid transparent;
+  }
+  .menu-panel a:nth-child(1){
+    background:linear-gradient(135deg, rgba(18,60,102,0.10), rgba(18,60,102,0.02)); color:var(--pine);
+  }
+  .menu-panel a:nth-child(2){
+    background:linear-gradient(135deg, rgba(31,122,70,0.10), rgba(31,122,70,0.03)); color:var(--leaf);
+  }
+  .menu-panel a:nth-child(3){
+    background:linear-gradient(135deg, rgba(217,168,99,0.16), rgba(217,168,99,0.04)); color:var(--mustard-dark);
+  }
+  .menu-panel a + a{ margin-top:6px; }
+  .menu-panel a:hover{
+    filter:brightness(1.02); transform:translateX(2px); box-shadow:inset 0 0 0 1px rgba(18,60,102,0.06);
+  }
   .logo-img{
     height:42px; width:auto; max-width:180px;
     object-fit:contain; display:block; background:transparent; padding:0;
@@ -64,19 +105,24 @@
   }
 
   /* ---------- Search bar ---------- */
-  .search-wrap{ background:var(--cream); padding:12px 16px 16px; }
+  .search-wrap{ background:linear-gradient(180deg, rgba(255,255,255,0.1), rgba(246,239,226,0.35)); padding:12px 16px 16px; }
   .search-bar{
     max-width:1100px; margin:0 auto;
     display:flex; align-items:center; gap:10px;
-    background:#fff; border:1.5px solid var(--paper-line); border-radius:14px;
+    background:linear-gradient(180deg, #ffffff, #fffaf4); border:1.5px solid var(--paper-line); border-radius:14px;
     padding:11px 14px 11px 16px;
+    box-shadow:0 6px 14px rgba(18,60,102,0.04);
   }
   .search-bar input{
     flex:1; border:none; outline:none; background:transparent;
     font-family:inherit; font-size:14.5px; color:var(--ink); min-width:0;
   }
   .search-bar input::placeholder{ color:#a89e88; }
-  .search-bar .ic{ font-size:16px; color:var(--pine); flex:0 0 auto; opacity:0.6; }
+  .search-bar .ic{
+    display:flex; align-items:center; justify-content:center; width:18px; height:18px;
+    color:var(--pine); flex:0 0 auto; opacity:0.7;
+  }
+  .search-bar .ic svg{ width:17px; height:17px; display:block; }
   .search-bar .clear-btn{
     display:none; border:none; background:var(--cream-2); color:var(--pine);
     width:22px; height:22px; border-radius:50%; font-size:13px; flex:0 0 auto;
@@ -126,8 +172,8 @@
   .cat-card{
     flex:0 0 auto; scroll-snap-align:start; width:108px;
     display:flex; flex-direction:column; align-items:center; gap:8px;
-    background:#fff; border-radius:16px; padding:14px 8px 12px;
-    box-shadow:0 4px 14px rgba(13,48,96,0.09);
+    background:linear-gradient(180deg, #ffffff, #fbf8f3); border-radius:16px; padding:14px 8px 12px;
+    box-shadow:0 4px 14px rgba(18,60,102,0.08);
     border:2px solid transparent; user-select:none;
   }
   .cat-card.active{ border-color:var(--mustard); }
@@ -172,7 +218,7 @@
   }
 
   .ferdo-paper{
-    background:#fff;
+    background:linear-gradient(180deg, #ffffff 0%, #fffdf9 100%);
     border-radius:4px 4px 14px 14px;
     box-shadow:var(--shadow);
     margin-top:16px;
@@ -370,12 +416,23 @@
     display:flex; justify-content:space-between; padding-top:12px; margin-top:4px;
     font-weight:800; font-size:16px; color:var(--pine);
   }
-  .pdf-btn{
-    width:100%; background:var(--leaf); color:#fff; border:none; border-radius:14px;
-    padding:15px; font-size:15.5px; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px;
-    box-shadow:0 6px 16px rgba(15,107,46,0.35);
+  .confirm-actions{
+    display:flex; gap:10px; margin-top:18px;
   }
-  .pdf-btn:disabled{ opacity:0.5; }
+  .order-btn, .pdf-btn{
+    flex:1 1 0; min-width:120px; background:var(--leaf); color:#fff; border:none; border-radius:12px;
+    padding:12px 14px; font-size:14px; font-weight:800; display:flex; align-items:center; justify-content:center; gap:6px;
+    box-shadow:0 5px 12px rgba(15,107,46,0.25);
+  }
+  .pdf-btn{
+    background:var(--pine); box-shadow:0 5px 12px rgba(13,48,96,0.2);
+  }
+  .quick-message-btn{
+    width:100%; margin-top:12px; background:linear-gradient(135deg, #fff7ea, #f4ebdf); color:var(--pine);
+    border:1px solid rgba(18,60,102,0.10); border-radius:12px; padding:10px 14px;
+    font-size:12.8px; font-weight:700; line-height:1.5; text-align:center; cursor:pointer;
+  }
+  .order-btn:disabled, .pdf-btn:disabled{ opacity:0.5; }
   .empty-state{ text-align:center; padding:60px 20px; color:#8a8272; }
   .empty-state .em{ font-size:44px; margin-bottom:10px; }
 
@@ -387,7 +444,87 @@
   }
   .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
 
-  footer.foot{ text-align:center; padding:20px; font-size:12px; color:#8a8272; }
+  footer.foot{
+    margin-top:30px;
+    background:linear-gradient(180deg, #eaf4fb 0%, #e5eef9 100%);
+    color:#1e3550;
+    border-top:1px solid rgba(85,123,166,0.14);
+    padding:0 0 12px;
+  }
+  .footer-shell{
+    max-width:760px;
+    margin:0 auto;
+    padding:18px 18px 0;
+  }
+  .footer-brand{
+    display:flex; align-items:center; gap:10px; margin-bottom:12px;
+  }
+  .footer-brand-mark{
+    width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg, #f4f9ff, #bfdaf3);
+    color:#183454; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px;
+    box-shadow:0 8px 18px rgba(21,56,85,0.08);
+  }
+  .footer-brand-name{ font-size:20px; font-weight:800; color:#1e3550; }
+  .footer-tagline{
+    margin:0 0 16px; font-size:13px; color:#405d7d; line-height:1.6; letter-spacing:0.1px;
+  }
+  .footer-socials{
+    display:flex; align-items:center; gap:12px; padding-bottom:18px; border-bottom:1px solid rgba(66,103,142,0.14);
+    margin-bottom:0;
+  }
+  .footer-social{
+    width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    text-decoration:none; font-weight:700; font-size:18px; transition:transform .2s ease;
+    border:1px solid rgba(64,93,125,0.14); background:rgba(255,255,255,0.34); color:#24476d;
+  }
+  .footer-social:hover{ transform:translateY(-2px); }
+  .footer-social.fb{ font-size:22px; }
+  .footer-social.wa{ font-size:16px; }
+  .footer-accordions{ margin-top:4px; }
+  .footer-section{
+    border-bottom:1px solid rgba(66,103,142,0.14); padding:0;
+  }
+  .footer-section:last-child{ border-bottom:none; }
+  .footer-section summary{
+    list-style:none; display:flex; align-items:center; justify-content:space-between;
+    padding:16px 0; font-size:15px; font-weight:700; color:#1e3550; cursor:pointer; user-select:none;
+    gap:12px;
+  }
+  .footer-section summary::-webkit-details-marker{ display:none; }
+  .footer-section summary::after{
+    content:'▾';
+    display:inline-flex; align-items:center; justify-content:center;
+    width:18px; height:18px; border-radius:50%;
+    font-size:12px; line-height:1; font-weight:700; color:#446a92;
+    background:rgba(68,106,146,0.08);
+    transition:transform .2s ease, background .2s ease;
+  }
+  .footer-section[open] summary::after{
+    transform:rotate(180deg);
+    background:rgba(68,106,146,0.12);
+  }
+  .footer-links{
+    display:flex; flex-direction:column; gap:10px; padding:0 0 12px; color:#dfeaf7;
+  }
+  .footer-links a{
+    color:#274a6d; text-decoration:none; font-size:14px; opacity:.96;
+  }
+  .footer-contact-box{
+    padding:0 0 12px; display:flex; flex-direction:column; gap:14px; color:#274a6d;
+  }
+  .footer-contact-item{
+    display:flex; align-items:center; gap:10px; font-size:14px; color:#274a6d; text-decoration:none;
+  }
+  .footer-contact-icon{
+    width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,0.2); color:#446a92; font-size:11px; border:1px solid rgba(68,106,146,0.12);
+  }
+  .footer-copy{
+    text-align:center; font-size:12px; color:#446a92; padding:18px 0 0; border-top:1px solid rgba(66,103,142,0.14); margin-top:16px;
+  }
+  .footer-copy .admin-link{
+    margin-top:12px; display:inline-block; background:none; border:none; color:#355a87; text-decoration:underline; font:inherit; cursor:pointer;
+  }
   .admin-img-row{
     display:flex; gap:12px; align-items:center; padding:12px 0;
     border-bottom:1px dashed var(--paper-line);
@@ -497,8 +634,19 @@
 <body>
 
 <header class="topbar">
-  <div class="topbar-row" style="grid-template-columns:auto 1fr;">
-    <img class="logo-img" src="logo.svg" alt="সুফ্ফা সুপারশপ" style="justify-self:start;" onerror="this.style.display='none'">
+  <div class="topbar-row" style="grid-template-columns:auto 1fr auto;">
+    <details class="menu-wrap">
+      <summary class="menu-button" aria-label="Menu">
+        <span class="bars"><span></span></span>
+      </summary>
+      <nav class="menu-panel" aria-label="Menu links">
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="gallery.html">Gallery</a>
+        <button type="button" id="menuAdminBtn" style="background:none; border:none; color:var(--pine); font:inherit; text-align:left; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:700;">Admin Panel</button>
+      </nav>
+    </details>
+    <img class="logo-img" src="logo.svg" alt="সুফ্ফা সুপারশপ" style="justify-self:center;" onerror="this.style.display='none'">
     <div class="nav-icons" style="justify-self:end;">
       <button data-nav="bag" id="cartPillBtn">
         <span class="ic">
@@ -519,14 +667,19 @@
 <div class="search-wrap">
   <div class="search-bar">
     <input type="text" id="searchInput" placeholder="পণ্য খুঁজুন — যেমন চাল, ডিম, তেল...">
-    <span class="ic">🔍</span>
+    <span class="ic" aria-label="সার্চ">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="10.5" cy="10.5" r="5.5"></circle>
+        <path d="M15.5 15.5L20 20"></path>
+      </svg>
+    </span>
     <button class="clear-btn" id="searchClear">✕</button>
   </div>
 </div>
 
-<!-- BANNER — এখানে "banner" নামের ছবিটা বসবে (যেমন banner.jpg, banner.png ইত্যাদি নিচের src ঠিক করে দিন) -->
+<!-- HOME PAGE BANNER 2 -->
 <div class="banner-wrap">
-  <img class="banner-img" src="banner.jpg" alt="সুফ্ফা সুপারশপ ব্যানার" loading="lazy" onerror="this.parentElement.style.display='none'">
+  <img class="banner-img" src="banner2.jpg" alt="সুফ্ফা সুপারশপ ব্যানার ২" loading="lazy" onerror="this.parentElement.style.display='none'">
 </div>
 
 <!-- CATEGORY ROW -->
@@ -565,10 +718,53 @@
 </div>
 
 <footer class="foot">
-  সুফফাতুল মুহাজিরিন এর কর্ম ও জীবিকা শিক্ষা বিভাগ থেকে পরিচালিত একটি উদ্যোগ
-  <div>সুফফা সুপারশপ</div>
-  <div style="margin-top:8px;">
-    <button id="footerAdminBtn" type="button" style="background:none; border:none; color:#a89e88; font-size:11px; font-family:inherit; text-decoration:underline; padding:4px;">⚙ এডমিন প্যানেল</button>
+  <div class="footer-shell">
+    <div class="footer-brand">
+      <div class="footer-brand-mark">S</div>
+      <div class="footer-brand-name">SuffaSuperShop</div>
+    </div>
+
+    <p class="footer-tagline">সুফফাতুল মুহাজিরীন এর কর্ম ও জীবিকা শিক্ষা বিভাগ থেকে পরিচালিত একটি উদ্যোগ।</p>
+
+    <div class="footer-socials">
+      <a href="https://www.facebook.com/profile.php?id=61593550493223&mibextid=rS40aB7S9Ucbxw6v" class="footer-social fb" target="_blank" aria-label="Facebook">f</a>
+      <a href="https://wa.me/8801738338138" class="footer-social wa" target="_blank" aria-label="WhatsApp">✆</a>
+    </div>
+
+    <div class="footer-accordions">
+      <details class="footer-section">
+        <summary>কুইক লিংক</summary>
+        <div class="footer-links">
+          <a href="#">সব ক্যাটাগরি</a>
+          <a href="#">টপ প্রোডাক্ট</a>
+          <a href="#">প্রি-অর্ডার</a>
+          <a href="#">অফার</a>
+        </div>
+      </details>
+
+      <details class="footer-section">
+        <summary>সাধারণ</summary>
+        <div class="footer-links">
+          <a href="about.html">আমাদের গল্প</a>
+          <a href="contact.html">আমাদের সাথে যোগাযোগ</a>
+          <a href="gallery.html">গ্যালারি</a>
+          <a href="#">সচেতনতা</a>
+        </div>
+      </details>
+
+      <details class="footer-section">
+        <summary>যোগাযোগের তথ্য</summary>
+        <div class="footer-contact-box">
+          <a href="mailto:suffasupershop@gmail.com" class="footer-contact-item"><span class="footer-contact-icon">✉</span> suffasupershop@gmail.com</a>
+          <a href="tel:+8801738338138" class="footer-contact-item"><span class="footer-contact-icon">☎</span> +880 1738338138</a>
+        </div>
+      </details>
+    </div>
+
+    <div class="footer-copy">
+      <div>© 2025 SuffaSuperShop. সর্বস্বত্ব সংরক্ষিত।</div>
+      <button id="footerAdminBtn" type="button" class="admin-link">⚙ এডমিন প্যানেল</button>
+    </div>
   </div>
 </footer>
 
@@ -619,7 +815,14 @@
       </div>
     </div>
 
-    <button class="pdf-btn" id="pdfBtn">⬇ PDF ডাউনলোড করুন</button>
+    <div class="confirm-actions">
+      <button class="order-btn" id="confirmOrderBtn">অর্ডার কনফার্ম করুন</button>
+      <button class="pdf-btn" id="pdfBtn">⬇ PDF</button>
+    </div>
+
+    <button class="quick-message-btn" type="button" id="quickMessageBtn">
+      দ্রুত ডেলিভারির জন্য আমাদের মেসেজ করে জানিয়ে দিন
+    </button>
   </div>
 </div>
 
@@ -750,18 +953,21 @@
 const CATEGORIES = [
   {id:'all', label:'সব', img:'', subcats:[]},
   {id:'meat', label:'গোশত বাজার', img:'', subcats:[
-    {id:'beef', label:'গোশত'}, {id:'nihari', label:'নিহারি'}, {id:'fat', label:'চর্বি'},
-    {id:'head', label:'মাথা'}, {id:'tripe', label:'ভুড়ি'}
+    {id:'beef', label:'গোশত'}, {id:'chicken', label:'মুরগি'}, {id:'nihari', label:'নিহারি'},
+    {id:'fat', label:'চর্বি'}, {id:'head', label:'মাথা'}, {id:'tripe', label:'ভুড়ি'}
+  ]},
+  {id:'vegetable', label:'সবজি বাজার', img:'', subcats:[
+    {id:'seasonal', label:'মৌসুমী সবজি'}, {id:'leafy', label:'শাক-সবজি'}, {id:'root', label:'মূল-আলু'}
   ]},
   {id:'spice', label:'মশলা বাজার', img:'', subcats:[
     {id:'powder', label:'গুঁড়া মশলা'}, {id:'whole', label:'সম্পূর্ণ মশলা'}
   ]},
   {id:'clean', label:'পরিচ্ছন্নতা', img:'', subcats:[
     {id:'tiles-cleaner', label:'টাইলস ক্লিনার'}, {id:'toilet-cleaner', label:'টয়লেট ক্লিনার'},
-    {id:'soap', label:'সাবান'}, {id:'laundry-soap', label:'কাপড় কাচা সাবান'},
+    {id:'soap', label:'সাবান'}, {id:'mini-soap', label:'মিনি সাবান'}, {id:'laundry-soap', label:'কাপড় কাচা সাবান'},
     {id:'detergent', label:'ডিটারজেন্ট পাউডার'}, {id:'shampoo', label:'শ্যাম্পু'},
     {id:'vim-bar', label:'ভিম বার'}, {id:'vim-liquid', label:'ভিম লিকুইড'},
-    {id:'handwash', label:'হ্যান্ডওয়াশ'}, {id:'toilet-tissue', label:'টয়লেট টিস্যা'},
+    {id:'handwash', label:'হ্যান্ডওয়াশ'}, {id:'toilet-tissue', label:'টয়লেট টিস্যু'},
     {id:'kitchen-tissue', label:'কিচেন টিস্যু'}, {id:'toothpaste', label:'টুথপেষ্ট'},
     {id:'mosquito', label:'মশার কয়েল ও স্প্রে'}, {id:'hair-oil', label:'হেয়ার ওয়েল'},
     {id:'first-aid', label:'ফার্স্ট এইড ও ঘামাচি'}, {id:'goodnight', label:'গুডনাইট'}
@@ -788,12 +994,12 @@ const CATEGORIES = [
 
 const PRODUCTS = [
   {id:1, name:'গরুর গোশত', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'beef', img:'', stock:50},
-  {id:2, name:'খাশি গোশত', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'goat', img:'', stock:50},
+  {id:2, name:'খাশির গোশত', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'goat', img:'', stock:50},
   {id:3, name:'মহিষের গোশত', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'buffalo', img:'', stock:50},
-  {id:4, name:'পোল্ট্রি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'chicken', img:'', stock:50},
-  {id:5, name:'সোনালি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'sonali', img:'', stock:50},
-  {id:6, name:'দেশি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'desi', img:'', stock:50},
-  {id:7, name:'লেয়ার', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'layer', img:'', stock:50},
+  {id:4, name:'পোল্ট্রি মুরগি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'chicken', img:'', stock:50},
+  {id:5, name:'সোনালি মুরগি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'sonali', img:'', stock:50},
+  {id:6, name:'দেশি মুরগি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'desi', img:'', stock:50},
+  {id:7, name:'লেয়ার মুরগি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'layer', img:'', stock:50},
   {id:8, name:'কবুতর', unit:'প্রতি পিস', price:0, cat:'meat', sub:'pigeon', img:'', stock:50},
   {id:9, name:'গরুর নিহারি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'nihari', img:'', stock:50},
   {id:10, name:'খাশির নিহারি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'nihari', img:'', stock:50},
@@ -806,9 +1012,17 @@ const PRODUCTS = [
   {id:17, name:'গরুর চর্বি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'fat', img:'', stock:50},
   {id:18, name:'ছাগলের চর্বি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'fat', img:'', stock:50},
   {id:19, name:'সরিষা তেল (ফিল্টার)', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
-  {id:20, name:'সরিষা তেল (ফিল্টার বাদে)', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
-  {id:21, name:'সয়াবিন তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
-  {id:22, name:'পাম তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
+  {id:20, name:'সরিষা তেল (ফিল্টার বাদে)', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
+  {id:21, name:'সয়াবিন তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50,
+    variants:[
+      {id:'v21_1', name:'লিটার', price:0, stock:50, img:''},
+      {id:'v21_2', name:'কেজি', price:0, stock:50, img:''}
+    ]},
+  {id:22, name:'পাম তেল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50,
+    variants:[
+      {id:'v22_1', name:'লিটার', price:0, stock:50, img:''},
+      {id:'v22_2', name:'কেজি', price:0, stock:50, img:''}
+    ]},
   {id:23, name:'সুপার তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
   {id:24, name:'অলিভ ওয়েল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
   {id:25, name:'নারিকেল তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
@@ -819,9 +1033,10 @@ const PRODUCTS = [
   {id:30, name:'লালস্বর্ন চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
   {id:31, name:'নাজির শাইল চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
   {id:32, name:'পাইজাম চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
-  {id:33, name:'বাংলা বাশমতি চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
+  {id:33, name:'বাংলামতি চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
   {id:34, name:'পাকিস্তানি বাশমতি চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
-  {id:35, name:'পোলাও চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
+  {id:35, name:'ইন্ডিয়ান বাশমতি চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
+  {id:36, name:'পোলাও চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
   {id:36, name:'লাল চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
   {id:37, name:'দেশি লাল আটা', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'flour', img:'', stock:50},
   {id:38, name:'সাদা আটা', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'flour', img:'', stock:50},
@@ -831,19 +1046,19 @@ const PRODUCTS = [
   {id:42, name:'হলুদের গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
   {id:43, name:'ধনিয়ার গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
   {id:44, name:'জিরা গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
-  {id:45, name:'লবন', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
-  {id:46, name:'বীট লবন', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
+  {id:45, name:'লবণ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
+  {id:46, name:'বীট লবণ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
   {id:47, name:'পিংক সল্ট', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
   {id:48, name:'জিরা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:49, name:'শাহি জিরা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:50, name:'কাঠ (মশলা)', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:51, name:'সেইগন কাঠ মশলা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:52, name:'সিলং কাঠ মশলা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:50, name:'দারুচিনি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:51, name:'দারুচিনি (সেইগন)', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:52, name:'দারুচিনি (সিলং)', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:53, name:'এলাচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:54, name:'শাহী এলাচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:55, name:'কালো গোলমরিচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:56, name:'সাদা গোলমরিচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:57, name:'লবংগ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:57, name:'লবঙ্গ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:58, name:'তেজপাতা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:59, name:'ধনিয়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:60, name:'মৌরি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
@@ -854,14 +1069,14 @@ const PRODUCTS = [
   {id:65, name:'জয়ত্রি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:66, name:'স্টার আনিস', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:67, name:'কাবাব চিনি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:68, name:'পোশ্ত দানা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:68, name:'পোস্ত দানা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:69, name:'রাধুনি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:70, name:'দেশি সরিষা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:71, name:'মাঘী সরিষা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:72, name:'চুইঝাল', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
   {id:73, name:'মশুর ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
   {id:74, name:'মুগ ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
-  {id:75, name:'কলায় ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
+  {id:75, name:'কলাই ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
   {id:76, name:'ছোলা ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
   {id:77, name:'মটর ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
   {id:78, name:'খেশারি ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
@@ -931,13 +1146,19 @@ const PRODUCTS = [
     ]},
   {id:132, name:'সাবান', unit:'প্রতি পিস', price:0, cat:'clean', sub:'soap', img:'', stock:50,
     variants:[
-      {id:'v132_1', name:'মেরিল', price:0, stock:50, img:''},
-      {id:'v132_2', name:'কেয়া', price:0, stock:50, img:''},
-      {id:'v132_3', name:'savlon', price:0, stock:50, img:''},
-      {id:'v132_4', name:'নিম', price:0, stock:50, img:''},
-      {id:'v132_5', name:'Lilly', price:0, stock:50, img:''},
-      {id:'v132_6', name:'septex', price:0, stock:50, img:''},
-      {id:'v132_7', name:'মিনি savlon', price:0, stock:50, img:''}
+      {id:'v132_1', name:'Lux', price:0, stock:50, img:''},
+      {id:'v132_2', name:'Lifebouy', price:0, stock:50, img:''},
+      {id:'v132_3', name:'Sandalina', price:0, stock:50, img:''},
+      {id:'v132_4', name:'Dettol', price:0, stock:50, img:''},
+      {id:'v132_5', name:'Dove', price:0, stock:50, img:''},
+      {id:'v132_6', name:'Bactrol', price:0, stock:50, img:''}
+    ]},
+  {id:132.5, name:'মিনি সাবান', unit:'প্রতি পিস', price:0, cat:'clean', sub:'mini-soap', img:'', stock:50,
+    variants:[
+      {id:'v132m_1', name:'Lux', price:0, stock:50, img:''},
+      {id:'v132m_2', name:'Lifebouy', price:0, stock:50, img:''},
+      {id:'v132m_3', name:'Dettol', price:0, stock:50, img:''},
+      {id:'v132m_4', name:'Bactrol', price:0, stock:50, img:''}
     ]},
   {id:133, name:'কাপড় কাচা সাবান', unit:'প্রতি পিস', price:0, cat:'clean', sub:'laundry-soap', img:'', stock:50,
     variants:[
@@ -958,11 +1179,14 @@ const PRODUCTS = [
     ]},
   {id:135, name:'শ্যাম্পু', unit:'প্রতি পিস', price:0, cat:'clean', sub:'shampoo', img:'', stock:50,
     variants:[
-      {id:'v135_1', name:'parachute', price:0, stock:50, img:''},
-      {id:'v135_2', name:'Dove', price:0, stock:50, img:''},
-      {id:'v135_3', name:'sansilk', price:0, stock:50, img:''},
-      {id:'v135_4', name:'কেয়া', price:0, stock:50, img:''},
-      {id:'v135_5', name:'revive', price:0, stock:50, img:''}
+      {id:'v135_1', name:'Clear', price:0, stock:50, img:''},
+      {id:'v135_2', name:'Lifebouy', price:0, stock:50, img:''},
+      {id:'v135_3', name:'Clinic Plus', price:0, stock:50, img:''},
+      {id:'v135_4', name:'parachute', price:0, stock:50, img:''},
+      {id:'v135_5', name:'Dove', price:0, stock:50, img:''},
+      {id:'v135_6', name:'sansilk', price:0, stock:50, img:''},
+      {id:'v135_7', name:'কেয়া', price:0, stock:50, img:''},
+      {id:'v135_8', name:'revive', price:0, stock:50, img:''}
     ]},
   {id:136, name:'ভিম বার', unit:'প্রতি পিস', price:0, cat:'clean', sub:'vim-bar', img:'', stock:50,
     variants:[
@@ -977,12 +1201,15 @@ const PRODUCTS = [
     ]},
   {id:138, name:'হ্যান্ডওয়াশ', unit:'প্রতি পিস', price:0, cat:'clean', sub:'handwash', img:'', stock:50,
     variants:[
-      {id:'v138_1', name:'savlon', price:0, stock:50, img:''},
-      {id:'v138_2', name:'sepnil', price:0, stock:50, img:''},
-      {id:'v138_3', name:'amana', price:0, stock:50, img:''},
-      {id:'v138_4', name:'লুজ', price:0, stock:50, img:''}
+      {id:'v138_1', name:'Bactrol', price:0, stock:50, img:''},
+      {id:'v138_2', name:'Lifebouy', price:0, stock:50, img:''},
+      {id:'v138_3', name:'Dettol', price:0, stock:50, img:''},
+      {id:'v138_4', name:'savlon', price:0, stock:50, img:''},
+      {id:'v138_5', name:'sepnil', price:0, stock:50, img:''},
+      {id:'v138_6', name:'amana', price:0, stock:50, img:''},
+      {id:'v138_7', name:'লুজ', price:0, stock:50, img:''}
     ]},
-  {id:139, name:'টয়লেট টিস্যা', unit:'প্রতি প্যাকেট', price:0, cat:'clean', sub:'toilet-tissue', img:'', stock:50,
+  {id:139, name:'টয়লেট টিস্যু', unit:'প্রতি প্যাকেট', price:0, cat:'clean', sub:'toilet-tissue', img:'', stock:50,
     variants:[
       {id:'v139_1', name:'বসুন্ধরা', price:0, stock:50, img:''},
       {id:'v139_2', name:'peal', price:0, stock:50, img:''}
@@ -1628,7 +1855,7 @@ function toggleErr(id, isErr){
 }
 
 /* ============ PDF GENERATION + ORDER CONFIRM ============ */
-document.getElementById('pdfBtn').addEventListener('click', ()=>{
+document.getElementById('confirmOrderBtn').addEventListener('click', ()=>{
   const data = validateForm();
   if(!data) { showToast('তথ্যগুলো সঠিকভাবে পূরণ করুন'); return; }
 
@@ -1646,21 +1873,39 @@ document.getElementById('pdfBtn').addEventListener('click', ()=>{
   };
   addOrder(order);
 
-  let pdfFailed = false;
-  try{
-    generatePDF(data);
-  }catch(e){
-    pdfFailed = true;
-  }
-
-  // order confirmed — clear the bag and close the checkout screen
   cart = {};
   updateCartBar();
   overlay.classList.remove('show');
   document.getElementById('inpName').value = '';
   document.getElementById('inpAddress').value = '';
   document.getElementById('inpMobile').value = '';
-  showToast(pdfFailed ? 'অর্ডার সম্পন্ন হয়েছে (রিসিট PDF তৈরিতে সমস্যা হয়েছে)' : 'অর্ডার সম্পন্ন হয়েছে ✓');
+  showToast('অর্ডার সম্পন্ন হয়েছে ✓');
+});
+
+document.getElementById('pdfBtn').addEventListener('click', ()=>{
+  const data = validateForm();
+  if(!data) { showToast('তথ্যগুলো সঠিকভাবে পূরণ করুন'); return; }
+
+  try{
+    generatePDF(data);
+    showToast('PDF ডাউনলোড হয়েছে ✓');
+  }catch(e){
+    showToast('PDF তৈরি করতে সমস্যা হয়েছে');
+  }
+});
+
+document.getElementById('quickMessageBtn').addEventListener('click', ()=>{
+  const data = validateForm();
+  if(!data) { showToast('তথ্যগুলো সঠিকভাবে পূরণ করুন'); return; }
+
+  const items = Object.entries(cart).map(([key,qty])=>{
+    const info = getSellable(key);
+    return info ? `${info.name} (${qty}x)` : null;
+  }).filter(Boolean).join(', ') || 'কোন পণ্য নেই';
+
+  const message = `Assalamu Alaikum, আমি ${data.name}. ঠিকানা: ${data.address}. মোবাইল: ${data.mobile}. অর্ডার: ${items}. সর্বমোট: ৳${cartTotal().toLocaleString('en-IN')}. দ্রুত ডেলিভারি চাই।`;
+  const encoded = encodeURIComponent(message);
+  window.open(`https://wa.me/8801738338138?text=${encoded}`, '_blank');
 });
 
 function generatePDF(data){
@@ -1754,22 +1999,23 @@ const adminLockInput = document.getElementById('adminLockInput');
 const adminLockError = document.getElementById('adminLockError');
 
 function isAdminSessionUnlocked(){
-  try{ return sessionStorage.getItem(ADMIN_SESSION_KEY) === '1'; }
-  catch(e){ return false; } // sandboxed/blocked storage — just fall back to asking for password again
+  return false;
 }
 
-document.getElementById('footerAdminBtn').addEventListener('click', ()=>{
+function openAdminPanel(){
   try{
-    if(isAdminSessionUnlocked()){
-      renderAdmin();
-      adminOverlay.classList.add('show');
-    }else{
-      adminLockError.classList.remove('show');
-      adminLockInput.value = '';
-      adminLockBackdrop.classList.add('show');
-      setTimeout(()=> adminLockInput.focus(), 50);
-    }
+    adminLockError.classList.remove('show');
+    adminLockInput.value = '';
+    adminLockBackdrop.classList.add('show');
+    setTimeout(()=> adminLockInput.focus(), 50);
   }catch(e){ /* ignore */ }
+}
+
+document.getElementById('footerAdminBtn').addEventListener('click', openAdminPanel);
+document.getElementById('menuAdminBtn').addEventListener('click', ()=>{
+  const menuWrap = document.querySelector('.menu-wrap');
+  if (menuWrap) menuWrap.removeAttribute('open');
+  openAdminPanel();
 });
 
 function tryAdminUnlock(){
