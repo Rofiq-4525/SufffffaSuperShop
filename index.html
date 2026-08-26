@@ -1,0 +1,2403 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>সুফ্ফা — সুপারশপ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --pine:#0D3060;
+    --pine-2:#1B4A8C;
+    --leaf:#0F6B2E;
+    --leaf-light:#3E9153;
+    --cream:#F8F4EA;
+    --cream-2:#EFE7D6;
+    --mustard:#C89B5C;
+    --mustard-dark:#A67C3D;
+    --sindoor:#5C3517;
+    --ink:#211D18;
+    --paper-line:#DAD5C8;
+    --shadow: 0 8px 24px rgba(13,48,96,0.14);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Hind Siliguri', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .display{font-family:'Tiro Bangla', serif;}
+  img,button{-webkit-tap-highlight-color:transparent;}
+  button{font-family:inherit; cursor:pointer;}
+  ::selection{background:var(--mustard); color:var(--pine);}
+
+  /* ---------- Header ---------- */
+  header.topbar{
+    position:sticky; top:0; z-index:40;
+    background:#FCFAF4;
+    padding:14px 16px 12px;
+    box-shadow:0 2px 12px rgba(13,48,96,0.07);
+  }
+  .topbar-row{ display:grid; align-items:center; gap:12px; }
+  .logo-img{
+    height:72px; width:auto; max-width:260px;
+    object-fit:contain; display:block; background:transparent; padding:0;
+    justify-self:center;
+  }
+  .nav-icons{ display:flex; align-items:center; gap:16px; justify-self:end; }
+  .nav-icons button{
+    background:none; border:none; display:flex; flex-direction:column; align-items:center;
+    gap:2px; color:var(--pine); position:relative; padding:2px;
+  }
+  .nav-icons .ic{ font-size:19px; position:relative; line-height:1; }
+  .nav-icons .lbl{ font-size:10px; font-weight:700; color:var(--pine); opacity:0.85; }
+  .nav-icons .badge{
+    position:absolute; top:-7px; right:-11px; background:var(--sindoor); color:#fff;
+    font-size:10px; min-width:16px; height:16px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-weight:800; padding:0 3px;
+  }
+
+  /* ---------- Search bar ---------- */
+  .search-wrap{ background:var(--cream); padding:12px 16px 16px; }
+  .search-bar{
+    max-width:1100px; margin:0 auto;
+    display:flex; align-items:center; gap:10px;
+    background:#fff; border:1.5px solid var(--paper-line); border-radius:14px;
+    padding:11px 14px 11px 16px;
+  }
+  .search-bar input{
+    flex:1; border:none; outline:none; background:transparent;
+    font-family:inherit; font-size:14.5px; color:var(--ink); min-width:0;
+  }
+  .search-bar input::placeholder{ color:#a89e88; }
+  .search-bar .ic{ font-size:16px; color:var(--pine); flex:0 0 auto; opacity:0.6; }
+  .search-bar .clear-btn{
+    display:none; border:none; background:var(--cream-2); color:var(--pine);
+    width:22px; height:22px; border-radius:50%; font-size:13px; flex:0 0 auto;
+    align-items:center; justify-content:center;
+  }
+  .search-bar .clear-btn.show{ display:flex; }
+  .search-empty{ text-align:center; padding:40px 16px; color:#8a8272; }
+  .search-empty .em{ font-size:40px; margin-bottom:8px; }
+
+  /* ---------- Category section ---------- */
+  .cat-section{ padding:20px 0 6px; }
+  .cat-heading{
+    font-family:'Tiro Bangla',serif; font-size:20px; font-weight:700; color:var(--pine);
+    margin:0 16px 10px;
+  }
+  .cat-scroll-wrap{ position:relative; }
+  .cat-arrow{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:30px; height:30px; border-radius:50%; border:none;
+    background:#fff; box-shadow:0 3px 10px rgba(13,48,96,0.2);
+    color:var(--pine); font-size:14px; z-index:6;
+    display:none; align-items:center; justify-content:center;
+  }
+  .cat-arrow.prev{ left:6px; } .cat-arrow.next{ right:6px; }
+  @media(min-width:640px){ .cat-arrow{ display:flex; } }
+  .cat-row{
+    display:flex; gap:12px; overflow-x:auto; padding:6px 16px 12px;
+    scroll-snap-type:x proximity; cursor:grab;
+    scrollbar-width:none;
+  }
+  .cat-row::-webkit-scrollbar{display:none;}
+  .cat-row.dragging{cursor:grabbing; scroll-snap-type:none;}
+  .cat-card{
+    flex:0 0 auto; scroll-snap-align:start; width:108px;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    background:#fff; border-radius:16px; padding:14px 8px 12px;
+    box-shadow:0 4px 14px rgba(13,48,96,0.09);
+    border:2px solid transparent; user-select:none;
+  }
+  .cat-card.active{ border-color:var(--mustard); }
+  .cat-card .cat-icon{
+    width:54px; height:54px; border-radius:13px; background:var(--cream-2);
+    overflow:hidden;
+  }
+  .cat-card .cat-icon img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .cat-card .cat-label{ font-size:12.5px; font-weight:700; color:var(--ink); text-align:center; line-height:1.2; }
+  .cat-card .cat-count{
+    font-size:10px; font-weight:700; color:var(--leaf); background:var(--cream-2);
+    padding:2px 9px; border-radius:999px;
+  }
+
+  /* ---------- Ferdo (list) section ---------- */
+  .ferdo-wrap{ max-width:760px; margin:10px auto 140px; padding:0 14px; }
+  .ferdo-head{
+    text-align:center; margin:18px 0 4px;
+  }
+  .ferdo-head h1{ font-family:'Tiro Bangla',serif; font-size:26px; color:var(--pine); margin:0 0 4px;}
+  .ferdo-head p{ font-size:13px; color:var(--leaf); margin:0; font-weight:600;}
+
+  .subcat-row{
+    display:flex; gap:8px; overflow-x:auto; padding:12px 2px 4px;
+    scrollbar-width:none;
+  }
+  .subcat-row::-webkit-scrollbar{ display:none; }
+  .subcat-row.empty{ display:none; }
+  .subcat-pill{
+    flex:0 0 auto; padding:7px 16px; border-radius:999px;
+    background:#fff; border:1.5px solid var(--paper-line);
+    font-size:12.5px; font-weight:700; color:var(--pine); white-space:nowrap;
+  }
+  .subcat-pill.active{ background:var(--pine); color:#fff; border-color:var(--pine); }
+
+  /* ---------- Package pills (inside ferdo) ---------- */
+  #packagePillRow .subcat-pill{
+    background:var(--cream-2); border-color:var(--mustard);
+  }
+  #packagePillRow .subcat-pill.active{
+    background:var(--mustard-dark); color:#fff; border-color:var(--mustard-dark);
+  }
+
+  .ferdo-paper{
+    background:#fff;
+    border-radius:4px 4px 14px 14px;
+    box-shadow:var(--shadow);
+    margin-top:16px;
+    position:relative;
+    padding-top:6px;
+  }
+  .torn-edge{
+    height:16px;
+    background-image: radial-gradient(circle at 10px 0, transparent 9px, #fff 10px);
+    background-size:20px 16px;
+    background-repeat:repeat-x;
+    background-position:top;
+    margin-bottom:-2px;
+  }
+  .torn-edge.top{ background:var(--cream);
+    -webkit-mask-image: radial-gradient(circle at 10px 16px, transparent 9px, #000 10px);
+    mask-image: radial-gradient(circle at 10px 16px, transparent 9px, #000 10px);
+    -webkit-mask-size:20px 16px; mask-size:20px 16px;
+    -webkit-mask-repeat:repeat-x; mask-repeat:repeat-x;
+  }
+  .ferdo-list{ padding:6px 18px 18px; }
+  .ferdo-item{ border-bottom:1.5px dashed var(--paper-line); }
+  .ferdo-item:last-child{ border-bottom:none; }
+  .ferdo-row{
+    display:flex; align-items:center; gap:14px;
+    padding:16px 0;
+  }
+  .ferdo-row.has-variants{ cursor:pointer; user-select:none; }
+  .ferdo-row.has-variants:active{ opacity:0.85; }
+  .variant-chevron{
+    font-size:20px; color:var(--pine); font-weight:700;
+    transition:transform .25s; flex:0 0 auto;
+  }
+  .variant-chevron.open{ transform:rotate(180deg); }
+  .variant-panel{
+    display:none;
+    background:var(--cream);
+    border-radius:12px;
+    padding:6px 10px;
+    margin:0 0 14px;
+    border:1.5px dashed var(--paper-line);
+  }
+  .variant-panel.open{ display:block; }
+  .variant-row{
+    display:flex; align-items:center; gap:10px;
+    padding:10px 2px;
+    border-bottom:1px dashed var(--paper-line);
+  }
+  .variant-row:last-child{ border-bottom:none; }
+  .variant-row.out-of-stock{ opacity:0.55; }
+  .variant-thumb{
+    width:46px; height:46px; border-radius:10px; flex:0 0 auto;
+    overflow:hidden; background:var(--cream-2);
+  }
+  .variant-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .variant-info{ flex:1 1 auto; min-width:0; }
+  .variant-info .vname{ font-weight:600; font-size:13px; color:var(--ink); }
+  .variant-price{
+    font-weight:800; color:var(--sindoor); font-size:13.5px;
+    white-space:nowrap; flex:0 0 auto;
+  }
+  .prod-thumb{
+    width:84px; height:84px; border-radius:16px; flex:0 0 auto;
+    overflow:hidden; background:var(--cream-2);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,0.06);
+  }
+  .prod-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .prod-info{ flex:1 1 auto; min-width:0; }
+  .prod-info .name{ font-weight:700; font-size:15.5px; color:var(--ink); }
+  .prod-info .unit{ font-size:12px; color:#8a8272; margin-top:2px; }
+  .prod-right{
+    display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+    flex:0 0 auto;
+  }
+  .qty-stepper{
+    display:flex; align-items:center; gap:0; flex:0 0 auto;
+    background:var(--cream-2); border-radius:999px; overflow:hidden;
+  }
+  .qty-stepper button{
+    width:26px; height:26px; border:none; background:transparent; color:var(--pine);
+    font-size:16px; font-weight:700; display:flex; align-items:center; justify-content:center;
+  }
+  .qty-stepper .qty-val{ min-width:20px; text-align:center; font-weight:700; font-size:13px; }
+  .prod-price{
+    font-weight:800; color:var(--sindoor); font-size:17px;
+    white-space:nowrap; text-align:right; padding:2px 4px;
+    letter-spacing:0.2px;
+  }
+  .add-btn{
+    flex:0 0 auto; width:34px; height:34px; border-radius:50%; border:none;
+    background:var(--leaf); color:#fff; font-size:16px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 3px 8px rgba(15,107,46,0.35);
+    transition:transform .15s;
+  }
+  .add-btn.added{ background:var(--pine); }
+  .add-btn:active{ transform:scale(0.88); }
+  .add-btn:disabled{ background:#c9c4b7; box-shadow:none; cursor:not-allowed; }
+  .ferdo-row.hidden{ display:none; }
+  .ferdo-row.out-of-stock .prod-thumb{ opacity:0.45; filter:grayscale(60%); }
+  .ferdo-row.out-of-stock .prod-info .name{ color:#a89e88; }
+  .stock-tag{ font-size:11px; font-weight:700; margin-top:3px; }
+  .stock-tag.ok{ color:var(--leaf); }
+  .stock-tag.low{ color:var(--mustard-dark); }
+  .stock-tag.out{ color:var(--sindoor); }
+  .qty-stepper button:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  /* ---------- Package "add all" button ---------- */
+  .pkg-add-all-btn{
+    width:100%; background:var(--leaf); color:#fff; border:none; border-radius:14px;
+    padding:14px; font-size:14.5px; font-weight:800;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    box-shadow:0 6px 16px rgba(15,107,46,0.3);
+  }
+  .pkg-add-all-btn:active{ transform:scale(0.98); }
+  .pkg-add-all-btn:disabled{ background:#c9c4b7; box-shadow:none; }
+  .pkg-save-note{
+    text-align:center; font-size:12px; font-weight:700; color:var(--leaf);
+    background:var(--cream-2); border-radius:999px; padding:6px 14px;
+    display:inline-block; margin:0 auto 12px; width:auto;
+  }
+  .pkg-save-note-wrap{ text-align:center; }
+
+  /* ---------- Sticky cart bar (always fixed at bottom) ---------- */
+  .cart-bar{
+    position:fixed; left:0; right:0; bottom:0; z-index:50;
+    display:flex; justify-content:center;
+    padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+    pointer-events:none;
+  }
+  .cart-bar-inner{
+    pointer-events:auto;
+    width:100%; max-width:640px;
+    background:var(--pine); color:var(--cream);
+    border-radius:18px; box-shadow:0 10px 30px rgba(13,48,96,0.4);
+    display:flex; align-items:center; gap:12px;
+    padding:10px 12px 10px 16px;
+    transform:translateY(140%);
+    transition:transform .35s cubic-bezier(.2,.9,.3,1.2);
+  }
+  .cart-bar-inner.show{ transform:translateY(0); }
+  .bag-icon{ font-size:24px; position:relative; }
+  .bag-icon .badge{
+    position:absolute; top:-8px; right:-10px; background:var(--mustard); color:var(--ink);
+    font-size:11px; font-weight:800; min-width:18px; height:18px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cart-bar-text{ flex:1; min-width:0; }
+  .cart-bar-text .items-line{ font-size:12px; opacity:0.75; }
+  .cart-bar-text .total-line{ font-size:16px; font-weight:700; color:var(--mustard); }
+  .confirm-btn{
+    background:var(--mustard); color:var(--pine); border:none;
+    padding:12px 18px; border-radius:12px; font-weight:800; font-size:14px;
+    white-space:nowrap;
+  }
+
+  /* ---------- Confirm page overlay ---------- */
+  .overlay{
+    position:fixed; inset:0; background:var(--cream); z-index:100;
+    overflow-y:auto;
+    transform:translateX(100%); transition:transform .4s cubic-bezier(.2,.9,.3,1);
+  }
+  .overlay.show{ transform:translateX(0); }
+  .confirm-top{
+    background:var(--pine); color:#fff; padding:16px 18px; display:flex; align-items:center; gap:12px;
+    position:sticky; top:0; z-index:5;
+  }
+  .back-btn{ background:rgba(255,255,255,0.15); border:none; color:#fff; width:34px; height:34px; border-radius:50%; font-size:16px;}
+  .confirm-top h2{ font-family:'Tiro Bangla',serif; font-size:19px; margin:0;}
+  .confirm-body{ max-width:600px; margin:0 auto; padding:20px 16px 60px; }
+  .form-card, .summary-card{
+    background:#fff; border-radius:16px; padding:18px; box-shadow:var(--shadow); margin-bottom:18px;
+  }
+  .form-card h3, .summary-card h3{ font-family:'Tiro Bangla',serif; color:var(--pine); margin:0 0 14px; font-size:17px;}
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:13px; font-weight:600; color:var(--leaf); margin-bottom:5px;}
+  .field input, .field textarea, .field select{
+    width:100%; border:1.5px solid var(--paper-line); border-radius:10px; padding:10px 12px;
+    font-family:inherit; font-size:14.5px; background:var(--cream); color:var(--ink);
+  }
+  .field input:focus, .field textarea:focus, .field select:focus{ outline:none; border-color:var(--leaf); }
+  .field.error input{ border-color:var(--sindoor); }
+  .field .err-msg{ font-size:11.5px; color:var(--sindoor); margin-top:4px; display:none; }
+  .field.error .err-msg{ display:block; }
+  .summary-row{
+    display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px dashed var(--paper-line);
+    font-size:13.5px;
+  }
+  .summary-row:last-child{ border-bottom:none; }
+  .summary-row .st{ width:34px; height:34px; border-radius:8px; object-fit:cover; flex:0 0 auto; }
+  .summary-row .sname{ flex:1; }
+  .summary-row .sqty{ color:#8a8272; }
+  .summary-row .sprice{ font-weight:700; color:var(--sindoor); }
+  .summary-total{
+    display:flex; justify-content:space-between; padding-top:12px; margin-top:4px;
+    font-weight:800; font-size:16px; color:var(--pine);
+  }
+  .pdf-btn{
+    width:100%; background:var(--leaf); color:#fff; border:none; border-radius:14px;
+    padding:15px; font-size:15.5px; font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px;
+    box-shadow:0 6px 16px rgba(15,107,46,0.35);
+  }
+  .pdf-btn:disabled{ opacity:0.5; }
+  .empty-state{ text-align:center; padding:60px 20px; color:#8a8272; }
+  .empty-state .em{ font-size:44px; margin-bottom:10px; }
+
+  .toast{
+    position:fixed; top:70px; left:50%; transform:translateX(-50%) translateY(-20px);
+    background:var(--pine); color:#fff; padding:10px 18px; border-radius:999px;
+    font-size:13px; font-weight:600; z-index:200; opacity:0; pointer-events:none;
+    transition:all .3s; box-shadow:var(--shadow);
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  footer.foot{ text-align:center; padding:20px; font-size:12px; color:#8a8272; }
+  .admin-img-row{
+    display:flex; gap:12px; align-items:center; padding:12px 0;
+    border-bottom:1px dashed var(--paper-line);
+  }
+  .admin-img-row:last-child{ border-bottom:none; }
+  .admin-thumb{
+    width:56px; height:56px; border-radius:12px; object-fit:cover; flex:0 0 auto;
+    background:var(--cream-2); box-shadow:inset 0 0 0 1px rgba(0,0,0,0.06);
+  }
+  .admin-fields{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:6px; }
+  .admin-name{ font-weight:700; font-size:13.5px; color:var(--ink); }
+  .admin-url-input{
+    width:100%; border:1.5px solid var(--paper-line); border-radius:8px;
+    padding:7px 10px; font-size:12px; font-family:inherit; background:var(--cream); color:var(--ink);
+  }
+  .admin-url-input:focus{ outline:none; border-color:var(--leaf); }
+  .admin-btns{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .admin-upload-btn{
+    background:var(--cream-2); color:var(--pine); font-size:11.5px; font-weight:700;
+    padding:7px 12px; border-radius:8px; cursor:pointer; white-space:nowrap;
+  }
+  .admin-save-btn{
+    background:var(--leaf); color:#fff; font-size:11.5px; font-weight:700;
+    padding:7px 14px; border-radius:8px; border:none; white-space:nowrap;
+  }
+  .admin-delete-btn{
+    background:none; color:var(--sindoor); font-size:11.5px; font-weight:700;
+    padding:7px 10px; border-radius:8px; border:1.5px solid var(--sindoor); white-space:nowrap;
+  }
+  .admin-saved-tag{
+    font-size:10.5px; font-weight:700; color:var(--leaf); display:none;
+  }
+  .admin-saved-tag.show{ display:inline; }
+  .admin-note{
+    font-size:12px; color:#8a8272; line-height:1.6; background:var(--cream);
+    border-radius:10px; padding:10px 12px; margin-bottom:14px;
+  }
+  .admin-numrow{ display:flex; gap:8px; }
+  .admin-num-field{ flex:1 1 0; min-width:0; }
+  .admin-num-field .lbl{ font-size:10.5px; font-weight:700; color:#8a8272; display:block; margin-bottom:3px; }
+
+  /* ---------- Order cards (admin) ---------- */
+  .order-card{
+    border:1.5px solid var(--paper-line); border-radius:12px;
+    padding:12px 14px; margin-bottom:12px; background:var(--cream);
+  }
+  .order-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px; }
+  .order-name{ font-weight:700; font-size:14px; color:var(--pine); }
+  .order-time{ font-size:10.5px; color:#8a8272; white-space:nowrap; }
+  .order-contact{ font-size:12px; color:var(--ink); margin-bottom:8px; line-height:1.5; }
+  .order-items{ font-size:12px; color:#5c5648; margin-bottom:8px; line-height:1.6; }
+  .order-items .oi-row{ display:flex; justify-content:space-between; gap:8px; }
+  .order-total-row{
+    display:flex; justify-content:space-between; align-items:center;
+    font-weight:800; color:var(--sindoor); font-size:14px;
+    padding-top:8px; border-top:1px dashed var(--paper-line); margin-bottom:10px;
+  }
+  .order-bottom{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+  .order-status-sel{
+    flex:1; min-width:110px; border:1.5px solid var(--paper-line); border-radius:8px;
+    padding:7px 10px; font-size:12px; font-family:inherit; background:#fff; color:var(--ink); font-weight:700;
+  }
+  .order-status-sel.st-new{ color:var(--pine); }
+  .order-status-sel.st-processing{ color:var(--mustard-dark); }
+  .order-status-sel.st-delivered{ color:var(--leaf); }
+  .order-status-sel.st-cancelled{ color:var(--sindoor); }
+  .admin-num-input{
+    width:100%; border:1.5px solid var(--paper-line); border-radius:8px;
+    padding:7px 10px; font-size:12.5px; font-family:inherit; background:var(--cream); color:var(--ink);
+    font-weight:700;
+  }
+  .admin-num-input:focus{ outline:none; border-color:var(--leaf); }
+  .admin-num-input.stock-input{ color:var(--leaf); }
+  .admin-num-input.price-input{ color:var(--sindoor); }
+
+  /* ---------- Admin lock modal ---------- */
+  .admin-lock-backdrop{
+    position:fixed; inset:0; background:rgba(13,48,96,0.55); z-index:150;
+    display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .admin-lock-backdrop.show{ display:flex; }
+  .admin-lock-card{
+    background:#fff; border-radius:16px; padding:26px 22px; max-width:320px; width:100%;
+    box-shadow:var(--shadow); text-align:center;
+  }
+  .admin-lock-card .lock-emoji{ font-size:30px; margin-bottom:4px; }
+  .admin-lock-card h3{ font-family:'Tiro Bangla',serif; color:var(--pine); margin:0 0 6px; font-size:18px; }
+  .admin-lock-card p{ font-size:12.5px; color:#8a8272; margin:0 0 16px; line-height:1.5; }
+  .admin-lock-card input{
+    width:100%; border:1.5px solid var(--paper-line); border-radius:10px; padding:11px 12px;
+    font-size:15px; margin-bottom:10px; text-align:center; letter-spacing:3px;
+    font-family:inherit; background:var(--cream); color:var(--ink);
+  }
+  .admin-lock-card input:focus{ outline:none; border-color:var(--leaf); }
+  .admin-lock-error{ font-size:11.5px; color:var(--sindoor); font-weight:700; margin:-4px 0 10px; display:none; }
+  .admin-lock-error.show{ display:block; }
+  .admin-lock-btns{ display:flex; gap:8px; }
+  .admin-lock-btns button{
+    flex:1; padding:11px; border-radius:10px; font-weight:700; font-size:13.5px; border:none;
+    font-family:inherit;
+  }
+  .admin-lock-submit{ background:var(--leaf); color:#fff; }
+  .admin-lock-cancel{ background:var(--cream-2); color:var(--pine); }
+</style>
+<base target="_blank">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-row" style="grid-template-columns:auto 1fr;">
+    <img class="logo-img" src="logo.svg" alt="সুফ্ফা সুপারশপ" style="justify-self:start;" onerror="this.style.display='none'">
+    <div class="nav-icons" style="justify-self:end;">
+      <button data-nav="bag" id="cartPillBtn">
+        <span class="ic">
+          <svg width="27" height="19" viewBox="0 0 28 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;">
+            <path d="M1 1h3l2.2 11.2a2 2 0 0 0 2 1.8h11.6a2 2 0 0 0 2-1.7L24 5H6.4"></path>
+            <circle cx="10" cy="18" r="1.5"></circle>
+            <circle cx="18" cy="18" r="1.5"></circle>
+          </svg>
+          <span class="badge" id="headerBadge" style="display:none;">0</span>
+        </span>
+        <span class="lbl">কার্ট</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- SEARCH BAR -->
+<div class="search-wrap">
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="পণ্য খুঁজুন — যেমন চাল, ডিম, তেল...">
+    <span class="ic">🔍</span>
+    <button class="clear-btn" id="searchClear">✕</button>
+  </div>
+</div>
+
+<!-- CATEGORY ROW -->
+<div class="cat-section" id="catSection">
+  <h2 class="cat-heading">ক্যাটাগরি</h2>
+  <div class="cat-scroll-wrap">
+    <button class="cat-arrow prev" id="catPrevBtn" aria-label="আগের ক্যাটাগরি">‹</button>
+    <div class="cat-row" id="catRow"></div>
+    <button class="cat-arrow next" id="catNextBtn" aria-label="পরের ক্যাটাগরি">›</button>
+  </div>
+</div>
+
+<!-- FERDO / PRODUCT LIST -->
+<div class="ferdo-wrap">
+  <div class="ferdo-head">
+    <h1>আজকের বাজার</h1>
+    <p id="ferdoSub">সব পণ্য</p>
+  </div>
+
+  <!-- READY-MADE PACKAGE CAPSULES — ফর্দ লেখার ঠিক নিচে -->
+  <div class="subcat-row" id="packagePillRow"></div>
+
+  <!-- SUB-CATEGORY CAPSULES -->
+  <div class="subcat-row empty" id="subcatRow"></div>
+
+  <div class="ferdo-paper">
+    <div class="torn-edge top"></div>
+    <div class="ferdo-list" id="ferdoList"></div>
+    <div id="pkgAddAllWrap" style="display:none; padding:0 18px 18px;">
+      <div class="pkg-save-note-wrap">
+        <span class="pkg-save-note" id="pkgSaveNote"></span>
+      </div>
+      <button class="pkg-add-all-btn" id="pkgAddAllBtn">🛍️ সব কার্টে যোগ করুন</button>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">
+  সুফফাতুল মুহাজিরিন এর কর্ম ও জীবিকা শিক্ষা বিভাগ থেকে পরিচালিত একটি উদ্যোগ
+  <div>সুফফা সুপারশপ</div>
+  <div style="margin-top:8px;">
+    <button id="footerAdminBtn" type="button" style="background:none; border:none; color:#a89e88; font-size:11px; font-family:inherit; text-decoration:underline; padding:4px;">⚙ এডমিন প্যানেল</button>
+  </div>
+</footer>
+
+<!-- STICKY CART BAR (always fixed) -->
+<div class="cart-bar">
+  <div class="cart-bar-inner" id="cartBarInner">
+    <div class="bag-icon">🧺<span class="badge" id="barBadge">0</span></div>
+    <div class="cart-bar-text">
+      <div class="items-line" id="barItemsLine">০ টি পণ্য</div>
+      <div class="total-line" id="barTotalLine">৳ ০</div>
+    </div>
+    <button class="confirm-btn" id="goConfirmBtn">অর্ডার কনফার্ম করুন</button>
+  </div>
+</div>
+
+<!-- CONFIRM OVERLAY -->
+<div class="overlay" id="confirmOverlay">
+  <div class="confirm-top">
+    <button class="back-btn" id="backBtn">‹</button>
+    <h2>অর্ডার কনফার্ম করুন</h2>
+  </div>
+  <div class="confirm-body">
+    <div class="form-card">
+      <h3>ডেলিভারি তথ্য</h3>
+      <div class="field" id="f-name">
+        <label>নাম</label>
+        <input type="text" id="inpName" placeholder="আপনার পূর্ণ নাম">
+        <div class="err-msg">অনুগ্রহ করে নাম লিখুন</div>
+      </div>
+      <div class="field" id="f-address">
+        <label>ঠিকানা</label>
+        <textarea id="inpAddress" rows="2" placeholder="বাসা/রোড/এলাকা, থানা, জেলা"></textarea>
+        <div class="err-msg">অনুগ্রহ করে ঠিকানা লিখুন</div>
+      </div>
+      <div class="field" id="f-mobile">
+        <label>মোবাইল নম্বর</label>
+        <input type="tel" id="inpMobile" placeholder="01XXXXXXXXX">
+        <div class="err-msg">সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন</div>
+      </div>
+    </div>
+
+    <div class="summary-card">
+      <h3>অর্ডার তালিকা</h3>
+      <div id="summaryList"></div>
+      <div class="summary-total">
+        <span>সর্বমোট</span>
+        <span id="summaryTotal">৳ ০</span>
+      </div>
+    </div>
+
+    <button class="pdf-btn" id="pdfBtn">⬇ PDF ডাউনলোড করুন</button>
+  </div>
+</div>
+
+<!-- ADMIN OVERLAY -->
+<div class="overlay" id="adminOverlay">
+  <div class="confirm-top">
+    <button class="back-btn" id="adminBackBtn">‹</button>
+    <h2>এডমিন প্যানেল — পণ্য ব্যবস্থাপনা</h2>
+  </div>
+  <div class="confirm-body">
+    <div class="form-card">
+      <h3>📋 অর্ডারসমূহ <span id="orderCountTag" style="font-size:12px; font-weight:700; color:var(--leaf); background:var(--cream-2); padding:3px 10px; border-radius:999px; margin-left:6px;"></span></h3>
+      <div id="adminOrdersList"></div>
+      <button class="admin-delete-btn" id="clearAllOrdersBtn" type="button" style="width:100%; margin-top:10px; padding:9px;">🗑 সব অর্ডার মুছুন</button>
+    </div>
+    <div class="admin-note">
+      এখানে ক্যাটাগরি ও পণ্যের ছবি, মূল্য ও স্টক বদলাতে পারবেন, নতুন পণ্য যোগ করতে পারবেন, অথবা যেকোনো পণ্য মুছে ফেলতে পারবেন। পরিবর্তন এই ব্রাউজারে সংরক্ষিত থাকবে।
+    </div>
+    <div class="form-card">
+      <h3>ক্যাটাগরি ছবি</h3>
+      <div id="adminCatList"></div>
+    </div>
+    <div class="form-card">
+      <h3>➕ নতুন পণ্য যোগ করুন</h3>
+      <div class="field">
+        <label>পণ্যের নাম</label>
+        <input type="text" id="newProdName" placeholder="যেমন: মিনিকেট চাল">
+      </div>
+      <div class="field">
+        <label>একক</label>
+        <input type="text" id="newProdUnit" placeholder="যেমন: প্রতি কেজি">
+      </div>
+      <div class="field">
+        <label>ক্যাটাগরি</label>
+        <select id="newProdCat"></select>
+      </div>
+      <div class="field">
+        <label>সাব-ক্যাটাগরি (ঐচ্ছিক)</label>
+        <select id="newProdSub"></select>
+      </div>
+      <div class="admin-numrow" style="margin-bottom:14px;">
+        <div class="admin-num-field">
+          <span class="lbl">মূল্য (৳)</span>
+          <input type="number" id="newProdPrice" class="admin-num-input price-input" min="0" step="1" placeholder="০">
+        </div>
+        <div class="admin-num-field">
+          <span class="lbl">স্টক</span>
+          <input type="number" id="newProdStock" class="admin-num-input stock-input" min="0" step="1" value="50">
+        </div>
+      </div>
+      <div class="field">
+        <label>ছবি</label>
+        <input type="text" id="newProdImgUrl" class="admin-url-input" placeholder="ছবির URL পেস্ট করুন" style="margin-bottom:8px;">
+        <label class="admin-upload-btn" style="display:inline-block;">📁 ছবি আপলোড
+          <input type="file" id="newProdImgFile" accept="image/*" hidden>
+        </label>
+      </div>
+      <div class="field">
+        <label>ভ্যারাইটি (ঐচ্ছিক) — যেমন: মধুর ৫ রকম, বা সাবানের বিভিন্ন ব্র্যান্ড</label>
+        <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;">
+          <input type="text" id="newProdVarName" placeholder="ধরনের নাম, যেমন: সুন্দরবন মধু" class="admin-url-input" style="flex:1.6; min-width:140px;">
+          <input type="number" id="newProdVarPrice" class="admin-num-input price-input" placeholder="মূল্য" style="flex:0.7; min-width:70px;" min="0" step="1">
+          <input type="number" id="newProdVarStock" class="admin-num-input stock-input" placeholder="স্টক" style="flex:0.6; min-width:60px;" min="0" step="1" value="20">
+          <button class="admin-save-btn" id="newProdVarAddBtn" type="button">যোগ</button>
+        </div>
+        <div id="newProdVarList"></div>
+      </div>
+      <button class="pdf-btn" id="addProductBtn" style="margin-top:6px;">➕ পণ্য যোগ করুন</button>
+    </div>
+    <div class="form-card">
+      <h3>📦 প্যাকেজ ব্যবস্থাপনা — বর্তমান প্যাকেজসমূহ</h3>
+      <div id="adminPkgList"></div>
+    </div>
+    <div class="form-card">
+      <h3>➕ নতুন প্যাকেজ যোগ করুন</h3>
+      <div class="field">
+        <label>প্যাকেজের নাম</label>
+        <input type="text" id="newPkgName" placeholder="যেমন: ঈদ স্পেশাল প্যাকেজ">
+      </div>
+      <div class="admin-numrow" style="margin-bottom:14px;">
+        <div class="admin-num-field">
+          <span class="lbl">ইমোজি</span>
+          <input type="text" id="newPkgEmoji" class="admin-num-input" placeholder="🎁" value="🎁">
+        </div>
+        <div class="admin-num-field">
+          <span class="lbl">ছাড় (%)</span>
+          <input type="number" id="newPkgDiscount" class="admin-num-input" min="0" max="90" step="1" value="10">
+        </div>
+      </div>
+      <div class="field">
+        <label>পণ্য যোগ করুন</label>
+        <div style="display:flex; gap:8px; margin-bottom:10px;">
+          <select id="newPkgProdSel" style="flex:1;"></select>
+          <input type="number" id="newPkgProdQty" class="admin-num-input" style="width:64px; flex:0 0 auto;" min="1" step="1" value="1">
+          <button class="admin-save-btn" id="newPkgAddItemBtn" type="button">যোগ</button>
+        </div>
+        <div id="newPkgItemsList"></div>
+      </div>
+      <button class="pdf-btn" id="addPackageBtn" style="margin-top:6px;">➕ প্যাকেজ যোগ করুন</button>
+    </div>
+    <div class="form-card">
+      <h3>পণ্যের তালিকা — ছবি, মূল্য, স্টক ও মুছে ফেলা</h3>
+      <div id="adminProdList"></div>
+    </div>
+    <button class="pdf-btn" id="adminResetBtn" style="background:var(--sindoor);">🔄 সব কিছু ডিফল্টে ফিরিয়ে দিন</button>
+  </div>
+</div>
+
+<!-- ADMIN LOCK MODAL -->
+<div class="admin-lock-backdrop" id="adminLockBackdrop">
+  <div class="admin-lock-card">
+    <div class="lock-emoji">🔒</div>
+    <h3>এডমিন অ্যাক্সেস</h3>
+    <p>এডমিন প্যানেলে ঢুকতে পাসওয়ার্ড দিন</p>
+    <div class="admin-lock-error" id="adminLockError">পাসওয়ার্ড সঠিক নয়, আবার চেষ্টা করুন</div>
+    <input type="password" id="adminLockInput" placeholder="পাসওয়ার্ড" autocomplete="off">
+    <div class="admin-lock-btns">
+      <button class="admin-lock-cancel" id="adminLockCancel" type="button">বাতিল</button>
+      <button class="admin-lock-submit" id="adminLockSubmit" type="button">প্রবেশ করুন</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ DATA ============ */
+const CATEGORIES = [
+  {id:'all', label:'সব', img:'', subcats:[]},
+  {id:'meat', label:'গোশত বাজার', img:'', subcats:[
+    {id:'beef', label:'গোশত'}, {id:'nihari', label:'নিহারি'}, {id:'fat', label:'চর্বি'},
+    {id:'head', label:'মাথা'}, {id:'tripe', label:'ভুড়ি'}
+  ]},
+  {id:'spice', label:'মশলা বাজার', img:'', subcats:[
+    {id:'powder', label:'গুঁড়া মশলা'}, {id:'whole', label:'সম্পূর্ণ মশলা'}
+  ]},
+  {id:'clean', label:'পরিচ্ছন্নতা', img:'', subcats:[
+    {id:'tiles-cleaner', label:'টাইলস ক্লিনার'}, {id:'toilet-cleaner', label:'টয়লেট ক্লিনার'},
+    {id:'soap', label:'সাবান'}, {id:'laundry-soap', label:'কাপড় কাচা সাবান'},
+    {id:'detergent', label:'ডিটারজেন্ট পাউডার'}, {id:'shampoo', label:'শ্যাম্পু'},
+    {id:'vim-bar', label:'ভিম বার'}, {id:'vim-liquid', label:'ভিম লিকুইড'},
+    {id:'handwash', label:'হ্যান্ডওয়াশ'}, {id:'toilet-tissue', label:'টয়লেট টিস্যা'},
+    {id:'kitchen-tissue', label:'কিচেন টিস্যু'}, {id:'toothpaste', label:'টুথপেষ্ট'},
+    {id:'mosquito', label:'মশার কয়েল ও স্প্রে'}, {id:'hair-oil', label:'হেয়ার ওয়েল'},
+    {id:'first-aid', label:'ফার্স্ট এইড ও ঘামাচি'}, {id:'goodnight', label:'গুডনাইট'}
+  ]},
+  {id:'organic', label:'অর্গানিক বাজার', img:'', subcats:[
+    {id:'honey', label:'মধু'}, {id:'ghee', label:'ঘি'}, {id:'nuts', label:'বাদাম ও ড্রাই ফ্রুট'},
+    {id:'dates', label:'খেজুর'}, {id:'seeds', label:'বীজ ও দানা'}, {id:'sugar', label:'চিনি ও মিসরি'},
+    {id:'raisins', label:'কিসমিস'}, {id:'dried-fruit', label:'শুকনো ফল'}, {id:'garlic', label:'কালো রসুন'}
+  ]},
+  {id:'grocery', label:'মুদি বাজার', img:'', subcats:[
+    {id:'rice-dal', label:'চাল-ডাল'}, {id:'oil-sugar-tea', label:'তেল-চিনি-চা'},
+    {id:'flour', label:'আটা-ময়দা'}, {id:'pulses', label:'ডাউল'}
+  ]},
+  {id:'islamic', label:'ইসলামি পণ্য', img:'', subcats:[
+    {id:'prayer', label:'নামাজের সামগ্রী'}, {id:'fragrance', label:'আতর'}, {id:'cap', label:'টুপি'}
+  ]},
+  {id:'books', label:'মুহাজির বুকশপ', img:'', subcats:[
+    {id:'books', label:'বই'}, {id:'stationery', label:'স্টেশনারি'}
+  ]},
+  {id:'fish', label:'মাছের বাজার', img:'', subcats:[
+    {id:'freshwater', label:'মিঠা পানির মাছ'}, {id:'sea', label:'সামুদ্রিক মাছ'}
+  ]},
+];
+
+const PRODUCTS = [
+  {id:1, name:'গরুর গোশত', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'beef', img:'', stock:50},
+  {id:2, name:'খাশি গোশত', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'goat', img:'', stock:50},
+  {id:3, name:'মহিষের গোশত', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'buffalo', img:'', stock:50},
+  {id:4, name:'পোল্ট্রি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'chicken', img:'', stock:50},
+  {id:5, name:'সোনালি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'sonali', img:'', stock:50},
+  {id:6, name:'দেশি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'desi', img:'', stock:50},
+  {id:7, name:'লেয়ার', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'layer', img:'', stock:50},
+  {id:8, name:'কবুতর', unit:'প্রতি পিস', price:0, cat:'meat', sub:'pigeon', img:'', stock:50},
+  {id:9, name:'গরুর নিহারি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'nihari', img:'', stock:50},
+  {id:10, name:'খাশির নিহারি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'nihari', img:'', stock:50},
+  {id:11, name:'গরুর ভূড়ি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'tripe', img:'', stock:50},
+  {id:12, name:'ছাগলের ভূড়ি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'tripe', img:'', stock:50},
+  {id:13, name:'গরুর মাথা', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'head', img:'', stock:50},
+  {id:14, name:'ছাগলের মাথা', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'head', img:'', stock:50},
+  {id:15, name:'গরুর কলিজা', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'liver', img:'', stock:50},
+  {id:16, name:'মহিষের কলিজা', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'liver', img:'', stock:50},
+  {id:17, name:'গরুর চর্বি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'fat', img:'', stock:50},
+  {id:18, name:'ছাগলের চর্বি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'fat', img:'', stock:50},
+  {id:19, name:'সরিষা তেল (ফিল্টার)', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
+  {id:20, name:'সরিষা তেল (ফিল্টার বাদে)', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
+  {id:21, name:'সয়াবিন তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
+  {id:22, name:'পাম তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
+  {id:23, name:'সুপার তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
+  {id:24, name:'অলিভ ওয়েল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
+  {id:25, name:'নারিকেল তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
+  {id:26, name:'তিলের তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
+  {id:27, name:'কালোজিরা তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
+  {id:28, name:'মিনিকেট চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
+  {id:29, name:'আঠাস চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
+  {id:30, name:'লালস্বর্ন চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
+  {id:31, name:'নাজির শাইল চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
+  {id:32, name:'পাইজাম চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
+  {id:33, name:'বাংলা বাশমতি চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
+  {id:34, name:'পাকিস্তানি বাশমতি চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
+  {id:35, name:'পোলাও চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
+  {id:36, name:'লাল চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
+  {id:37, name:'দেশি লাল আটা', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'flour', img:'', stock:50},
+  {id:38, name:'সাদা আটা', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'flour', img:'', stock:50},
+  {id:39, name:'ময়দা', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'flour', img:'', stock:50},
+  {id:40, name:'চাউলের আটা', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'flour', img:'', stock:50},
+  {id:41, name:'ঝালের গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
+  {id:42, name:'হলুদের গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
+  {id:43, name:'ধনিয়ার গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
+  {id:44, name:'জিরা গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
+  {id:45, name:'লবন', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
+  {id:46, name:'বীট লবন', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
+  {id:47, name:'পিংক সল্ট', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
+  {id:48, name:'জিরা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:49, name:'শাহি জিরা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:50, name:'কাঠ (মশলা)', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:51, name:'সেইগন কাঠ মশলা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:52, name:'সিলং কাঠ মশলা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:53, name:'এলাচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:54, name:'শাহী এলাচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:55, name:'কালো গোলমরিচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:56, name:'সাদা গোলমরিচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:57, name:'লবংগ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:58, name:'তেজপাতা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:59, name:'ধনিয়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:60, name:'মৌরি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:61, name:'মেথি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:62, name:'জোয়ান', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:63, name:'পাচফোড়ন', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:64, name:'জয়ফল', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:65, name:'জয়ত্রি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:66, name:'স্টার আনিস', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:67, name:'কাবাব চিনি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:68, name:'পোশ্ত দানা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:69, name:'রাধুনি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:70, name:'দেশি সরিষা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:71, name:'মাঘী সরিষা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:72, name:'চুইঝাল', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
+  {id:73, name:'মশুর ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
+  {id:74, name:'মুগ ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
+  {id:75, name:'কলায় ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
+  {id:76, name:'ছোলা ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
+  {id:77, name:'মটর ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
+  {id:78, name:'খেশারি ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
+  {id:79, name:'আইরি ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
+  {id:80, name:'বক্রম ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
+  {id:81, name:'সরিষা ফুলের মধু', unit:'প্রতি বোতল (৫০০ গ্রাম)', price:0, cat:'organic', sub:'honey', img:'', stock:50},
+  {id:82, name:'লিচু ফুলের মধু', unit:'প্রতি বোতল (৫০০ গ্রাম)', price:0, cat:'organic', sub:'honey', img:'', stock:50},
+  {id:83, name:'কালোজিরা মধু', unit:'প্রতি বোতল (৫০০ গ্রাম)', price:0, cat:'organic', sub:'honey', img:'', stock:50},
+  {id:84, name:'ঘি (মাখনের)', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'ghee', img:'', stock:50},
+  {id:85, name:'ঘি (সরের)', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'ghee', img:'', stock:50},
+  {id:86, name:'কাজু বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'', stock:50},
+  {id:87, name:'কাজু বাদাম ভাজা', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'', stock:50},
+  {id:88, name:'কাঠ বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'', stock:50},
+  {id:89, name:'আখরোট বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'', stock:50},
+  {id:90, name:'দেশি চিনা বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'', stock:50},
+  {id:91, name:'থাই চিনা বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'', stock:50},
+  {id:92, name:'পেস্তা বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'', stock:50},
+  {id:93, name:'আজোয়া খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
+  {id:94, name:'মরিয়ম খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
+  {id:95, name:'মেডজুল খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
+  {id:96, name:'সুক্কারি খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
+  {id:97, name:'দাবাস খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
+  {id:98, name:'মাবরুম খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
+  {id:99, name:'সাফায়ি খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
+  {id:100, name:'কলমি খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
+  {id:101, name:'লুলু খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
+  {id:102, name:'মাশরুক খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
+  {id:103, name:'ছড়া খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
+  {id:104, name:'খুরমা খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
+  {id:105, name:'সাদা তিল', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
+  {id:106, name:'কালো তিল', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
+  {id:107, name:'চিয়া সীড', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
+  {id:108, name:'সূর্যমুখী বীজ', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
+  {id:109, name:'পামকিন সীড', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
+  {id:110, name:'তরমুজ বীজ', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
+  {id:111, name:'কালোজিরা', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
+  {id:112, name:'তিশি/মষনী', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
+  {id:113, name:'তুকমা দানা', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
+  {id:114, name:'তাল মিসরি', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'', stock:50},
+  {id:115, name:'মিসরি', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'', stock:50},
+  {id:116, name:'লাল চিনি', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'', stock:50},
+  {id:117, name:'সাদা চিনি', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'', stock:50},
+  {id:118, name:'খেজুরের গুড়', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'', stock:50},
+  {id:119, name:'আখের গুড়', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'', stock:50},
+  {id:120, name:'গোল্ডেন সিডলেস কিসমিস', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'raisins', img:'', stock:50},
+  {id:121, name:'গোল্ডেন কিসমিস (সীডসহ)', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'raisins', img:'', stock:50},
+  {id:122, name:'কালো কিসমিস', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'raisins', img:'', stock:50},
+  {id:123, name:'জর্দা আলু বোখরা', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'', stock:50},
+  {id:124, name:'লাল সাকুরা পাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'', stock:50},
+  {id:125, name:'কালো সাকুরা পাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'', stock:50},
+  {id:126, name:'এপ্রিকট', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'', stock:50},
+  {id:127, name:'তীনফল', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'', stock:50},
+  {id:128, name:'জায়তুন', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'', stock:50},
+  {id:129, name:'ব্ল্যাক গার্লিক / কালো রসুন', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'garlic', img:'', stock:50},
+  {id:130, name:'টাইলস ক্লিনার', unit:'প্রতি পিস', price:0, cat:'clean', sub:'tiles-cleaner', img:'', stock:50,
+    variants:[
+      {id:'v130_1', name:'টিক্সল', price:0, stock:50, img:''},
+      {id:'v130_2', name:'নেক্সল', price:0, stock:50, img:''},
+      {id:'v130_3', name:'ফিক্সল', price:0, stock:50, img:''},
+      {id:'v130_4', name:'ভিক্সল', price:0, stock:50, img:''}
+    ]},
+  {id:131, name:'টয়লেট ক্লিনার', unit:'প্রতি পিস', price:0, cat:'clean', sub:'toilet-cleaner', img:'', stock:50,
+    variants:[
+      {id:'v131_1', name:'Harpic', price:0, stock:50, img:''},
+      {id:'v131_2', name:'Harpoon', price:0, stock:50, img:''},
+      {id:'v131_3', name:'powerX', price:0, stock:50, img:''}
+    ]},
+  {id:132, name:'সাবান', unit:'প্রতি পিস', price:0, cat:'clean', sub:'soap', img:'', stock:50,
+    variants:[
+      {id:'v132_1', name:'মেরিল', price:0, stock:50, img:''},
+      {id:'v132_2', name:'কেয়া', price:0, stock:50, img:''},
+      {id:'v132_3', name:'savlon', price:0, stock:50, img:''},
+      {id:'v132_4', name:'নিম', price:0, stock:50, img:''},
+      {id:'v132_5', name:'Lilly', price:0, stock:50, img:''},
+      {id:'v132_6', name:'septex', price:0, stock:50, img:''},
+      {id:'v132_7', name:'মিনি savlon', price:0, stock:50, img:''}
+    ]},
+  {id:133, name:'কাপড় কাচা সাবান', unit:'প্রতি পিস', price:0, cat:'clean', sub:'laundry-soap', img:'', stock:50,
+    variants:[
+      {id:'v133_1', name:'তিব্বত বল সাবান', price:0, stock:50, img:''},
+      {id:'v133_2', name:'হুইল কাপড় কাচা সাবান', price:0, stock:50, img:''},
+      {id:'v133_3', name:'অচল সাবান', price:0, stock:50, img:''},
+      {id:'v133_4', name:'চাকা কাপড় কাচা সাবান', price:0, stock:50, img:''}
+    ]},
+  {id:134, name:'ডিটারজেন্ট পাউডার', unit:'প্রতি কেজি', price:0, cat:'clean', sub:'detergent', img:'', stock:50,
+    variants:[
+      {id:'v134_1', name:'হুইল', price:0, stock:50, img:''},
+      {id:'v134_2', name:'রিন', price:0, stock:50, img:''},
+      {id:'v134_3', name:'তিব্বত', price:0, stock:50, img:''},
+      {id:'v134_4', name:'কেয়া', price:0, stock:50, img:''},
+      {id:'v134_5', name:'fast wash', price:0, stock:50, img:''},
+      {id:'v134_6', name:'চাকা', price:0, stock:50, img:''},
+      {id:'v134_7', name:'surf excel', price:0, stock:50, img:''}
+    ]},
+  {id:135, name:'শ্যাম্পু', unit:'প্রতি পিস', price:0, cat:'clean', sub:'shampoo', img:'', stock:50,
+    variants:[
+      {id:'v135_1', name:'parachute', price:0, stock:50, img:''},
+      {id:'v135_2', name:'Dove', price:0, stock:50, img:''},
+      {id:'v135_3', name:'sansilk', price:0, stock:50, img:''},
+      {id:'v135_4', name:'কেয়া', price:0, stock:50, img:''},
+      {id:'v135_5', name:'revive', price:0, stock:50, img:''}
+    ]},
+  {id:136, name:'ভিম বার', unit:'প্রতি পিস', price:0, cat:'clean', sub:'vim-bar', img:'', stock:50,
+    variants:[
+      {id:'v136_1', name:'vim', price:0, stock:50, img:''},
+      {id:'v136_2', name:'lemon blast', price:0, stock:50, img:''}
+    ]},
+  {id:137, name:'ভিম লিকুইড', unit:'প্রতি পিস', price:0, cat:'clean', sub:'vim-liquid', img:'', stock:50,
+    variants:[
+      {id:'v137_1', name:'vim liquid', price:0, stock:50, img:''},
+      {id:'v137_2', name:'গ্লিটার', price:0, stock:50, img:''},
+      {id:'v137_3', name:'lemon blast', price:0, stock:50, img:''}
+    ]},
+  {id:138, name:'হ্যান্ডওয়াশ', unit:'প্রতি পিস', price:0, cat:'clean', sub:'handwash', img:'', stock:50,
+    variants:[
+      {id:'v138_1', name:'savlon', price:0, stock:50, img:''},
+      {id:'v138_2', name:'sepnil', price:0, stock:50, img:''},
+      {id:'v138_3', name:'amana', price:0, stock:50, img:''},
+      {id:'v138_4', name:'লুজ', price:0, stock:50, img:''}
+    ]},
+  {id:139, name:'টয়লেট টিস্যা', unit:'প্রতি প্যাকেট', price:0, cat:'clean', sub:'toilet-tissue', img:'', stock:50,
+    variants:[
+      {id:'v139_1', name:'বসুন্ধরা', price:0, stock:50, img:''},
+      {id:'v139_2', name:'peal', price:0, stock:50, img:''}
+    ]},
+  {id:140, name:'কিচেন টিস্যু', unit:'প্রতি প্যাকেট', price:0, cat:'clean', sub:'kitchen-tissue', img:'', stock:50,
+    variants:[
+      {id:'v140_1', name:'বসুন্ধরা', price:0, stock:50, img:''},
+      {id:'v140_2', name:'easy', price:0, stock:50, img:''}
+    ]},
+  {id:141, name:'টুথপেষ্ট', unit:'প্রতি পিস', price:0, cat:'clean', sub:'toothpaste', img:'', stock:50,
+    variants:[
+      {id:'v141_1', name:'মেডিপ্লাস', price:0, stock:50, img:''},
+      {id:'v141_2', name:'colgate', price:0, stock:50, img:''},
+      {id:'v141_3', name:'পেপসুডেন্ট', price:0, stock:50, img:''},
+      {id:'v141_4', name:'সেনসুডাইন', price:0, stock:50, img:''}
+    ]},
+  {id:142, name:'গুডনাইট', unit:'প্রতি প্যাকেট', price:0, cat:'clean', sub:'goodnight', img:'', stock:50},
+  {id:143, name:'মশার কয়েল', unit:'প্রতি প্যাকেট', price:0, cat:'clean', sub:'mosquito', img:'', stock:50},
+  {id:144, name:'এরোসল', unit:'প্রতি পিস', price:0, cat:'clean', sub:'mosquito', img:'', stock:50},
+  {id:145, name:'ঘামাচি পাউডার', unit:'প্রতি পিস', price:0, cat:'clean', sub:'first-aid', img:'', stock:50},
+  {id:146, name:'হেয়ার ওয়েল', unit:'প্রতি পিস', price:0, cat:'clean', sub:'hair-oil', img:'', stock:50},
+  {id:147, name:'ফার্স্ট এইড বক্স', unit:'প্রতি পিস', price:0, cat:'clean', sub:'first-aid', img:'', stock:50},
+  {id:148, name:'মেশওয়াক', unit:'প্রতি পিস', price:0, cat:'islamic', sub:'prayer', img:'', stock:50},
+  {id:149, name:'জায়নামাজ', unit:'প্রতি পিস', price:0, cat:'islamic', sub:'prayer', img:'', stock:50},
+  {id:150, name:'ট্রাভেল জায়নামাজ', unit:'প্রতি পিস', price:0, cat:'islamic', sub:'prayer', img:'', stock:50},
+  {id:151, name:'টুপি', unit:'প্রতি পিস', price:0, cat:'islamic', sub:'cap', img:'', stock:50},
+  {id:152, name:'আতর', unit:'প্রতি বোতল', price:0, cat:'islamic', sub:'fragrance', img:'', stock:50},
+  {id:153, name:'সকল ধরনের বই', unit:'প্রতি পিস', price:0, cat:'books', sub:'books', img:'', stock:50},
+  {id:154, name:'স্টেশনারি', unit:'প্রতি পিস', price:0, cat:'books', sub:'stationery', img:'', stock:50}
+];
+
+/* Ensure all meat products use the allowed subcategories.
+   Any existing meat item whose `sub` is not one of the five allowed
+   will be remapped to 'beef' (গোশত) so it appears under the requested group. */
+(function normalizeMeatSubcats(){
+  const allowed = ['beef','nihari','fat','head','tripe'];
+  PRODUCTS.forEach(p=>{
+    try{
+      if(p.cat === 'meat' && !allowed.includes(p.sub)) p.sub = 'beef';
+    }catch(e){ /* skip malformed entries */ }
+  });
+})();
+
+/* ============ READY-MADE PACKAGES (bundles) ============ */
+const PACKAGES = [
+  /*
+    উদাহরণ ফরম্যাট:
+    { id: 'pkg1', name: 'প্যাকেজের নাম', emoji: '🎁', discount: 0.10,
+      items: [{id: 1, qty: 2}, {id: 3, qty: 1}] }
+  */
+];
+
+/* ============ PACKAGE persistence (admin can add/edit/delete packages; saved in this browser) ============ */
+const PACKAGES_KEY = 'suffaPackages';
+function loadSavedPackages(){
+  try{ const raw = localStorage.getItem(PACKAGES_KEY); return raw ? JSON.parse(raw) : null; }catch(e){ return null; }
+}
+function savePackages(){
+  try{ localStorage.setItem(PACKAGES_KEY, JSON.stringify(PACKAGES)); }catch(e){ /* storage unavailable */ }
+}
+(function applySavedPackages(){
+  const saved = loadSavedPackages();
+  if(saved && Array.isArray(saved)){
+    PACKAGES.length = 0;
+    saved.forEach(p=> PACKAGES.push(p));
+  }
+})();
+
+/* ============ ORDERS (customer confirmations; saved in this browser — swap for a real backend later) ============ */
+const ORDERS_KEY = 'suffaOrders';
+function loadOrders(){
+  try{ const raw = localStorage.getItem(ORDERS_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; }
+}
+function saveOrdersToStorage(orders){
+  try{ localStorage.setItem(ORDERS_KEY, JSON.stringify(orders)); }catch(e){ /* storage unavailable */ }
+}
+function addOrder(order){
+  const orders = loadOrders();
+  orders.unshift(order); // newest first
+  saveOrdersToStorage(orders);
+}
+function formatOrderTime(iso){
+  try{
+    const d = new Date(iso);
+    return d.toLocaleDateString('bn-BD', {day:'numeric', month:'short', year:'numeric'}) + ', ' +
+           d.toLocaleTimeString('bn-BD', {hour:'2-digit', minute:'2-digit'});
+  }catch(e){ return iso; }
+}
+
+/* ============ CUSTOM PRODUCTS (admin-added) & DELETIONS (persisted in this browser) ============ */
+const CUSTOM_KEY = 'suffaCustomProducts';
+const DELETED_KEY = 'suffaDeletedProductIds';
+function loadCustomProducts(){
+  try{ const raw = localStorage.getItem(CUSTOM_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; }
+}
+function saveCustomProducts(list){
+  try{ localStorage.setItem(CUSTOM_KEY, JSON.stringify(list)); }catch(e){ /* storage unavailable */ }
+}
+function loadDeletedIds(){
+  try{ const raw = localStorage.getItem(DELETED_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; }
+}
+function saveDeletedIds(list){
+  try{ localStorage.setItem(DELETED_KEY, JSON.stringify(list)); }catch(e){ /* storage unavailable */ }
+}
+let deletedProductIds = loadDeletedIds();
+loadCustomProducts().forEach(p=> PRODUCTS.push(p));
+for(let i=PRODUCTS.length-1; i>=0; i--){
+  if(deletedProductIds.includes(PRODUCTS[i].id)) PRODUCTS.splice(i,1);
+}
+
+/* ============ default stock (admin can edit per product) ============ */
+PRODUCTS.forEach(p=>{ if(typeof p.stock !== 'number') p.stock = 50; });
+
+/* ============ ADMIN OVERRIDES: images, price, stock (persisted in this browser) ============ */
+const OVR_KEY = 'suffaImageOverrides';
+function loadOverrides(){
+  try{
+    const raw = localStorage.getItem(OVR_KEY);
+    return raw ? JSON.parse(raw) : {cat:{}, prod:{}};
+  }catch(e){ return {cat:{}, prod:{}}; }
+}
+function saveOverridesToStorage(ovr){
+  try{ localStorage.setItem(OVR_KEY, JSON.stringify(ovr)); }catch(e){ /* storage unavailable */ }
+}
+let imageOverrides = loadOverrides();
+if(!imageOverrides.cat) imageOverrides.cat = {};
+if(!imageOverrides.prod) imageOverrides.prod = {};
+CATEGORIES.forEach(c=>{ if(imageOverrides.cat && imageOverrides.cat[c.id]) c.img = imageOverrides.cat[c.id]; });
+PRODUCTS.forEach(p=>{
+  const ov = imageOverrides.prod && imageOverrides.prod[p.id];
+  if(!ov) return;
+  if(typeof ov === 'string'){ p.img = ov; return; } // backward-compat with older image-only overrides
+  if(ov.img) p.img = ov.img;
+  if(ov.price != null && ov.price !== '') p.price = Number(ov.price);
+  if(ov.stock != null && ov.stock !== '') p.stock = Number(ov.stock);
+  if(ov.variants) p.variants = ov.variants;
+});
+
+const BN_DIGIT = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+function toBn(num){
+  return String(num).split('').map(ch => /[0-9]/.test(ch) ? BN_DIGIT[+ch] : ch).join('');
+}
+function taka(n){ return '৳ ' + toBn(n.toLocaleString('en-IN')); }
+
+/* ============ STATE ============ */
+let cart = {}; // id (number) or "v_<parentId>_<variantId>" (string) -> qty in bag
+let qtyDraft = {}; // id -> stepper qty before adding
+PRODUCTS.forEach(p => qtyDraft[p.id] = 1);
+let variantQtyDraft = {}; // "<parentId>_<variantId>" -> stepper qty before adding
+let activeCat = 'all';
+let activeSub = 'all';
+let searchTerm = '';
+let activePackage = null; // id of currently viewed package, or null for normal ferdo
+
+/* ============ SELLABLE ITEM LOOKUP (handles both plain products and product variants) ============ */
+function getSellable(key){
+  const k = String(key);
+  if(k.startsWith('v_')){
+    const rest = k.slice(2);
+    const sep = rest.indexOf('_');
+    if(sep === -1) return null;
+    const parentId = +rest.slice(0, sep);
+    const variantId = rest.slice(sep+1);
+    const parent = PRODUCTS.find(p=>p.id===parentId);
+    if(!parent) return null;
+    const variant = (parent.variants||[]).find(v=>v.id===variantId);
+    if(!variant) return null;
+    return {
+      key:k, name:`${parent.name} — ${variant.name}`, unit:parent.unit,
+      price:variant.price, stock:variant.stock, img:variant.img || parent.img,
+      isVariant:true, parentId, variantId
+    };
+  }
+  const p = PRODUCTS.find(x=>x.id===+k);
+  if(!p) return null;
+  return { key:p.id, name:p.name, unit:p.unit, price:p.price, stock:p.stock, img:p.img, isVariant:false };
+}
+
+/* ============ CATEGORY ROW (draggable + clickable) ============ */
+const catRow = document.getElementById('catRow');
+function countFor(catId){
+  return catId==='all' ? PRODUCTS.length : PRODUCTS.filter(p=>p.cat===catId).length;
+}
+CATEGORIES.forEach(c=>{
+  const btn = document.createElement('button');
+  btn.className = 'cat-card' + (c.id==='all' ? ' active' : '');
+  btn.dataset.cat = c.id;
+  btn.innerHTML = `
+    <span class="cat-icon"><img src="${c.img}" alt="${c.label}" loading="lazy"></span>
+    <span class="cat-label">${c.label}</span>
+    <span class="cat-count">${toBn(countFor(c.id))} টি পণ্য</span>
+  `;
+  btn.addEventListener('click', ()=>{
+    if(catRow.dataset.dragged === '1'){ catRow.dataset.dragged='0'; return; }
+    activeCat = c.id;
+    activeSub = 'all';
+    activePackage = null;
+    [...catRow.children].forEach(ch=> ch.classList.toggle('active', ch.dataset.cat===c.id));
+    document.getElementById('ferdoSub').textContent = c.id==='all' ? 'সব পণ্য' : c.label;
+    renderPackagePills();
+    renderFerdo();
+  });
+  catRow.appendChild(btn);
+});
+function refreshCatCounts(){
+  [...catRow.children].forEach(ch=>{
+    const countEl = ch.querySelector('.cat-count');
+    if(countEl) countEl.textContent = `${toBn(countFor(ch.dataset.cat))} টি পণ্য`;
+  });
+}
+
+/* ============ SUB-CATEGORY CAPSULES ============ */
+const subcatRow = document.getElementById('subcatRow');
+function renderSubcats(){
+  subcatRow.innerHTML = '';
+  const cat = CATEGORIES.find(c=>c.id===activeCat);
+  if(!cat || !cat.subcats || cat.subcats.length===0){
+    subcatRow.classList.add('empty');
+    return;
+  }
+  subcatRow.classList.remove('empty');
+  const allPill = document.createElement('button');
+  allPill.className = 'subcat-pill active';
+  allPill.textContent = 'সব ' + cat.label;
+  allPill.addEventListener('click', ()=>{
+    activeSub = 'all';
+    [...subcatRow.children].forEach(ch=> ch.classList.remove('active'));
+    allPill.classList.add('active');
+    renderFerdo();
+  });
+  subcatRow.appendChild(allPill);
+  cat.subcats.forEach(s=>{
+    const pill = document.createElement('button');
+    pill.className = 'subcat-pill';
+    pill.textContent = s.label;
+    pill.dataset.sub = s.id;
+    pill.addEventListener('click', ()=>{
+      activeSub = s.id;
+      [...subcatRow.children].forEach(ch=> ch.classList.remove('active'));
+      pill.classList.add('active');
+      renderFerdo();
+    });
+    subcatRow.appendChild(pill);
+  });
+}
+// drag to scroll
+let isDown=false, startX=0, scrollLeft=0, moved=0;
+catRow.addEventListener('mousedown', e=>{
+  isDown=true; moved=0; catRow.classList.add('dragging');
+  startX = e.pageX - catRow.offsetLeft; scrollLeft = catRow.scrollLeft;
+});
+window.addEventListener('mouseup', ()=>{ isDown=false; catRow.classList.remove('dragging'); });
+catRow.addEventListener('mouseleave', ()=>{ isDown=false; catRow.classList.remove('dragging'); });
+catRow.addEventListener('mousemove', e=>{
+  if(!isDown) return;
+  e.preventDefault();
+  const x = e.pageX - catRow.offsetLeft;
+  const walk = (x - startX);
+  moved += Math.abs(walk);
+  if(moved > 6) catRow.dataset.dragged = '1';
+  catRow.scrollLeft = scrollLeft - walk;
+});
+document.getElementById('catPrevBtn').addEventListener('click', ()=> catRow.scrollBy({left:-140, behavior:'smooth'}));
+document.getElementById('catNextBtn').addEventListener('click', ()=> catRow.scrollBy({left:140, behavior:'smooth'}));
+
+/* ============ FERDO (product list) render ============ */
+const ferdoList = document.getElementById('ferdoList');
+const pkgAddAllWrap = document.getElementById('pkgAddAllWrap');
+const pkgAddAllBtn = document.getElementById('pkgAddAllBtn');
+const pkgSaveNote = document.getElementById('pkgSaveNote');
+function stockTagHtml(stock){
+  if(stock <= 0) return `<div class="stock-tag out">স্টক নেই</div>`;
+  if(stock <= 10) return `<div class="stock-tag low">মজুদ: ${toBn(stock)}টি বাকি</div>`;
+  return `<div class="stock-tag ok">মজুদ আছে</div>`;
+}
+
+/* ============ PACKAGE CAPSULES (inside ফর্দ, right below the heading) ============ */
+const packagePillRow = document.getElementById('packagePillRow');
+function renderPackagePills(){
+  packagePillRow.innerHTML = '';
+  PACKAGES.forEach(pkg=>{
+    const pill = document.createElement('button');
+    pill.className = 'subcat-pill' + (activePackage===pkg.id ? ' active' : '');
+    pill.textContent = `${pkg.emoji} ${pkg.name}`;
+    pill.addEventListener('click', ()=>{
+      if(activePackage === pkg.id){
+        // second tap on the same pill exits package view
+        activePackage = null;
+        document.getElementById('ferdoSub').textContent = searchTerm
+          ? `অনুসন্ধান: "${searchTerm}"`
+          : (activeCat==='all' ? 'সব পণ্য' : CATEGORIES.find(c=>c.id===activeCat).label);
+      }else{
+        activePackage = pkg.id;
+        document.getElementById('ferdoSub').textContent = pkg.name;
+      }
+      renderPackagePills();
+      renderFerdo();
+    });
+    packagePillRow.appendChild(pill);
+  });
+}
+
+function buildFerdoRow(p){
+  const hasVariants = Array.isArray(p.variants) && p.variants.length > 0;
+  const wrapper = document.createElement('div');
+  wrapper.className = 'ferdo-item';
+
+  const row = document.createElement('div');
+
+  if(hasVariants){
+    row.className = 'ferdo-row has-variants';
+    const totalVariantStock = p.variants.reduce((s,v)=> s + Math.max(0, v.stock), 0);
+    row.innerHTML = `
+      <div class="prod-thumb"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
+      <div class="prod-info">
+        <div class="name">${p.name}</div>
+        <div class="unit">${p.unit}</div>
+        ${totalVariantStock<=0
+          ? `<div class="stock-tag out">সব ধরন স্টকে নেই</div>`
+          : `<div class="stock-tag ok">${toBn(p.variants.length)} রকম পাওয়া যায়</div>`}
+      </div>
+      <div class="variant-chevron">▾</div>
+    `;
+    wrapper.appendChild(row);
+
+    const panel = document.createElement('div');
+    panel.className = 'variant-panel';
+    p.variants.forEach(v=>{
+      const draftKey = `${p.id}_${v.id}`;
+      if(variantQtyDraft[draftKey] === undefined) variantQtyDraft[draftKey] = 1;
+      if(variantQtyDraft[draftKey] > v.stock) variantQtyDraft[draftKey] = Math.max(1, v.stock);
+      const vOut = v.stock <= 0;
+      const vrow = document.createElement('div');
+      vrow.className = 'variant-row' + (vOut ? ' out-of-stock' : '');
+      vrow.innerHTML = `
+        <div class="variant-thumb"><img src="${v.img || p.img}" alt="${v.name}" loading="lazy"></div>
+        <div class="variant-info">
+          <div class="vname">${v.name}</div>
+          ${vOut ? '<div class="stock-tag out">স্টক নেই</div>' : (v.stock<=10 ? `<div class="stock-tag low">মজুদ: ${toBn(v.stock)}টি বাকি</div>` : '')}
+        </div>
+        <div class="qty-stepper">
+          <button data-vact="dec" data-parent="${p.id}" data-variant="${v.id}" ${vOut?'disabled':''}>−</button>
+          <span class="qty-val" id="qv-${p.id}_${v.id}">${toBn(vOut ? 0 : variantQtyDraft[draftKey])}</span>
+          <button data-vact="inc" data-parent="${p.id}" data-variant="${v.id}" ${vOut?'disabled':''}>+</button>
+        </div>
+        <div class="variant-price">${taka(v.price)}</div>
+        <button class="add-btn variant-add-btn" data-parent="${p.id}" data-variant="${v.id}" aria-label="ব্যাগে যোগ করুন" ${vOut?'disabled':''}>＋</button>
+      `;
+      panel.appendChild(vrow);
+    });
+    wrapper.appendChild(panel);
+  }else{
+    const outOfStock = p.stock <= 0;
+    if(qtyDraft[p.id] === undefined) qtyDraft[p.id] = 1;
+    if(qtyDraft[p.id] > p.stock) qtyDraft[p.id] = Math.max(1, p.stock);
+    row.className = 'ferdo-row' + (outOfStock ? ' out-of-stock' : '');
+    row.innerHTML = `
+      <div class="prod-thumb"><img src="${p.img}" alt="${p.name}" loading="lazy"></div>
+      <div class="prod-info">
+        <div class="name">${p.name}</div>
+        <div class="unit">${p.unit}</div>
+        ${stockTagHtml(p.stock)}
+      </div>
+      <div class="prod-right">
+        <div class="qty-stepper">
+          <button data-act="dec" data-id="${p.id}" ${outOfStock ? 'disabled' : ''}>−</button>
+          <span class="qty-val" id="qv-${p.id}">${toBn(outOfStock ? 0 : qtyDraft[p.id])}</span>
+          <button data-act="inc" data-id="${p.id}" ${outOfStock ? 'disabled' : ''}>+</button>
+        </div>
+        <div class="prod-price">${taka(p.price)}</div>
+      </div>
+      <button class="add-btn" id="add-${p.id}" data-id="${p.id}" aria-label="ব্যাগে যোগ করুন" ${outOfStock ? 'disabled' : ''}>＋</button>
+    `;
+    wrapper.appendChild(row);
+  }
+
+  return wrapper;
+}
+
+function attachFerdoListeners(){
+  ferdoList.querySelectorAll('[data-act]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = +btn.dataset.id;
+      const p = PRODUCTS.find(x=>x.id===id);
+      if(btn.dataset.act==='inc') qtyDraft[id] = Math.min(99, p.stock, qtyDraft[id]+1);
+      else qtyDraft[id] = Math.max(1, qtyDraft[id]-1);
+      document.getElementById('qv-'+id).textContent = toBn(qtyDraft[id]);
+      if(activePackage) updatePkgSaveNote();
+    });
+  });
+  ferdoList.querySelectorAll('.add-btn:not(.variant-add-btn)').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = +btn.dataset.id;
+      const p = PRODUCTS.find(x=>x.id===id);
+      if(p.stock <= 0){ showToast('দুঃখিত, এই পণ্যটি স্টকে নেই'); return; }
+      const already = cart[id] || 0;
+      const addQty = Math.min(qtyDraft[id], p.stock - already);
+      if(addQty <= 0){ showToast('স্টকে পর্যাপ্ত পরিমাণ নেই'); return; }
+      cart[id] = already + addQty;
+      btn.classList.add('added');
+      btn.textContent = '✓';
+      setTimeout(()=>{ btn.classList.remove('added'); btn.textContent='＋'; }, 700);
+      showToast(`${p.name} ব্যাগে যোগ হয়েছে`);
+      updateCartBar();
+    });
+  });
+
+  /* ---- Variant toggle: clicking the product row expands/collapses its variety panel ---- */
+  ferdoList.querySelectorAll('.ferdo-row.has-variants').forEach(row=>{
+    row.addEventListener('click', ()=>{
+      const wrapper = row.closest('.ferdo-item');
+      const panel = wrapper.querySelector('.variant-panel');
+      const chevron = row.querySelector('.variant-chevron');
+      const isOpen = panel.classList.toggle('open');
+      chevron.classList.toggle('open', isOpen);
+    });
+  });
+
+  /* ---- Variant qty steppers ---- */
+  ferdoList.querySelectorAll('[data-vact]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const parentId = +btn.dataset.parent;
+      const variantId = btn.dataset.variant;
+      const parent = PRODUCTS.find(x=>x.id===parentId);
+      const variant = parent.variants.find(v=>v.id===variantId);
+      const key = `${parentId}_${variantId}`;
+      if(btn.dataset.vact==='inc') variantQtyDraft[key] = Math.min(99, variant.stock, variantQtyDraft[key]+1);
+      else variantQtyDraft[key] = Math.max(1, variantQtyDraft[key]-1);
+      document.getElementById(`qv-${parentId}_${variantId}`).textContent = toBn(variantQtyDraft[key]);
+    });
+  });
+
+  /* ---- Variant add-to-cart ---- */
+  ferdoList.querySelectorAll('.variant-add-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const parentId = +btn.dataset.parent;
+      const variantId = btn.dataset.variant;
+      const parent = PRODUCTS.find(x=>x.id===parentId);
+      const variant = parent.variants.find(v=>v.id===variantId);
+      if(!variant || variant.stock <= 0){ showToast('দুঃখিত, এই ধরনটি স্টকে নেই'); return; }
+      const cartKey = `v_${parentId}_${variantId}`;
+      const draftKey = `${parentId}_${variantId}`;
+      const already = cart[cartKey] || 0;
+      const addQty = Math.min(variantQtyDraft[draftKey], variant.stock - already);
+      if(addQty <= 0){ showToast('স্টকে পর্যাপ্ত পরিমাণ নেই'); return; }
+      cart[cartKey] = already + addQty;
+      btn.classList.add('added');
+      btn.textContent = '✓';
+      setTimeout(()=>{ btn.classList.remove('added'); btn.textContent='＋'; }, 700);
+      showToast(`${parent.name} — ${variant.name} ব্যাগে যোগ হয়েছে`);
+      updateCartBar();
+    });
+  });
+}
+
+function updatePkgSaveNote(){
+  const pkg = PACKAGES.find(p=>p.id===activePackage);
+  if(!pkg){ pkgSaveNote.textContent=''; return; }
+  const availableItems = pkg.items
+    .map(it => ({ ...it, product: PRODUCTS.find(x=>x.id===it.id) }))
+    .filter(it => it.product);
+  const originalTotal = availableItems.reduce((sum,it)=> sum + it.product.price*(qtyDraft[it.id]||it.qty), 0);
+  const price = Math.round(originalTotal * (1 - pkg.discount));
+  const savings = originalTotal - price;
+  if(savings > 0){
+    pkgSaveNote.textContent = `একসাথে নিলে বাঁচবে ${taka(savings)} (${toBn(Math.round(pkg.discount*100))}% ছাড়) — মোট ${taka(price)}`;
+  }else{
+    pkgSaveNote.textContent = `মোট ${taka(originalTotal)}`;
+  }
+}
+
+function renderFerdo(){
+  refreshCatCounts();
+  ferdoList.innerHTML = '';
+
+  if(activePackage){
+    subcatRow.classList.add('empty');
+    const pkg = PACKAGES.find(p=>p.id===activePackage);
+    let n = 0;
+    pkg.items.forEach(it=>{
+      const p = PRODUCTS.find(x=>x.id===it.id);
+      if(!p) return;
+      n++;
+      if(qtyDraft[p.id] === undefined || qtyDraft[p.id] < it.qty) qtyDraft[p.id] = it.qty;
+      ferdoList.appendChild(buildFerdoRow(p));
+    });
+    if(n===0){
+      ferdoList.innerHTML = `<div class="search-empty"><div class="em">📦</div>এই প্যাকেজের পণ্য এখন পাওয়া যাচ্ছে না</div>`;
+      pkgAddAllWrap.style.display = 'none';
+    }else{
+      const anyOutOfStock = pkg.items.some(it=>{
+        const p = PRODUCTS.find(x=>x.id===it.id);
+        return p && p.stock <= 0;
+      });
+      pkgAddAllBtn.disabled = anyOutOfStock;
+      pkgAddAllBtn.textContent = anyOutOfStock ? 'কিছু পণ্য স্টকে নেই' : '🛍️ সব কার্টে যোগ করুন';
+      updatePkgSaveNote();
+      pkgAddAllWrap.style.display = 'block';
+    }
+  }else{
+    renderSubcats();
+    pkgAddAllWrap.style.display = 'none';
+    let n = 0;
+    PRODUCTS.forEach(p=>{
+      const inCat = activeCat==='all' || p.cat===activeCat;
+      const inSub = activeSub==='all' || p.sub===activeSub;
+      const inSearch = !searchTerm || p.name.includes(searchTerm);
+      if(!inCat || !inSub || !inSearch) return;
+      n++;
+      ferdoList.appendChild(buildFerdoRow(p));
+    });
+    if(n===0){
+      ferdoList.innerHTML = `<div class="search-empty"><div class="em">🔎</div>কোনো পণ্য পাওয়া যায়নি</div>`;
+    }
+  }
+  attachFerdoListeners();
+}
+
+pkgAddAllBtn.addEventListener('click', ()=>{
+  const pkg = PACKAGES.find(p=>p.id===activePackage);
+  if(!pkg) return;
+  let addedCount = 0, skippedCount = 0;
+  pkg.items.forEach(it=>{
+    const p = PRODUCTS.find(x=>x.id===it.id);
+    if(!p){ skippedCount++; return; }
+    const already = cart[p.id] || 0;
+    const useQty = qtyDraft[p.id] || it.qty;
+    const addQty = Math.min(useQty, p.stock - already);
+    if(addQty <= 0){ skippedCount++; return; }
+    cart[p.id] = already + addQty;
+    addedCount++;
+  });
+  updateCartBar();
+  if(skippedCount === 0){
+    showToast(`${pkg.name} ব্যাগে যোগ হয়েছে`);
+  }else if(addedCount > 0){
+    showToast(`${pkg.name} আংশিক যোগ হয়েছে (কিছু পণ্য স্টকে নেই)`);
+  }else{
+    showToast('দুঃখিত, এই প্যাকেজের পণ্য স্টকে নেই');
+  }
+});
+
+renderPackagePills();
+renderFerdo();
+
+/* ============ SEARCH ============ */
+const searchInput = document.getElementById('searchInput');
+const searchClear = document.getElementById('searchClear');
+searchInput.addEventListener('input', ()=>{
+  searchTerm = searchInput.value.trim();
+  searchClear.classList.toggle('show', searchTerm.length>0);
+  activePackage = null;
+  renderPackagePills();
+  document.getElementById('ferdoSub').textContent = searchTerm
+    ? `অনুসন্ধান: "${searchTerm}"`
+    : (activeCat==='all' ? 'সব পণ্য' : CATEGORIES.find(c=>c.id===activeCat).label);
+  renderFerdo();
+});
+searchClear.addEventListener('click', ()=>{
+  searchInput.value=''; searchTerm=''; searchClear.classList.remove('show');
+  document.getElementById('ferdoSub').textContent = activeCat==='all' ? 'সব পণ্য' : CATEGORIES.find(c=>c.id===activeCat).label;
+  renderFerdo();
+});
+
+/* ============ CART BAR (always fixed & visible) ============ */
+function cartCount(){ return Object.values(cart).reduce((a,b)=>a+b,0); }
+function cartTotal(){
+  return Object.entries(cart).reduce((sum,[key,qty])=>{
+    const info = getSellable(key);
+    return sum + (info ? info.price*qty : 0);
+  },0);
+}
+function updateCartBar(){
+  const count = cartCount(), total = cartTotal();
+  const inner = document.getElementById('cartBarInner');
+  inner.classList.toggle('show', count>0);
+  document.getElementById('barBadge').textContent = toBn(count);
+  document.getElementById('barItemsLine').textContent = `${toBn(count)} টি পণ্য`;
+  document.getElementById('barTotalLine').textContent = taka(total);
+  const hb = document.getElementById('headerBadge');
+  hb.style.display = count>0 ? 'flex' : 'none';
+  hb.textContent = toBn(count);
+}
+document.getElementById('cartPillBtn').addEventListener('click', openConfirm);
+document.getElementById('goConfirmBtn').addEventListener('click', openConfirm);
+
+/* ============ TOAST ============ */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=> t.classList.remove('show'), 1600);
+}
+
+/* ============ CONFIRM OVERLAY ============ */
+const overlay = document.getElementById('confirmOverlay');
+function openConfirm(){
+  if(cartCount()===0){ showToast('ফর্দে এখনো কোনো পণ্য যোগ করা হয়নি'); return; }
+  renderSummary();
+  overlay.classList.add('show');
+}
+document.getElementById('backBtn').addEventListener('click', ()=> overlay.classList.remove('show'));
+
+function renderSummary(){
+  const wrap = document.getElementById('summaryList');
+  wrap.innerHTML = '';
+  Object.entries(cart).forEach(([key,qty])=>{
+    const info = getSellable(key);
+    if(!info) return;
+    const row = document.createElement('div');
+    row.className = 'summary-row';
+    row.innerHTML = `
+      <img class="st" src="${info.img}" alt="${info.name}">
+      <span class="sname">${info.name}</span>
+      <span class="sqty">× ${toBn(qty)}</span>
+      <span class="sprice">${taka(info.price*qty)}</span>
+    `;
+    wrap.appendChild(row);
+  });
+  document.getElementById('summaryTotal').textContent = taka(cartTotal());
+}
+
+/* ============ FORM VALIDATION ============ */
+function validateForm(){
+  let ok = true;
+  const name = document.getElementById('inpName').value.trim();
+  const address = document.getElementById('inpAddress').value.trim();
+  const mobile = document.getElementById('inpMobile').value.trim();
+
+  toggleErr('f-name', name.length < 2); if(name.length<2) ok=false;
+  toggleErr('f-address', address.length < 5); if(address.length<5) ok=false;
+  const mobileOk = /^(01[3-9][0-9]{8})$/.test(mobile);
+  toggleErr('f-mobile', !mobileOk); if(!mobileOk) ok=false;
+
+  return ok ? {name,address,mobile} : null;
+}
+function toggleErr(id, isErr){
+  document.getElementById(id).classList.toggle('error', isErr);
+}
+
+/* ============ PDF GENERATION + ORDER CONFIRM ============ */
+document.getElementById('pdfBtn').addEventListener('click', ()=>{
+  const data = validateForm();
+  if(!data) { showToast('তথ্যগুলো সঠিকভাবে পূরণ করুন'); return; }
+
+  const items = Object.entries(cart).map(([key,qty])=>{
+    const info = getSellable(key);
+    return info ? { key, name: info.name, unit: info.unit, price: info.price, qty } : null;
+  }).filter(Boolean);
+
+  const order = {
+    id: 'ord_' + Date.now(),
+    name: data.name, address: data.address, mobile: data.mobile,
+    items, total: cartTotal(),
+    status: 'নতুন',
+    createdAt: new Date().toISOString()
+  };
+  addOrder(order);
+
+  let pdfFailed = false;
+  try{
+    generatePDF(data);
+  }catch(e){
+    pdfFailed = true;
+  }
+
+  // order confirmed — clear the bag and close the checkout screen
+  cart = {};
+  updateCartBar();
+  overlay.classList.remove('show');
+  document.getElementById('inpName').value = '';
+  document.getElementById('inpAddress').value = '';
+  document.getElementById('inpMobile').value = '';
+  showToast(pdfFailed ? 'অর্ডার সম্পন্ন হয়েছে (রিসিট PDF তৈরিতে সমস্যা হয়েছে)' : 'অর্ডার সম্পন্ন হয়েছে ✓');
+});
+
+function generatePDF(data){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({unit:'pt', format:'a4'});
+  const pageW = doc.internal.pageSize.getWidth();
+  const margin = 40;
+  let y = 0;
+
+  // header band
+  doc.setFillColor(13,48,96);
+  doc.rect(0,0,pageW,80,'F');
+  doc.setTextColor(251,243,228);
+  doc.setFontSize(22);
+  doc.text('Suffa Supershop', margin, 36);
+  doc.setFontSize(11);
+  doc.text('Order Receipt / Order Ferdo', margin, 55);
+
+  y = 105;
+  doc.setTextColor(33,29,24);
+  doc.setFontSize(11);
+  doc.text(`Name: ${data.name}`, margin, y); y+=18;
+  doc.text(`Mobile: ${data.mobile}`, margin, y); y+=18;
+  const addrLines = doc.splitTextToSize(`Address: ${data.address}`, pageW - margin*2);
+  doc.text(addrLines, margin, y); y += addrLines.length*15 + 6;
+
+  doc.setDrawColor(217,203,176);
+  doc.setLineDashPattern([2,2],0);
+  doc.line(margin, y, pageW-margin, y);
+  y += 20;
+
+  doc.setFontSize(13);
+  doc.setTextColor(13,48,96);
+  doc.text('Items', margin, y);
+  y += 14;
+
+  const rowH = 26;
+  Object.entries(cart).forEach(([key,qty])=>{
+    const info = getSellable(key);
+    if(!info) return;
+    if(y + rowH > 780){ doc.addPage(); y = 40; }
+    doc.setFontSize(11.5);
+    doc.setTextColor(33,29,24);
+    doc.text(info.name, margin, y+10);
+    doc.setFontSize(9.5);
+    doc.setTextColor(140,130,110);
+    doc.text(`${info.unit}  x ${qty}`, margin, y+21);
+    doc.setFontSize(11.5);
+    doc.setTextColor(92,53,23);
+    doc.text(`Tk ${(info.price*qty).toLocaleString('en-IN')}`, pageW-margin, y+14, {align:'right'});
+    y += rowH;
+    doc.setDrawColor(230,224,208);
+    doc.setLineDashPattern([1.5,2],0);
+    doc.line(margin, y-6, pageW-margin, y-6);
+  });
+
+  y += 10;
+  doc.setDrawColor(13,48,96);
+  doc.setLineDashPattern([],0);
+  doc.line(margin, y, pageW-margin, y);
+  y += 22;
+  doc.setFontSize(14);
+  doc.setTextColor(13,48,96);
+  doc.text('Total', margin, y);
+  doc.setTextColor(92,53,23);
+  doc.text(`Tk ${cartTotal().toLocaleString('en-IN')}`, pageW-margin, y, {align:'right'});
+
+  y += 40;
+  doc.setFontSize(9.5);
+  doc.setTextColor(140,130,110);
+  doc.text('Thank you for shopping with Suffa Supershop.', margin, y);
+
+  doc.save(`suffa-order-${Date.now()}.pdf`);
+  showToast('PDF ডাউনলোড হয়েছে ✓');
+}
+
+/* ============ ADMIN PANEL ============ */
+const adminOverlay = document.getElementById('adminOverlay');
+const adminCatList = document.getElementById('adminCatList');
+const adminProdList = document.getElementById('adminProdList');
+
+/* ---- Admin password lock ----
+   এটি একটি স্ট্যাটিক সাইট, তাই এই পাসওয়ার্ড চেক ব্রাউজারেই (client-side) হয় —
+   কেউ পেজ সোর্স দেখলে পাসওয়ার্ডটা খুঁজে পেতে পারে। এটা সাধারণ দর্শকদের ঠেকানোর
+   জন্য যথেষ্ট, কিন্তু প্রকৃত নিরাপত্তার জন্য নয়। পাসওয়ার্ড বদলাতে নিচের লাইনটা এডিট করুন। */
+const ADMIN_PASSWORD = 'suffa2026';
+const ADMIN_SESSION_KEY = 'suffaAdminUnlocked';
+
+const adminLockBackdrop = document.getElementById('adminLockBackdrop');
+const adminLockInput = document.getElementById('adminLockInput');
+const adminLockError = document.getElementById('adminLockError');
+
+function isAdminSessionUnlocked(){
+  try{ return sessionStorage.getItem(ADMIN_SESSION_KEY) === '1'; }
+  catch(e){ return false; } // sandboxed/blocked storage — just fall back to asking for password again
+}
+
+document.getElementById('footerAdminBtn').addEventListener('click', ()=>{
+  try{
+    if(isAdminSessionUnlocked()){
+      renderAdmin();
+      adminOverlay.classList.add('show');
+    }else{
+      adminLockError.classList.remove('show');
+      adminLockInput.value = '';
+      adminLockBackdrop.classList.add('show');
+      setTimeout(()=> adminLockInput.focus(), 50);
+    }
+  }catch(e){ /* ignore */ }
+});
+
+function tryAdminUnlock(){
+  try{
+    if(adminLockInput.value === ADMIN_PASSWORD){
+      try{ sessionStorage.setItem(ADMIN_SESSION_KEY, '1'); }catch(e){ /* storage unavailable */ }
+      adminLockBackdrop.classList.remove('show');
+      renderAdmin();
+      adminOverlay.classList.add('show');
+    }else{
+      adminLockError.classList.add('show');
+      adminLockInput.value = '';
+      adminLockInput.focus();
+    }
+  }catch(e){ /* ignore */ }
+}
+document.getElementById('adminLockSubmit').addEventListener('click', tryAdminUnlock);
+document.getElementById('adminLockCancel').addEventListener('click', ()=> adminLockBackdrop.classList.remove('show'));
+adminLockInput.addEventListener('keydown', e=>{ if(e.key === 'Enter') tryAdminUnlock(); });
+
+document.getElementById('adminBackBtn').addEventListener('click', ()=> adminOverlay.classList.remove('show'));
+document.getElementById('adminResetBtn').addEventListener('click', ()=>{
+  if(!confirm('ছবি, মূল্য, স্টক, যোগ করা ও মুছে ফেলা পণ্য, এবং প্যাকেজ — সবকিছু ডিফল্টে ফিরিয়ে দিতে চান?')) return;
+  try{
+    localStorage.removeItem(OVR_KEY);
+    localStorage.removeItem(CUSTOM_KEY);
+    localStorage.removeItem(DELETED_KEY);
+    localStorage.removeItem(PACKAGES_KEY);
+  }catch(e){ /* storage unavailable */ }
+  location.reload();
+});
+
+/* ---- Add new product ---- */
+const newProdCatSel = document.getElementById('newProdCat');
+const newProdSubSel = document.getElementById('newProdSub');
+CATEGORIES.filter(c=>c.id!=='all').forEach(c=>{
+  const opt = document.createElement('option');
+  opt.value = c.id; opt.textContent = c.label;
+  newProdCatSel.appendChild(opt);
+});
+function refreshNewProdSubOptions(){
+  const cat = CATEGORIES.find(c=>c.id===newProdCatSel.value);
+  newProdSubSel.innerHTML = '';
+  const noneOpt = document.createElement('option');
+  noneOpt.value = ''; noneOpt.textContent = 'কোনটি না';
+  newProdSubSel.appendChild(noneOpt);
+  if(cat && cat.subcats){
+    cat.subcats.forEach(s=>{
+      const opt = document.createElement('option');
+      opt.value = s.id; opt.textContent = s.label;
+      newProdSubSel.appendChild(opt);
+    });
+  }
+}
+newProdCatSel.addEventListener('change', refreshNewProdSubOptions);
+refreshNewProdSubOptions();
+
+let newProdImgData = '';
+document.getElementById('newProdImgFile').addEventListener('change', function(){
+  const file = this.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    newProdImgData = reader.result;
+    document.getElementById('newProdImgUrl').value = '';
+  };
+  reader.readAsDataURL(file);
+});
+document.getElementById('newProdImgUrl').addEventListener('input', function(){
+  if(this.value.trim()) newProdImgData = '';
+});
+
+/* ---- Variant builder for new product ---- */
+let newProdVariants = [];
+function renderNewProdVarList(){
+  const wrap = document.getElementById('newProdVarList');
+  if(newProdVariants.length === 0){
+    wrap.innerHTML = '<div style="font-size:12px;color:#8a8272;">এখনো কোনো ভ্যারাইটি যোগ করা হয়নি</div>';
+    return;
+  }
+  wrap.innerHTML = newProdVariants.map((v,idx)=>`
+    <div class="admin-numrow" style="align-items:center; margin-bottom:6px;">
+      <div style="flex:1; font-size:12.5px; font-weight:600;">${v.name} — ${taka(v.price)} (স্টক ${toBn(v.stock)})</div>
+      <button class="admin-delete-btn" type="button" data-rm-var="${idx}" style="padding:6px 9px;">✕</button>
+    </div>
+  `).join('');
+  wrap.querySelectorAll('[data-rm-var]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      newProdVariants.splice(+btn.dataset.rmVar, 1);
+      renderNewProdVarList();
+    });
+  });
+}
+function genVariantId(){
+  return 'vr' + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+}
+document.getElementById('newProdVarAddBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('newProdVarName').value.trim();
+  const price = Number(document.getElementById('newProdVarPrice').value);
+  const stock = Number(document.getElementById('newProdVarStock').value);
+  if(!name){ showToast('ভ্যারাইটির নাম দিন'); return; }
+  if(isNaN(price) || price < 0){ showToast('সঠিক মূল্য দিন'); return; }
+  if(isNaN(stock) || stock < 0){ showToast('সঠিক স্টক দিন'); return; }
+  newProdVariants.push({ id: genVariantId(), name, price, stock });
+  document.getElementById('newProdVarName').value = '';
+  document.getElementById('newProdVarPrice').value = '';
+  document.getElementById('newProdVarStock').value = '20';
+  renderNewProdVarList();
+});
+renderNewProdVarList();
+
+document.getElementById('addProductBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('newProdName').value.trim();
+  const unit = document.getElementById('newProdUnit').value.trim();
+  const cat = newProdCatSel.value;
+  const sub = newProdSubSel.value || undefined;
+  const price = Number(document.getElementById('newProdPrice').value);
+  const stock = Number(document.getElementById('newProdStock').value);
+  const urlVal = document.getElementById('newProdImgUrl').value.trim();
+  const img = newProdImgData || urlVal || 'https://loremflickr.com/200/200/grocery';
+
+  if(!name){ showToast('পণ্যের নাম দিন'); return; }
+  if(!unit){ showToast('একক দিন'); return; }
+  if(!cat){ showToast('ক্যাটাগরি নির্বাচন করুন'); return; }
+  if(isNaN(price) || price < 0){ showToast('সঠিক মূল্য দিন'); return; }
+  if(isNaN(stock) || stock < 0){ showToast('সঠিক স্টক পরিমাণ দিন'); return; }
+
+  const newProduct = {
+    id: Date.now(), name, unit, price, stock, cat, sub, img,
+    variants: newProdVariants.length ? newProdVariants.map(v=>({...v})) : undefined
+  };
+  PRODUCTS.push(newProduct);
+  const custom = loadCustomProducts();
+  custom.push(newProduct);
+  saveCustomProducts(custom);
+
+  // reset form
+  document.getElementById('newProdName').value = '';
+  document.getElementById('newProdUnit').value = '';
+  document.getElementById('newProdPrice').value = '';
+  document.getElementById('newProdStock').value = '50';
+  document.getElementById('newProdImgUrl').value = '';
+  document.getElementById('newProdImgFile').value = '';
+  newProdImgData = '';
+  newProdVariants = [];
+  renderNewProdVarList();
+  refreshNewProdSubOptions();
+
+  renderAdmin();
+  renderFerdo();
+  showToast(`${name} যোগ করা হয়েছে`);
+});
+
+function buildAdminRow(type, item, label, currentImg){
+  const row = document.createElement('div');
+  row.className = 'admin-img-row';
+  row.innerHTML = `
+    <img class="admin-thumb" src="${currentImg}" alt="${label}">
+    <div class="admin-fields">
+      <div class="admin-name">${label}</div>
+      <input type="text" class="admin-url-input" placeholder="ছবির URL পেস্ট করুন" value="">
+      <div class="admin-btns">
+        <label class="admin-upload-btn">📁 ছবি আপলোড
+          <input type="file" accept="image/*" hidden>
+        </label>
+        <button class="admin-save-btn" type="button">সংরক্ষণ</button>
+        <span class="admin-saved-tag">✓ সংরক্ষিত হয়েছে</span>
+      </div>
+    </div>
+  `;
+  const thumb = row.querySelector('.admin-thumb');
+  const urlInput = row.querySelector('.admin-url-input');
+  const fileInput = row.querySelector('input[type=file]');
+  const saveBtn = row.querySelector('.admin-save-btn');
+  const savedTag = row.querySelector('.admin-saved-tag');
+  let pendingImg = null;
+
+  fileInput.addEventListener('change', ()=>{
+    const file = fileInput.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      pendingImg = reader.result;
+      thumb.src = pendingImg;
+      urlInput.value = '';
+    };
+    reader.readAsDataURL(file);
+  });
+  urlInput.addEventListener('input', ()=>{
+    if(urlInput.value.trim()){
+      pendingImg = urlInput.value.trim();
+      thumb.src = pendingImg;
+    }
+  });
+  saveBtn.addEventListener('click', ()=>{
+    if(!pendingImg){ showToast('আগে একটি ছবি আপলোড করুন বা URL দিন'); return; }
+    imageOverrides[type][item.id] = pendingImg;
+    saveOverridesToStorage(imageOverrides);
+    item.img = pendingImg;
+    savedTag.classList.add('show');
+    setTimeout(()=> savedTag.classList.remove('show'), 1800);
+    // refresh visible parts of the site
+    [...catRow.children].forEach((ch,i)=>{
+      if(CATEGORIES[i] && CATEGORIES[i].id===item.id && type==='cat'){
+        const img = ch.querySelector('.cat-icon img');
+        if(img) img.src = pendingImg;
+      }
+    });
+    renderFerdo();
+    showToast('ছবি সংরক্ষণ হয়েছে');
+  });
+  return row;
+}
+
+function buildAdminProductRow(p){
+  if(!Array.isArray(p.variants)) p.variants = [];
+  const row = document.createElement('div');
+  row.className = 'admin-img-row';
+  row.innerHTML = `
+    <img class="admin-thumb" src="${p.img}" alt="${p.name}">
+    <div class="admin-fields">
+      <div class="admin-name">${p.name} (${p.unit})</div>
+      <input type="text" class="admin-url-input" placeholder="ছবির URL পেস্ট করুন" value="">
+      <div class="admin-numrow">
+        <div class="admin-num-field">
+          <span class="lbl">মূল্য (৳)</span>
+          <input type="number" class="admin-num-input price-input" min="0" step="1" value="${p.price}">
+        </div>
+        <div class="admin-num-field">
+          <span class="lbl">স্টক (পরিমাণ)</span>
+          <input type="number" class="admin-num-input stock-input" min="0" step="1" value="${p.stock}">
+        </div>
+      </div>
+      <div style="font-size:11.5px; font-weight:700; color:var(--leaf); margin:10px 0 6px;">🏷️ ভ্যারাইটি (ঐচ্ছিক)</div>
+      <div class="admin-var-list"></div>
+      <div style="display:flex; gap:6px; margin:6px 0 4px; flex-wrap:wrap;">
+        <input type="text" class="admin-url-input add-var-name" placeholder="নতুন ধরনের নাম" style="flex:1.4; min-width:120px;">
+        <input type="number" class="admin-num-input add-var-price" placeholder="মূল্য" style="flex:0.7; min-width:60px;" min="0" step="1">
+        <input type="number" class="admin-num-input add-var-stock" placeholder="স্টক" style="flex:0.6; min-width:55px;" min="0" step="1" value="20">
+        <button class="admin-save-btn add-var-btn" type="button" style="padding:7px 10px;">যোগ</button>
+      </div>
+      <div class="admin-btns" style="margin-top:8px;">
+        <label class="admin-upload-btn">📁 ছবি আপলোড
+          <input type="file" accept="image/*" hidden>
+        </label>
+        <button class="admin-save-btn" type="button">সংরক্ষণ</button>
+        <button class="admin-delete-btn" type="button">🗑 মুছুন</button>
+        <span class="admin-saved-tag">✓ সংরক্ষিত হয়েছে</span>
+      </div>
+    </div>
+  `;
+  const thumb = row.querySelector('.admin-thumb');
+  const urlInput = row.querySelector('.admin-url-input');
+  const fileInput = row.querySelector('input[type=file]');
+  const priceInput = row.querySelector('.price-input');
+  const stockInput = row.querySelector('.stock-input');
+  const saveBtn = row.querySelector('.admin-save-btn');
+  const deleteBtn = row.querySelector('.admin-delete-btn');
+  const savedTag = row.querySelector('.admin-saved-tag');
+  const varListEl = row.querySelector('.admin-var-list');
+
+  function renderVarList(){
+    if(p.variants.length === 0){
+      varListEl.innerHTML = '<div style="font-size:11.5px;color:#8a8272;">কোনো ভ্যারাইটি নেই</div>';
+      return;
+    }
+    varListEl.innerHTML = p.variants.map((v,idx)=>`
+      <div class="admin-numrow" style="align-items:center; margin-bottom:6px; flex-wrap:wrap;" data-var-idx="${idx}">
+        <input type="text" class="admin-num-input var-name-input" style="flex:1.4; min-width:110px;" value="${v.name}">
+        <input type="number" class="admin-num-input var-price-input" style="flex:0.7; min-width:55px;" min="0" step="1" value="${v.price}">
+        <input type="number" class="admin-num-input var-stock-input" style="flex:0.6; min-width:50px;" min="0" step="1" value="${v.stock}">
+        <button class="admin-delete-btn var-remove-btn" type="button" style="padding:6px 9px;">✕</button>
+      </div>
+    `).join('');
+    varListEl.querySelectorAll('.var-remove-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const idx = +btn.closest('[data-var-idx]').dataset.varIdx;
+        p.variants.splice(idx,1);
+        renderVarList();
+      });
+    });
+  }
+  renderVarList();
+
+  row.querySelector('.add-var-btn').addEventListener('click', ()=>{
+    const nameEl = row.querySelector('.add-var-name');
+    const priceEl = row.querySelector('.add-var-price');
+    const stockEl = row.querySelector('.add-var-stock');
+    const name = nameEl.value.trim();
+    const price = Number(priceEl.value);
+    const stock = Number(stockEl.value);
+    if(!name){ showToast('ভ্যারাইটির নাম দিন'); return; }
+    if(isNaN(price) || price < 0){ showToast('সঠিক মূল্য দিন'); return; }
+    if(isNaN(stock) || stock < 0){ showToast('সঠিক স্টক দিন'); return; }
+    p.variants.push({ id: genVariantId(), name, price, stock });
+    nameEl.value=''; priceEl.value=''; stockEl.value='20';
+    renderVarList();
+  });
+
+  deleteBtn.addEventListener('click', ()=>{
+    if(!confirm(`"${p.name}" পণ্যটি মুছে ফেলতে চান? এই কাজটি ফেরানো যাবে না।`)) return;
+    const idx = PRODUCTS.findIndex(x=>x.id===p.id);
+    if(idx > -1) PRODUCTS.splice(idx,1);
+    if(!deletedProductIds.includes(p.id)) deletedProductIds.push(p.id);
+    saveDeletedIds(deletedProductIds);
+    saveCustomProducts(loadCustomProducts().filter(x=>x.id!==p.id));
+    delete cart[p.id];
+    delete qtyDraft[p.id];
+    Object.keys(cart).forEach(k=>{ if(k.startsWith(`v_${p.id}_`)) delete cart[k]; });
+    Object.keys(variantQtyDraft).forEach(k=>{ if(k.startsWith(`${p.id}_`)) delete variantQtyDraft[k]; });
+    if(imageOverrides.prod[p.id]) delete imageOverrides.prod[p.id];
+    saveOverridesToStorage(imageOverrides);
+    row.remove();
+    renderFerdo();
+    updateCartBar();
+    showToast(`${p.name} মুছে ফেলা হয়েছে`);
+  });
+
+  fileInput.addEventListener('change', ()=>{
+    const file = fileInput.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      thumb.src = reader.result;
+      urlInput.value = '';
+    };
+    reader.readAsDataURL(file);
+  });
+  urlInput.addEventListener('input', ()=>{
+    if(urlInput.value.trim()) thumb.src = urlInput.value.trim();
+  });
+
+  saveBtn.addEventListener('click', ()=>{
+    const priceVal = Number(priceInput.value);
+    const stockVal = Number(stockInput.value);
+    if(isNaN(priceVal) || priceVal < 0){ showToast('সঠিক মূল্য দিন'); return; }
+    if(isNaN(stockVal) || stockVal < 0){ showToast('সঠিক স্টক পরিমাণ দিন'); return; }
+
+    // sync any inline-edited variant fields before saving
+    varListEl.querySelectorAll('[data-var-idx]').forEach(rowEl=>{
+      const idx = +rowEl.dataset.varIdx;
+      if(!p.variants[idx]) return;
+      const nm = rowEl.querySelector('.var-name-input').value.trim();
+      const pr = Number(rowEl.querySelector('.var-price-input').value);
+      const st = Number(rowEl.querySelector('.var-stock-input').value);
+      if(nm) p.variants[idx].name = nm;
+      if(!isNaN(pr) && pr >= 0) p.variants[idx].price = pr;
+      if(!isNaN(st) && st >= 0) p.variants[idx].stock = st;
+    });
+
+    p.img = thumb.src;
+    p.price = priceVal;
+    p.stock = stockVal;
+
+    imageOverrides.prod[p.id] = {
+      img: p.img, price: p.price, stock: p.stock,
+      variants: p.variants.length ? p.variants.map(v=>({...v})) : undefined
+    };
+    saveOverridesToStorage(imageOverrides);
+
+    // also keep admin-added custom products' saved copy in sync
+    const custom = loadCustomProducts();
+    const cIdx = custom.findIndex(x=>x.id===p.id);
+    if(cIdx > -1){ custom[cIdx] = {...p, variants: p.variants.map(v=>({...v}))}; saveCustomProducts(custom); }
+
+    savedTag.classList.add('show');
+    setTimeout(()=> savedTag.classList.remove('show'), 1800);
+    renderVarList();
+    renderFerdo();
+    showToast(`${p.name} — তথ্য সংরক্ষণ হয়েছে`);
+  });
+  return row;
+}
+
+/* ---- Package management (admin) ---- */
+const adminPkgList = document.getElementById('adminPkgList');
+
+function productLabel(prodId){
+  const p = PRODUCTS.find(x=>x.id===prodId);
+  return p ? `${p.name} (${p.unit})` : 'অজানা পণ্য';
+}
+
+function buildAdminPackageRow(pkg){
+  const row = document.createElement('div');
+  row.className = 'admin-img-row';
+  row.style.flexDirection = 'column';
+  row.style.alignItems = 'stretch';
+
+  const itemsHtml = pkg.items.map((it,idx)=>`
+    <div class="admin-numrow" style="align-items:center; margin-bottom:6px;" data-item-idx="${idx}">
+      <div style="flex:1; font-size:12.5px; font-weight:600;">${productLabel(it.id)}</div>
+      <input type="number" class="admin-num-input pkg-item-qty" style="width:56px; flex:0 0 auto;" min="1" step="1" value="${it.qty}">
+      <button class="admin-delete-btn pkg-item-remove" type="button" style="padding:6px 9px;">✕</button>
+    </div>
+  `).join('');
+
+  row.innerHTML = `
+    <div class="admin-name" style="margin-bottom:8px;">প্যাকেজ সম্পাদনা</div>
+    <div class="admin-numrow" style="margin-bottom:10px;">
+      <div class="admin-num-field" style="flex:2;">
+        <span class="lbl">নাম</span>
+        <input type="text" class="admin-num-input pkg-name" value="${pkg.name}">
+      </div>
+      <div class="admin-num-field">
+        <span class="lbl">ইমোজি</span>
+        <input type="text" class="admin-num-input pkg-emoji" value="${pkg.emoji}">
+      </div>
+      <div class="admin-num-field">
+        <span class="lbl">ছাড় (%)</span>
+        <input type="number" class="admin-num-input pkg-discount" min="0" max="90" step="1" value="${Math.round(pkg.discount*100)}">
+      </div>
+    </div>
+    <div class="pkg-items-wrap" style="margin-bottom:10px;">${itemsHtml || '<div style="font-size:12px;color:#8a8272;">কোনো পণ্য যোগ করা নেই</div>'}</div>
+    <div style="display:flex; gap:8px; margin-bottom:10px;">
+      <select class="pkg-add-prod-sel" style="flex:1; border:1.5px solid var(--paper-line); border-radius:8px; padding:7px 10px; font-size:12px; background:var(--cream);"></select>
+      <input type="number" class="admin-num-input pkg-add-prod-qty" style="width:56px; flex:0 0 auto;" min="1" step="1" value="1">
+      <button class="admin-save-btn pkg-add-prod-btn" type="button">যোগ</button>
+    </div>
+    <div class="admin-btns">
+      <button class="admin-save-btn pkg-save-btn" type="button">সংরক্ষণ</button>
+      <button class="admin-delete-btn pkg-delete-btn" type="button">🗑 প্যাকেজ মুছুন</button>
+      <span class="admin-saved-tag">✓ সংরক্ষিত হয়েছে</span>
+    </div>
+  `;
+
+  const prodSel = row.querySelector('.pkg-add-prod-sel');
+  PRODUCTS.forEach(p=>{
+    const opt = document.createElement('option');
+    opt.value = p.id; opt.textContent = `${p.name} (${p.unit})`;
+    prodSel.appendChild(opt);
+  });
+
+  row.querySelectorAll('.pkg-item-remove').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const idx = +btn.closest('[data-item-idx]').dataset.itemIdx;
+      pkg.items.splice(idx,1);
+      const listEl = adminPkgList;
+      renderAdminPackages();
+    });
+  });
+
+  row.querySelector('.pkg-add-prod-btn').addEventListener('click', ()=>{
+    const prodId = +prodSel.value;
+    const qty = Math.max(1, Number(row.querySelector('.pkg-add-prod-qty').value) || 1);
+    if(!prodId){ showToast('একটি পণ্য নির্বাচন করুন'); return; }
+    const existing = pkg.items.find(it=>it.id===prodId);
+    if(existing) existing.qty += qty;
+    else pkg.items.push({id:prodId, qty});
+    renderAdminPackages();
+  });
+
+  row.querySelector('.pkg-delete-btn').addEventListener('click', ()=>{
+    if(!confirm(`"${pkg.name}" প্যাকেজটি মুছে ফেলতে চান?`)) return;
+    const idx = PACKAGES.findIndex(p=>p.id===pkg.id);
+    if(idx > -1) PACKAGES.splice(idx,1);
+    savePackages();
+    if(activePackage === pkg.id) activePackage = null;
+    renderAdminPackages();
+    renderPackagePills();
+    renderFerdo();
+    showToast(`${pkg.name} মুছে ফেলা হয়েছে`);
+  });
+
+  const savedTag = row.querySelector('.admin-saved-tag');
+  row.querySelector('.pkg-save-btn').addEventListener('click', ()=>{
+    const nameVal = row.querySelector('.pkg-name').value.trim();
+    const emojiVal = row.querySelector('.pkg-emoji').value.trim() || '📦';
+    const discountVal = Number(row.querySelector('.pkg-discount').value);
+    if(!nameVal){ showToast('প্যাকেজের নাম দিন'); return; }
+    if(isNaN(discountVal) || discountVal < 0 || discountVal > 90){ showToast('সঠিক ছাড়ের হার দিন (০-৯০)'); return; }
+    row.querySelectorAll('.pkg-item-qty').forEach((inp,idx)=>{
+      const q = Math.max(1, Number(inp.value) || 1);
+      if(pkg.items[idx]) pkg.items[idx].qty = q;
+    });
+    pkg.name = nameVal;
+    pkg.emoji = emojiVal;
+    pkg.discount = discountVal/100;
+    savePackages();
+    savedTag.classList.add('show');
+    setTimeout(()=> savedTag.classList.remove('show'), 1800);
+    renderPackagePills();
+    renderFerdo();
+    showToast(`${pkg.name} — সংরক্ষণ হয়েছে`);
+  });
+
+  return row;
+}
+
+function renderAdminPackages(){
+  adminPkgList.innerHTML = '';
+  if(PACKAGES.length === 0){
+    adminPkgList.innerHTML = '<div style="font-size:12.5px;color:#8a8272;">এখনো কোনো প্যাকেজ নেই</div>';
+    return;
+  }
+  PACKAGES.forEach(pkg=>{
+    adminPkgList.appendChild(buildAdminPackageRow(pkg));
+  });
+}
+
+/* ---- New package builder ---- */
+let newPkgItems = [];
+const newPkgProdSel = document.getElementById('newPkgProdSel');
+function refreshNewPkgProdOptions(){
+  newPkgProdSel.innerHTML = '';
+  PRODUCTS.forEach(p=>{
+    const opt = document.createElement('option');
+    opt.value = p.id; opt.textContent = `${p.name} (${p.unit})`;
+    newPkgProdSel.appendChild(opt);
+  });
+}
+function renderNewPkgItemsList(){
+  const wrap = document.getElementById('newPkgItemsList');
+  if(newPkgItems.length === 0){
+    wrap.innerHTML = '<div style="font-size:12px;color:#8a8272;">এখনো কোনো পণ্য যোগ করা হয়নি</div>';
+    return;
+  }
+  wrap.innerHTML = newPkgItems.map((it,idx)=>`
+    <div class="admin-numrow" style="align-items:center; margin-bottom:6px;">
+      <div style="flex:1; font-size:12.5px; font-weight:600;">${productLabel(it.id)} × ${toBn(it.qty)}</div>
+      <button class="admin-delete-btn" type="button" data-remove-idx="${idx}" style="padding:6px 9px;">✕</button>
+    </div>
+  `).join('');
+  wrap.querySelectorAll('[data-remove-idx]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      newPkgItems.splice(+btn.dataset.removeIdx, 1);
+      renderNewPkgItemsList();
+    });
+  });
+}
+document.getElementById('newPkgAddItemBtn').addEventListener('click', ()=>{
+  const prodId = +newPkgProdSel.value;
+  const qty = Math.max(1, Number(document.getElementById('newPkgProdQty').value) || 1);
+  if(!prodId){ showToast('একটি পণ্য নির্বাচন করুন'); return; }
+  const existing = newPkgItems.find(it=>it.id===prodId);
+  if(existing) existing.qty += qty;
+  else newPkgItems.push({id:prodId, qty});
+  renderNewPkgItemsList();
+});
+document.getElementById('addPackageBtn').addEventListener('click', ()=>{
+  const name = document.getElementById('newPkgName').value.trim();
+  const emoji = document.getElementById('newPkgEmoji').value.trim() || '📦';
+  const discount = Number(document.getElementById('newPkgDiscount').value);
+  if(!name){ showToast('প্যাকেজের নাম দিন'); return; }
+  if(isNaN(discount) || discount < 0 || discount > 90){ showToast('সঠিক ছাড়ের হার দিন (০-৯০)'); return; }
+  if(newPkgItems.length === 0){ showToast('অন্তত একটি পণ্য যোগ করুন'); return; }
+
+  const newPkg = { id:'pkg_'+Date.now(), name, emoji, discount: discount/100, items: newPkgItems.map(it=>({...it})) };
+  PACKAGES.push(newPkg);
+  savePackages();
+
+  document.getElementById('newPkgName').value = '';
+  document.getElementById('newPkgEmoji').value = '🎁';
+  document.getElementById('newPkgDiscount').value = '10';
+  newPkgItems = [];
+  renderNewPkgItemsList();
+
+  renderAdminPackages();
+  renderPackagePills();
+  renderFerdo();
+  showToast(`${name} প্যাকেজ যোগ করা হয়েছে`);
+});
+refreshNewPkgProdOptions();
+renderNewPkgItemsList();
+
+/* ---- Orders (admin) ---- */
+const ORDER_STATUSES = ['নতুন', 'প্রসেসিং', 'ডেলিভারড', 'বাতিল'];
+function statusClass(status){
+  if(status==='নতুন') return 'st-new';
+  if(status==='প্রসেসিং') return 'st-processing';
+  if(status==='ডেলিভারড') return 'st-delivered';
+  if(status==='বাতিল') return 'st-cancelled';
+  return '';
+}
+function buildOrderCard(order, orders){
+  const card = document.createElement('div');
+  card.className = 'order-card';
+  const itemsHtml = order.items.map(it=>`
+    <div class="oi-row"><span>${it.name} × ${toBn(it.qty)}</span><span>${taka(it.price*it.qty)}</span></div>
+  `).join('');
+  const statusOptions = ORDER_STATUSES.map(s=>`<option value="${s}" ${s===order.status?'selected':''}>${s}</option>`).join('');
+  card.innerHTML = `
+    <div class="order-top">
+      <div>
+        <div class="order-name">${order.name}</div>
+        <div class="order-contact">📞 ${order.mobile}<br>📍 ${order.address}</div>
+      </div>
+      <div class="order-time">${formatOrderTime(order.createdAt)}</div>
+    </div>
+    <div class="order-items">${itemsHtml}</div>
+    <div class="order-total-row"><span>সর্বমোট</span><span>${taka(order.total)}</span></div>
+    <div class="order-bottom">
+      <select class="order-status-sel ${statusClass(order.status)}">${statusOptions}</select>
+      <button class="admin-delete-btn order-delete-btn" type="button">🗑 মুছুন</button>
+    </div>
+  `;
+  const statusSel = card.querySelector('.order-status-sel');
+  statusSel.addEventListener('change', ()=>{
+    order.status = statusSel.value;
+    statusSel.className = 'order-status-sel ' + statusClass(order.status);
+    const idx = orders.findIndex(o=>o.id===order.id);
+    if(idx>-1) orders[idx] = order;
+    saveOrdersToStorage(orders);
+    showToast('অর্ডারের অবস্থা আপডেট হয়েছে');
+  });
+  card.querySelector('.order-delete-btn').addEventListener('click', ()=>{
+    if(!confirm(`${order.name}-এর অর্ডারটি মুছে ফেলতে চান?`)) return;
+    const updated = orders.filter(o=>o.id!==order.id);
+    saveOrdersToStorage(updated);
+    renderAdminOrders();
+    showToast('অর্ডার মুছে ফেলা হয়েছে');
+  });
+  return card;
+}
+function renderAdminOrders(){
+  const orders = loadOrders();
+  const listEl = document.getElementById('adminOrdersList');
+  const countTag = document.getElementById('orderCountTag');
+  countTag.textContent = orders.length ? `${toBn(orders.length)}টি` : '';
+  listEl.innerHTML = '';
+  if(orders.length === 0){
+    listEl.innerHTML = '<div style="font-size:12.5px;color:#8a8272;">এখনো কোনো অর্ডার আসেনি</div>';
+    return;
+  }
+  orders.forEach(order=>{
+    listEl.appendChild(buildOrderCard(order, orders));
+  });
+}
+document.getElementById('clearAllOrdersBtn').addEventListener('click', ()=>{
+  if(!confirm('সব অর্ডার স্থায়ীভাবে মুছে ফেলতে চান? এই কাজটি ফেরানো যাবে না।')) return;
+  saveOrdersToStorage([]);
+  renderAdminOrders();
+  showToast('সব অর্ডার মুছে ফেলা হয়েছে');
+});
+
+function renderAdmin(){
+  renderAdminOrders();
+  adminCatList.innerHTML = '';
+  CATEGORIES.filter(c=>c.id!=='all').forEach(c=>{
+    adminCatList.appendChild(buildAdminRow('cat', c, c.label, c.img));
+  });
+  adminProdList.innerHTML = '';
+  PRODUCTS.forEach(p=>{
+    adminProdList.appendChild(buildAdminProductRow(p));
+  });
+  renderAdminPackages();
+  refreshNewPkgProdOptions();
+}
+</script>
+</body>
+</html>
