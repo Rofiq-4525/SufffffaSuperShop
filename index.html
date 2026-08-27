@@ -771,9 +771,7 @@
 <!-- HOME PAGE BANNER -->
 <div class="banner-wrap">
   <div class="banner-viewport" id="bannerViewport">
-    <div class="banner-slide active">
-      <img class="banner-img" src="banner 2" alt="সুফ্ফা সুপারশপ ব্যানার ২" loading="lazy" onerror="this.style.display='none'">
-    </div>
+    <img class="banner-img" id="homeBannerImg" src="banner 2.jpg" alt="সুফ্ফা সুপারশপ ব্যানার" loading="lazy" onerror="this.style.display='none'">
   </div>
 </div>
 
@@ -1044,20 +1042,22 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const homeBannerSlides = Array.from(document.querySelectorAll('.banner-slide'));
+const bannerFiles = [
+  'banner 2.jpg',
+  'banner 3.png',
+  'banner 4.png'
+];
 let currentBannerIndex = 0;
+const homeBannerImg = document.getElementById('homeBannerImg');
 
 function rotateHomeBanner(){
-  if (!homeBannerSlides.length || homeBannerSlides.length === 1) return;
-  const nextIndex = (currentBannerIndex + 1) % homeBannerSlides.length;
-  homeBannerSlides[currentBannerIndex].classList.remove('active');
-  homeBannerSlides[nextIndex].classList.add('active');
-  currentBannerIndex = nextIndex;
+  if (!homeBannerImg || !bannerFiles.length) return;
+  currentBannerIndex = (currentBannerIndex + 1) % bannerFiles.length;
+  homeBannerImg.src = bannerFiles[currentBannerIndex];
+  homeBannerImg.alt = 'সুফ্ফা সুপারশপ ব্যানার ' + (currentBannerIndex + 1);
 }
 
-if (homeBannerSlides.length > 1) {
-  setInterval(rotateHomeBanner, 30000);
-}
+setInterval(rotateHomeBanner, 30000);
 
 /* ============ DATA ============ */
 const CATEGORIES = [
