@@ -184,17 +184,18 @@
   .banner-viewport{
     position:relative; width:100%; overflow:hidden; border-radius:16px; box-shadow:var(--shadow);
     background:var(--cream-2);
+    line-height:0;
   }
-  .banner-slide{
-    position:absolute; inset:0; opacity:0; pointer-events:none;
-    transition:opacity 0.6s ease;
+  .banner-slide,
+  .banner-slide.active{
+    position:relative; inset:auto; opacity:1; pointer-events:auto;
+    display:block;
   }
-  .banner-slide.active{ opacity:1; pointer-events:auto; }
   .banner-img{
     width:100%;
     height:auto;
-    object-fit:contain;
     display:block;
+    object-fit:cover;
     border-radius:16px;
     background:var(--cream-2);
   }
@@ -771,7 +772,7 @@
 <div class="banner-wrap">
   <div class="banner-viewport" id="bannerViewport">
     <div class="banner-slide active">
-      <img class="banner-img" src="banner 2" alt="সুফ্ফা সুপারশপ ব্যানার" loading="lazy" onerror="this.style.display='none'">
+      <img class="banner-img" src="banner 2" alt="সুফ্ফা সুপারশপ ব্যানার ২" loading="lazy" onerror="this.style.display='none'">
     </div>
   </div>
 </div>
