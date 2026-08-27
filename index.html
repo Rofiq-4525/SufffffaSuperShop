@@ -186,18 +186,11 @@
     background:var(--cream-2);
     line-height:0;
   }
- .banner-viewport{
-  overflow:hidden;
-  touch-action:pan-y;
-}
-.banner-slide{
+ .banner-slide{
   position:absolute; inset:0; opacity:1; pointer-events:none;
   transform:translateX(100%);
-  transition:transform 0.4s ease;
-  cursor:grab;
+  transition:transform 0.6s ease;
 }
-.banner-slide.active{ transform:translateX(0); pointer-events:auto; z-index:1; }
-.banner-slide.prev{ transform:translateX(-100%); }
 .banner-slide.active{ transform:translateX(0); pointer-events:auto; z-index:1; }
   .banner-img{
     width:100%;
@@ -1050,58 +1043,19 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const homeBannerSlides = Array.from(document.querySelectorAll('.banner-slide'));
+const bannerFiles = [
+  'banner 2',
+  'banner 3',
+  'banner 4'
+];
 let currentBannerIndex = 0;
-let bannerTimer = null;
-
-function goToBannerSlide(nextIndex, direction){
-  if (!homeBannerSlides.length) return;
-  nextIndex = (nextIndex + homeBannerSlides.length) % homeBannerSlides.length;
-  homeBannerSlides[currentBannerIndex].classList.remove('active','prev');
-  if (direction === 'prev') homeBannerSlides[currentBannerIndex].classList.add('prev');
-  homeBannerSlides[nextIndex].classList.remove('prev');
-  homeBannerSlides[nextIndex].classList.add('active');
-  currentBannerIndex = nextIndex;
-}
+const homeBannerImg = document.getElementById('homeBannerImg');
 
 function rotateHomeBanner(){
-  if (homeBannerSlides.length <= 1) return;
-  goToBannerSlide(currentBannerIndex + 1, 'next');
-}
-
-function startBannerAutoplay(){
-  if (homeBannerSlides.length <= 1) return;
-  clearInterval(bannerTimer);
-  bannerTimer = setInterval(rotateHomeBanner, 30000);
-}
-startBannerAutoplay();
-
-// ---- Swipe/drag support ----
-const bannerViewport = document.getElementById('bannerViewport');
-let startX = 0, isDragging = false;
-
-function onDragStart(x){
-  isDragging = true;
-  startX = x;
-}
-function onDragEnd(x){
-  if (!isDragging) return;
-  isDragging = false;
-  const diff = x - startX;
-  const threshold = 50; // এর কম সরালে কিছু হবে না
-  if (Math.abs(diff) > threshold){
-    if (diff < 0) goToBannerSlide(currentBannerIndex + 1, 'next');   // বামে সোয়াইপ -> পরের
-    else goToBannerSlide(currentBannerIndex - 1, 'prev');            // ডানে সোয়াইপ -> আগের
-    startBannerAutoplay(); // সোয়াইপ করলে টাইমার রিসেট
-  }
-}
-
-bannerViewport.addEventListener('touchstart', e => onDragStart(e.touches[0].clientX), {passive:true});
-bannerViewport.addEventListener('touchend', e => onDragEnd(e.changedTouches[0].clientX));
-
-bannerViewport.addEventListener('mousedown', e => onDragStart(e.clientX));
-bannerViewport.addEventListener('mouseup', e => onDragEnd(e.clientX));
-bannerViewport.addEventListener('mouseleave', () => { isDragging = false; });
+  if (!homeBannerImg || !bannerFiles.length) return;
+  currentBannerIndex = (currentBannerIndex + 1) % bannerFiles.length;
+  homeBannerImg.src = bannerFiles[currentBannerIndex];
+  homeBannerImg.alt = 'সুফ্ফা সুপারশপ ব্যানার ' + (currentBannerIndex + 1);
 }
 
 setInterval(rotateHomeBanner, 5000);
