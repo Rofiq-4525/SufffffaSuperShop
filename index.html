@@ -767,17 +767,11 @@
   </div>
 </div>
 
-<!-- HOME PAGE BANNER ROTATOR -->
+<!-- HOME PAGE BANNER -->
 <div class="banner-wrap">
   <div class="banner-viewport" id="bannerViewport">
     <div class="banner-slide active">
-      <img class="banner-img" src="banner 2" alt="সুফ্ফা সুপারশপ ব্যানার ১" loading="lazy" onerror="this.style.display='none'">
-    </div>
-    <div class="banner-slide">
-      <img class="banner-img" src="banner 3" alt="সুফ্ফা সুপারশপ ব্যানার ২" loading="lazy" onerror="this.style.display='none'">
-    </div>
-    <div class="banner-slide">
-      <img class="banner-img" src="banner 4" alt="সুফ্ফা সুপারশপ ব্যানার ৩" loading="lazy" onerror="this.style.display='none'">
+      <img class="banner-img" src="banner 2.jpg" alt="সুফ্ফা সুপারশপ ব্যানার" loading="lazy" onerror="this.style.display='none'">
     </div>
   </div>
 </div>
@@ -1053,7 +1047,7 @@ const homeBannerSlides = Array.from(document.querySelectorAll('.banner-slide'));
 let currentBannerIndex = 0;
 
 function rotateHomeBanner(){
-  if (!homeBannerSlides.length) return;
+  if (!homeBannerSlides.length || homeBannerSlides.length === 1) return;
   const nextIndex = (currentBannerIndex + 1) % homeBannerSlides.length;
   homeBannerSlides[currentBannerIndex].classList.remove('active');
   homeBannerSlides[nextIndex].classList.add('active');
