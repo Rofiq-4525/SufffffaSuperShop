@@ -224,9 +224,12 @@
   .cat-card.active{ border-color:var(--mustard); }
   .cat-card .cat-icon{
     width:54px; height:54px; border-radius:13px; background:var(--cream-2);
-    overflow:hidden;
+    overflow:hidden; display:flex; align-items:center; justify-content:center;
   }
   .cat-card .cat-icon img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .cat-card .cat-icon .cat-emoji{
+    font-size:26px; line-height:1; display:block;
+  }
   .cat-card .cat-label{ font-size:12.5px; font-weight:700; color:var(--ink); text-align:center; line-height:1.2; }
   .cat-card .cat-count{
     font-size:10px; font-weight:700; color:var(--leaf); background:var(--cream-2);
@@ -1003,45 +1006,47 @@
 <script>
 /* ============ DATA ============ */
 const CATEGORIES = [
-  {id:'all', label:'সব', img:'', subcats:[]},
-  {id:'meat', label:'গোশত বাজার', img:'', subcats:[
+  {id:'all', label:'সব', img:'', icon:'🏠', subcats:[]},
+  {id:'meat', label:'গোশত বাজার', img:'', icon:'🥩', subcats:[
     {id:'beef', label:'গোশত'}, {id:'chicken', label:'মুরগি'}, {id:'nihari', label:'নিহারি'},
     {id:'fat', label:'চর্বি'}, {id:'head', label:'মাথা'}, {id:'tripe', label:'ভুড়ি'}
   ]},
-  {id:'vegetable', label:'সবজি বাজার', img:'', subcats:[
+  {id:'grocery', label:'মুদি বাজার', img:'', icon:'🛒', subcats:[
+    {id:'rice-dal', label:'চাল-ডাল'}, {id:'oil-sugar-tea', label:'তেল-চিনি-চা'},
+    {id:'flour', label:'আটা-ময়দা'}, {id:'pulses', label:'ডাউল'}
+  ]},
+  {id:'cosmetic', label:'প্রসাধনী বাজার', img:'', icon:'💄', subcats:[
+    {id:'beauty', label:'সৌন্দর্য'}, {id:'skin', label:'ত্বক'}, {id:'hair', label:'চুল'}
+  ]},
+  {id:'fish', label:'মাছের বাজার', img:'', icon:'🐟', subcats:[
+    {id:'freshwater', label:'মিঠা পানির মাছ'}, {id:'sea', label:'সামুদ্রিক মাছ'}
+  ]},
+  {id:'vegetable', label:'সবজি বাজার', img:'', icon:'🥬', subcats:[
     {id:'seasonal', label:'মৌসুমী সবজি'}, {id:'leafy', label:'শাক-সবজি'}, {id:'root', label:'মূল-আলু'}
   ]},
-  {id:'spice', label:'মশলা বাজার', img:'', subcats:[
+  {id:'islamic', label:'ইসলামি বাজার', img:'', icon:'🕌', subcats:[
+    {id:'prayer', label:'নামাজের সামগ্রী'}, {id:'fragrance', label:'আতর'}, {id:'cap', label:'টুপি'}
+  ]},
+  {id:'spice', label:'মশলা বাজার', img:'', icon:'🌶️', subcats:[
     {id:'powder', label:'গুঁড়া মশলা'}, {id:'whole', label:'সম্পূর্ণ মশলা'}
   ]},
-  {id:'clean', label:'পরিচ্ছন্নতা', img:'', subcats:[
-    {id:'tiles-cleaner', label:'টাইলস ক্লিনার'}, {id:'toilet-cleaner', label:'টয়লেট ক্লিনার'},
-    {id:'soap', label:'সাবান'}, {id:'mini-soap', label:'মিনি সাবান'}, {id:'laundry-soap', label:'কাপড় কাচা সাবান'},
-    {id:'detergent', label:'ডিটারজেন্ট পাউডার'}, {id:'shampoo', label:'শ্যাম্পু'},
-    {id:'vim-bar', label:'ভিম বার'}, {id:'vim-liquid', label:'ভিম লিকুইড'},
-    {id:'handwash', label:'হ্যান্ডওয়াশ'}, {id:'toilet-tissue', label:'টয়লেট টিস্যু'},
-    {id:'kitchen-tissue', label:'কিচেন টিস্যু'}, {id:'toothpaste', label:'টুথপেষ্ট'},
-    {id:'mosquito', label:'মশার কয়েল ও স্প্রে'}, {id:'hair-oil', label:'হেয়ার ওয়েল'},
-    {id:'first-aid', label:'ফার্স্ট এইড ও ঘামাচি'}, {id:'goodnight', label:'গুডনাইট'}
-  ]},
-  {id:'organic', label:'অর্গানিক বাজার', img:'', subcats:[
+  {id:'organic', label:'অর্গানিক বাজার', img:'', icon:'🌿', subcats:[
     {id:'honey', label:'মধু'}, {id:'ghee', label:'ঘি'}, {id:'nuts', label:'বাদাম ও ড্রাই ফ্রুট'},
     {id:'dates', label:'খেজুর'}, {id:'seeds', label:'বীজ ও দানা'}, {id:'sugar', label:'চিনি ও মিসরি'},
     {id:'raisins', label:'কিসমিস'}, {id:'dried-fruit', label:'শুকনো ফল'}, {id:'garlic', label:'কালো রসুন'}
   ]},
-  {id:'grocery', label:'মুদি বাজার', img:'', subcats:[
-    {id:'rice-dal', label:'চাল-ডাল'}, {id:'oil-sugar-tea', label:'তেল-চিনি-চা'},
-    {id:'flour', label:'আটা-ময়দা'}, {id:'pulses', label:'ডাউল'}
+  {id:'fruit', label:'ফলের বাজার', img:'', icon:'🍏', subcats:[
+    {id:'fresh-fruit', label:'তাজা ফল'}, {id:'seasonal-fruit', label:'মৌসুমী ফল'}
   ]},
-  {id:'islamic', label:'ইসলামি পণ্য', img:'', subcats:[
-    {id:'prayer', label:'নামাজের সামগ্রী'}, {id:'fragrance', label:'আতর'}, {id:'cap', label:'টুপি'}
+  {id:'sweet', label:'মিষ্টির বাজার', img:'', icon:'🍰', subcats:[
+    {id:'sweets', label:'মিষ্টি'}, {id:'snacks', label:'স্ন্যাকস'}
   ]},
-  {id:'books', label:'মুহাজির বুকশপ', img:'', subcats:[
-    {id:'books', label:'বই'}, {id:'stationery', label:'স্টেশনারি'}
+  {id:'clothing', label:'পোশাক বাজার', img:'', icon:'👕', subcats:[
+    {id:'men', label:'পুরুষ'}, {id:'women', label:'নারী'}, {id:'kids', label:'শিশু'}
   ]},
-  {id:'fish', label:'মাছের বাজার', img:'', subcats:[
-    {id:'freshwater', label:'মিঠা পানির মাছ'}, {id:'sea', label:'সামুদ্রিক মাছ'}
-  ]},
+  {id:'readyfood', label:'সুফফা রেডি ফুড', img:'', icon:'🍱', subcats:[
+    {id:'combo', label:'কম্বো'}, {id:'snack-box', label:'স্ন্যাক বক্স'}, {id:'meal', label:'মেইল'}
+  ]}
 ];
 
 const PRODUCTS = [
@@ -1450,7 +1455,7 @@ CATEGORIES.forEach(c=>{
   btn.className = 'cat-card' + (c.id==='all' ? ' active' : '');
   btn.dataset.cat = c.id;
   btn.innerHTML = `
-    <span class="cat-icon"><img src="${c.img}" alt="${c.label}" loading="lazy"></span>
+    <span class="cat-icon">${c.img ? `<img src="${c.img}" alt="${c.label}" loading="lazy">` : `<span class="cat-emoji">${c.icon || '•'}</span>`}</span>
     <span class="cat-label">${c.label}</span>
     <span class="cat-count">${toBn(countFor(c.id))} টি পণ্য</span>
   `;
