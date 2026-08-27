@@ -2587,7 +2587,7 @@ function buildAdminProductRow(p){
         <button class="admin-save-btn add-var-btn" type="button" style="padding:7px 10px;">যোগ</button>
       </div>
       <div class="admin-btns" style="margin-top:8px;">
-        <button class="admin-save-btn" type="button">সংরক্ষণ</button>
+        <button class="admin-save-btn save-price-btn" type="button">সংরক্ষণ</button>
         <button class="admin-delete-btn" type="button">🗑 মুছুন</button>
         <span class="admin-saved-tag">✓ সংরক্ষিত হয়েছে</span>
       </div>
@@ -2595,7 +2595,7 @@ function buildAdminProductRow(p){
   `;
   const priceInput = row.querySelector('.price-input');
   const stockInput = row.querySelector('.stock-input');
-  const saveBtn = row.querySelector('.admin-save-btn');
+  const saveBtn = row.querySelector('.save-price-btn');
   const deleteBtn = row.querySelector('.admin-delete-btn');
   const savedTag = row.querySelector('.admin-saved-tag');
   const varListEl = row.querySelector('.admin-var-list');
