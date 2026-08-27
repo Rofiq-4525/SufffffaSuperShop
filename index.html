@@ -236,6 +236,21 @@
     padding:2px 7px; border-radius:999px;
   }
 
+  @media (max-width: 480px){
+    .cat-section{ padding-top:12px; }
+    .cat-row{ gap:8px; padding:4px 10px 8px; }
+    .cat-card{
+      width: calc((100% - 24px) / 4);
+      min-width:72px;
+      padding:8px 4px 8px;
+      gap:5px;
+    }
+    .cat-card .cat-icon{ width:36px; height:36px; border-radius:9px; }
+    .cat-card .cat-icon .cat-emoji{ font-size:18px; }
+    .cat-card .cat-label{ font-size:10px; }
+    .cat-card .cat-count{ font-size:8px; padding:2px 5px; }
+  }
+
   /* ---------- Ferdo (list) section ---------- */
   .ferdo-wrap{ max-width:760px; margin:8px auto 140px; padding:0 14px; }
   .ferdo-head{
