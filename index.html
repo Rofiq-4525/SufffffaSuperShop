@@ -182,22 +182,21 @@
     position:relative; max-width:1100px; margin:0 auto; padding:0 16px 16px;
   }
   .banner-viewport{
-    position:relative; width:100%; overflow:hidden; border-radius:6px; box-shadow:var(--shadow);
+    position:relative; width:100%; overflow:hidden; border-radius:16px; box-shadow:var(--shadow);
     background:var(--cream-2);
     line-height:0;
   }
- .banner-slide{
-  position:absolute; inset:0; opacity:1; pointer-events:none;
-  transform:translateX(100%);
-  transition:transform 0.6s ease;
-}
-.banner-slide.active{ transform:translateX(0); pointer-events:auto; z-index:1; }
+  .banner-slide,
+  .banner-slide.active{
+    position:relative; inset:auto; opacity:1; pointer-events:auto;
+    display:block;
+  }
   .banner-img{
     width:100%;
     height:auto;
     display:block;
     object-fit:cover;
-    border-radius:6px;
+    border-radius:16px;
     background:var(--cream-2);
   }
 
@@ -772,7 +771,7 @@
 <!-- HOME PAGE BANNER -->
 <div class="banner-wrap">
   <div class="banner-viewport" id="bannerViewport">
-    <img class="banner-img" id="homeBannerImg" src="banner 2" alt="সুফ্ফা সুপারশপ ব্যানার" loading="lazy" onerror="this.style.display='none'">
+    <img class="banner-img" id="homeBannerImg" src="banner 2.jpg" alt="সুফ্ফা সুপারশপ ব্যানার" loading="lazy" onerror="this.style.display='none'">
   </div>
 </div>
 
@@ -933,11 +932,7 @@
       <button class="admin-delete-btn" id="clearAllOrdersBtn" type="button" style="width:100%; margin-top:10px; padding:9px;">🗑 সব অর্ডার মুছুন</button>
     </div>
     <div class="admin-note">
-      এখানে ক্যাটাগরি ও পণ্যের ছবি, মূল্য ও স্টক বদলাতে পারবেন, নতুন পণ্য যোগ করতে পারবেন, অথবা যেকোনো পণ্য মুছে ফেলতে পারবেন। পরিবর্তন এই ব্রাউজারে সংরক্ষিত থাকবে।
-    </div>
-    <div class="form-card">
-      <h3>ক্যাটাগরি ছবি</h3>
-      <div id="adminCatList"></div>
+      এখানে পণ্যের নাম, মূল্য ও স্টক বদলাতে পারবেন, নতুন পণ্য যোগ করতে পারবেন, অথবা যেকোনো পণ্য মুছে ফেলতে পারবেন। ছবি এখন সরাসরি ফোল্ডার থেকে যুক্ত হয়, তাই ছবি ব্যবস্থাপনা এখান থেকে সরিয়ে দেওয়া হয়েছে। পরিবর্তন এই ব্রাউজারে সংরক্ষিত থাকবে।
     </div>
     <div class="form-card">
       <h3>➕ নতুন পণ্য যোগ করুন</h3>
@@ -968,11 +963,8 @@
         </div>
       </div>
       <div class="field">
-        <label>ছবি</label>
-        <input type="text" id="newProdImgUrl" class="admin-url-input" placeholder="ছবির URL পেস্ট করুন" style="margin-bottom:8px;">
-        <label class="admin-upload-btn" style="display:inline-block;">📁 ছবি আপলোড
-          <input type="file" id="newProdImgFile" accept="image/*" hidden>
-        </label>
+        <label>ছবির ফাইলের নাম (ঐচ্ছিক) — ফোল্ডারে রাখা ছবির ফাইলনেম দিন, যেমন: rice-miniket.jpg</label>
+        <input type="text" id="newProdImgUrl" class="admin-url-input" placeholder="যেমন: rice-miniket.jpg">
       </div>
       <div class="field">
         <label>ভ্যারাইটি (ঐচ্ছিক) — যেমন: মধুর ৫ রকম, বা সাবানের বিভিন্ন ব্র্যান্ড</label>
@@ -1042,11 +1034,28 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- ============ FIREBASE (দাম, স্টক, অর্ডার, প্যাকেজ — সব ডিভাইসে শেয়ার্ড রাখার জন্য) ============ -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyAilatPLy1Lnlg3WLCioiwjvLReuSpOfBk",
+    authDomain: "suffasupershop.firebaseapp.com",
+    projectId: "suffasupershop",
+    storageBucket: "suffasupershop.firebasestorage.app",
+    messagingSenderId: "1019545365662",
+    appId: "1:1019545365662:web:58238bc96abd5cc2c99f8f",
+    measurementId: "G-HKVSQHK578"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
+
 <script>
 const bannerFiles = [
-  'banner 2',
-  'banner 3',
-  'banner 4'
+  'banner 2.jpg',
+  'banner 3.png',
+  'banner 4.png'
 ];
 let currentBannerIndex = 0;
 const homeBannerImg = document.getElementById('homeBannerImg');
@@ -1058,7 +1067,7 @@ function rotateHomeBanner(){
   homeBannerImg.alt = 'সুফ্ফা সুপারশপ ব্যানার ' + (currentBannerIndex + 1);
 }
 
-setInterval(rotateHomeBanner, 5000);
+setInterval(rotateHomeBanner, 30000);
 
 /* ============ DATA ============ */
 const CATEGORIES = [
@@ -1624,6 +1633,100 @@ PRODUCTS.forEach(p=>{
 });
 
 const BN_DIGIT = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+
+/* ============ FIREBASE / FIRESTORE SYNC HELPERS ============
+   এই ফাংশনগুলো দাম, স্টক, প্যাকেজ ও অর্ডার সব ডিভাইসে শেয়ার করার জন্য
+   Firestore-এ পড়ে/লেখে। ইন্টারনেট না থাকলে বা কোনো কারণে ব্যর্থ হলে
+   সাইট আগের মতোই localStorage দিয়ে কাজ চালিয়ে যাবে (কোনো ভাঙবে না)। */
+async function fsSaveProduct(id, data){
+  try{ await db.collection('products').doc(String(id)).set(data, {merge:true}); }
+  catch(e){ console.error('Firestore product save failed', e); }
+}
+async function fsDeleteProduct(id){
+  try{
+    await db.collection('deletedProducts').doc(String(id)).set({deleted:true});
+    await db.collection('products').doc(String(id)).delete();
+  }catch(e){ console.error('Firestore product delete failed', e); }
+}
+async function fsSavePackage(pkg){
+  try{ await db.collection('packages').doc(String(pkg.id)).set(pkg); }
+  catch(e){ console.error('Firestore package save failed', e); }
+}
+async function fsDeletePackage(id){
+  try{ await db.collection('packages').doc(String(id)).delete(); }
+  catch(e){ console.error('Firestore package delete failed', e); }
+}
+async function fsSaveOrder(order){
+  try{ await db.collection('orders').doc(order.id).set(order); }
+  catch(e){ console.error('Firestore order save failed', e); }
+}
+async function fsUpdateOrderStatus(id, status){
+  try{ await db.collection('orders').doc(id).update({status}); }
+  catch(e){ console.error('Firestore order status update failed', e); }
+}
+async function fsDeleteOrder(id){
+  try{ await db.collection('orders').doc(id).delete(); }
+  catch(e){ console.error('Firestore order delete failed', e); }
+}
+async function fsClearAllOrders(){
+  try{
+    const snap = await db.collection('orders').get();
+    const batch = db.batch();
+    snap.forEach(doc=> batch.delete(doc.ref));
+    await batch.commit();
+  }catch(e){ console.error('Firestore clear orders failed', e); }
+}
+
+/* পেজ লোড হওয়ার সময় Firestore থেকে দাম/স্টক/প্যাকেজ টেনে এনে সাইটে বসিয়ে দেয়,
+   যাতে যেকোনো ডিভাইস থেকে এডমিন যা বদলান তা সবাই দেখতে পায়। */
+async function loadCloudData(){
+  try{
+    // ১) পণ্যের দাম/স্টক/ভ্যারাইটি ওভাররাইড + এডমিন-যোগ করা নতুন পণ্য
+    const prodSnap = await db.collection('products').get();
+    prodSnap.forEach(doc=>{
+      const data = doc.data();
+      const idNum = isNaN(doc.id) ? doc.id : Number(doc.id);
+      const existing = PRODUCTS.find(p=>p.id===idNum);
+      if(existing){
+        if(data.price != null) existing.price = Number(data.price);
+        if(data.stock != null) existing.stock = Number(data.stock);
+        if(Array.isArray(data.variants)) existing.variants = data.variants;
+      }else if(data.isCustom){
+        PRODUCTS.push({
+          id: idNum, name:data.name, unit:data.unit, price:Number(data.price)||0,
+          stock:Number(data.stock)||0, cat:data.cat, sub:data.sub, img:data.img||'',
+          variants: Array.isArray(data.variants) && data.variants.length ? data.variants : undefined
+        });
+      }
+    });
+
+    // ২) মুছে ফেলা পণ্য (যেকোনো ডিভাইস থেকে ডিলিট করা হলে)
+    const delSnap = await db.collection('deletedProducts').get();
+    delSnap.forEach(doc=>{
+      const idNum = isNaN(doc.id) ? doc.id : Number(doc.id);
+      const idx = PRODUCTS.findIndex(p=>p.id===idNum);
+      if(idx>-1) PRODUCTS.splice(idx,1);
+    });
+
+    // ৩) প্যাকেজসমূহ
+    const pkgSnap = await db.collection('packages').get();
+    if(!pkgSnap.empty){
+      PACKAGES.length = 0;
+      pkgSnap.forEach(doc=>{
+        const d = doc.data();
+        PACKAGES.push({ id: doc.id, name:d.name, emoji:d.emoji, discount:d.discount, items:d.items||[] });
+      });
+    }
+
+    // সাইট নতুন তথ্য দিয়ে আবার আঁকা হচ্ছে
+    refreshCatCounts();
+    renderPackagePills();
+    renderFerdo();
+  }catch(e){
+    console.error('Firestore থেকে তথ্য আনতে সমস্যা হয়েছে, স্থানীয় তথ্য দেখানো হচ্ছে', e);
+  }
+}
+
 function toBn(num){
   return String(num).split('').map(ch => /[0-9]/.test(ch) ? BN_DIGIT[+ch] : ch).join('');
 }
@@ -2043,6 +2146,7 @@ pkgAddAllBtn.addEventListener('click', ()=>{
 
 renderPackagePills();
 renderFerdo();
+loadCloudData();
 
 /* ============ SEARCH ============ */
 const searchInput = document.getElementById('searchInput');
@@ -2159,6 +2263,7 @@ document.getElementById('confirmOrderBtn').addEventListener('click', ()=>{
     createdAt: new Date().toISOString()
   };
   addOrder(order);
+  fsSaveOrder(order);
 
   cart = {};
   updateCartBar();
@@ -2271,7 +2376,6 @@ function generatePDF(data){
 
 /* ============ ADMIN PANEL ============ */
 const adminOverlay = document.getElementById('adminOverlay');
-const adminCatList = document.getElementById('adminCatList');
 const adminProdList = document.getElementById('adminProdList');
 
 /* ---- Admin password lock ----
@@ -2374,21 +2478,6 @@ function refreshNewProdSubOptions(){
 newProdCatSel.addEventListener('change', refreshNewProdSubOptions);
 refreshNewProdSubOptions();
 
-let newProdImgData = '';
-document.getElementById('newProdImgFile').addEventListener('change', function(){
-  const file = this.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ()=>{
-    newProdImgData = reader.result;
-    document.getElementById('newProdImgUrl').value = '';
-  };
-  reader.readAsDataURL(file);
-});
-document.getElementById('newProdImgUrl').addEventListener('input', function(){
-  if(this.value.trim()) newProdImgData = '';
-});
-
 /* ---- Variant builder for new product ---- */
 let newProdVariants = [];
 function renderNewProdVarList(){
@@ -2436,7 +2525,7 @@ document.getElementById('addProductBtn').addEventListener('click', ()=>{
   const price = Number(document.getElementById('newProdPrice').value);
   const stock = Number(document.getElementById('newProdStock').value);
   const urlVal = document.getElementById('newProdImgUrl').value.trim();
-  const img = newProdImgData || urlVal || 'https://loremflickr.com/200/200/grocery';
+  const img = urlVal || 'https://loremflickr.com/200/200/grocery';
 
   if(!name){ showToast('পণ্যের নাম দিন'); return; }
   if(!unit){ showToast('একক দিন'); return; }
@@ -2452,6 +2541,10 @@ document.getElementById('addProductBtn').addEventListener('click', ()=>{
   const custom = loadCustomProducts();
   custom.push(newProduct);
   saveCustomProducts(custom);
+  fsSaveProduct(newProduct.id, {
+    isCustom:true, name, unit, price, stock, cat, sub, img,
+    variants: newProdVariants.length ? newProdVariants.map(v=>({...v})) : []
+  });
 
   // reset form
   document.getElementById('newProdName').value = '';
@@ -2459,8 +2552,6 @@ document.getElementById('addProductBtn').addEventListener('click', ()=>{
   document.getElementById('newProdPrice').value = '';
   document.getElementById('newProdStock').value = '50';
   document.getElementById('newProdImgUrl').value = '';
-  document.getElementById('newProdImgFile').value = '';
-  newProdImgData = '';
   newProdVariants = [];
   renderNewProdVarList();
   refreshNewProdSubOptions();
@@ -2470,76 +2561,13 @@ document.getElementById('addProductBtn').addEventListener('click', ()=>{
   showToast(`${name} যোগ করা হয়েছে`);
 });
 
-function buildAdminRow(type, item, label, currentImg){
-  const row = document.createElement('div');
-  row.className = 'admin-img-row';
-  row.innerHTML = `
-    <img class="admin-thumb" src="${currentImg}" alt="${label}">
-    <div class="admin-fields">
-      <div class="admin-name">${label}</div>
-      <input type="text" class="admin-url-input" placeholder="ছবির URL পেস্ট করুন" value="">
-      <div class="admin-btns">
-        <label class="admin-upload-btn">📁 ছবি আপলোড
-          <input type="file" accept="image/*" hidden>
-        </label>
-        <button class="admin-save-btn" type="button">সংরক্ষণ</button>
-        <span class="admin-saved-tag">✓ সংরক্ষিত হয়েছে</span>
-      </div>
-    </div>
-  `;
-  const thumb = row.querySelector('.admin-thumb');
-  const urlInput = row.querySelector('.admin-url-input');
-  const fileInput = row.querySelector('input[type=file]');
-  const saveBtn = row.querySelector('.admin-save-btn');
-  const savedTag = row.querySelector('.admin-saved-tag');
-  let pendingImg = null;
-
-  fileInput.addEventListener('change', ()=>{
-    const file = fileInput.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ()=>{
-      pendingImg = reader.result;
-      thumb.src = pendingImg;
-      urlInput.value = '';
-    };
-    reader.readAsDataURL(file);
-  });
-  urlInput.addEventListener('input', ()=>{
-    if(urlInput.value.trim()){
-      pendingImg = urlInput.value.trim();
-      thumb.src = pendingImg;
-    }
-  });
-  saveBtn.addEventListener('click', ()=>{
-    if(!pendingImg){ showToast('আগে একটি ছবি আপলোড করুন বা URL দিন'); return; }
-    imageOverrides[type][item.id] = pendingImg;
-    saveOverridesToStorage(imageOverrides);
-    item.img = pendingImg;
-    savedTag.classList.add('show');
-    setTimeout(()=> savedTag.classList.remove('show'), 1800);
-    // refresh visible parts of the site
-    [...catRow.children].forEach((ch,i)=>{
-      if(CATEGORIES[i] && CATEGORIES[i].id===item.id && type==='cat'){
-        const img = ch.querySelector('.cat-icon img');
-        if(img) img.src = pendingImg;
-      }
-    });
-    renderFerdo();
-    showToast('ছবি সংরক্ষণ হয়েছে');
-  });
-  return row;
-}
-
 function buildAdminProductRow(p){
   if(!Array.isArray(p.variants)) p.variants = [];
   const row = document.createElement('div');
   row.className = 'admin-img-row';
   row.innerHTML = `
-    <img class="admin-thumb" src="${p.img}" alt="${p.name}">
     <div class="admin-fields">
       <div class="admin-name">${p.name} (${p.unit})</div>
-      <input type="text" class="admin-url-input" placeholder="ছবির URL পেস্ট করুন" value="">
       <div class="admin-numrow">
         <div class="admin-num-field">
           <span class="lbl">মূল্য (৳)</span>
@@ -2559,18 +2587,12 @@ function buildAdminProductRow(p){
         <button class="admin-save-btn add-var-btn" type="button" style="padding:7px 10px;">যোগ</button>
       </div>
       <div class="admin-btns" style="margin-top:8px;">
-        <label class="admin-upload-btn">📁 ছবি আপলোড
-          <input type="file" accept="image/*" hidden>
-        </label>
         <button class="admin-save-btn" type="button">সংরক্ষণ</button>
         <button class="admin-delete-btn" type="button">🗑 মুছুন</button>
         <span class="admin-saved-tag">✓ সংরক্ষিত হয়েছে</span>
       </div>
     </div>
   `;
-  const thumb = row.querySelector('.admin-thumb');
-  const urlInput = row.querySelector('.admin-url-input');
-  const fileInput = row.querySelector('input[type=file]');
   const priceInput = row.querySelector('.price-input');
   const stockInput = row.querySelector('.stock-input');
   const saveBtn = row.querySelector('.admin-save-btn');
@@ -2629,24 +2651,11 @@ function buildAdminProductRow(p){
     Object.keys(variantQtyDraft).forEach(k=>{ if(k.startsWith(`${p.id}_`)) delete variantQtyDraft[k]; });
     if(imageOverrides.prod[p.id]) delete imageOverrides.prod[p.id];
     saveOverridesToStorage(imageOverrides);
+    fsDeleteProduct(p.id);
     row.remove();
     renderFerdo();
     updateCartBar();
     showToast(`${p.name} মুছে ফেলা হয়েছে`);
-  });
-
-  fileInput.addEventListener('change', ()=>{
-    const file = fileInput.files[0];
-    if(!file) return;
-    const reader = new FileReader();
-    reader.onload = ()=>{
-      thumb.src = reader.result;
-      urlInput.value = '';
-    };
-    reader.readAsDataURL(file);
-  });
-  urlInput.addEventListener('input', ()=>{
-    if(urlInput.value.trim()) thumb.src = urlInput.value.trim();
   });
 
   saveBtn.addEventListener('click', ()=>{
@@ -2667,15 +2676,18 @@ function buildAdminProductRow(p){
       if(!isNaN(st) && st >= 0) p.variants[idx].stock = st;
     });
 
-    p.img = thumb.src;
     p.price = priceVal;
     p.stock = stockVal;
 
     imageOverrides.prod[p.id] = {
-      img: p.img, price: p.price, stock: p.stock,
+      price: p.price, stock: p.stock,
       variants: p.variants.length ? p.variants.map(v=>({...v})) : undefined
     };
     saveOverridesToStorage(imageOverrides);
+    fsSaveProduct(p.id, {
+      price: p.price, stock: p.stock,
+      variants: p.variants.length ? p.variants.map(v=>({...v})) : []
+    });
 
     // also keep admin-added custom products' saved copy in sync
     const custom = loadCustomProducts();
@@ -2773,6 +2785,7 @@ function buildAdminPackageRow(pkg){
     const idx = PACKAGES.findIndex(p=>p.id===pkg.id);
     if(idx > -1) PACKAGES.splice(idx,1);
     savePackages();
+    fsDeletePackage(pkg.id);
     if(activePackage === pkg.id) activePackage = null;
     renderAdminPackages();
     renderPackagePills();
@@ -2795,6 +2808,7 @@ function buildAdminPackageRow(pkg){
     pkg.emoji = emojiVal;
     pkg.discount = discountVal/100;
     savePackages();
+    fsSavePackage(pkg);
     savedTag.classList.add('show');
     setTimeout(()=> savedTag.classList.remove('show'), 1800);
     renderPackagePills();
@@ -2866,6 +2880,7 @@ document.getElementById('addPackageBtn').addEventListener('click', ()=>{
   const newPkg = { id:'pkg_'+Date.now(), name, emoji, discount: discount/100, items: newPkgItems.map(it=>({...it})) };
   PACKAGES.push(newPkg);
   savePackages();
+  fsSavePackage(newPkg);
 
   document.getElementById('newPkgName').value = '';
   document.getElementById('newPkgEmoji').value = '🎁';
@@ -2919,19 +2934,20 @@ function buildOrderCard(order, orders){
     const idx = orders.findIndex(o=>o.id===order.id);
     if(idx>-1) orders[idx] = order;
     saveOrdersToStorage(orders);
+    fsUpdateOrderStatus(order.id, order.status);
     showToast('অর্ডারের অবস্থা আপডেট হয়েছে');
   });
   card.querySelector('.order-delete-btn').addEventListener('click', ()=>{
     if(!confirm(`${order.name}-এর অর্ডারটি মুছে ফেলতে চান?`)) return;
     const updated = orders.filter(o=>o.id!==order.id);
     saveOrdersToStorage(updated);
-    renderAdminOrders();
+    fsDeleteOrder(order.id);
+    renderOrdersList(updated);
     showToast('অর্ডার মুছে ফেলা হয়েছে');
   });
   return card;
 }
-function renderAdminOrders(){
-  const orders = loadOrders();
+function renderOrdersList(orders){
   const listEl = document.getElementById('adminOrdersList');
   const countTag = document.getElementById('orderCountTag');
   countTag.textContent = orders.length ? `${toBn(orders.length)}টি` : '';
@@ -2944,19 +2960,30 @@ function renderAdminOrders(){
     listEl.appendChild(buildOrderCard(order, orders));
   });
 }
+function renderAdminOrders(){
+  // প্রথমে স্থানীয় (ক্যাশ করা) তালিকা দেখানো হয়, দ্রুত দেখানোর জন্য
+  const localOrders = loadOrders();
+  renderOrdersList(localOrders);
+  // তারপর Firestore থেকে সব ডিভাইসের অর্ডার টেনে এনে আপডেট করা হয়
+  db.collection('orders').get().then(snap=>{
+    const cloudOrders = snap.docs.map(d=>d.data());
+    cloudOrders.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
+    if(cloudOrders.length){
+      saveOrdersToStorage(cloudOrders);
+      renderOrdersList(cloudOrders);
+    }
+  }).catch(e=> console.error('Firestore থেকে অর্ডার আনতে সমস্যা হয়েছে', e));
+}
 document.getElementById('clearAllOrdersBtn').addEventListener('click', ()=>{
   if(!confirm('সব অর্ডার স্থায়ীভাবে মুছে ফেলতে চান? এই কাজটি ফেরানো যাবে না।')) return;
   saveOrdersToStorage([]);
-  renderAdminOrders();
+  fsClearAllOrders();
+  renderOrdersList([]);
   showToast('সব অর্ডার মুছে ফেলা হয়েছে');
 });
 
 function renderAdmin(){
   renderAdminOrders();
-  adminCatList.innerHTML = '';
-  CATEGORIES.filter(c=>c.id!=='all').forEach(c=>{
-    adminCatList.appendChild(buildAdminRow('cat', c, c.label, c.img));
-  });
   adminProdList.innerHTML = '';
   PRODUCTS.forEach(p=>{
     adminProdList.appendChild(buildAdminProductRow(p));
