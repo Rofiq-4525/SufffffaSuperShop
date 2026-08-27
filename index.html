@@ -179,15 +179,23 @@
 
   /* ---------- Banner ---------- */
   .banner-wrap{
-    max-width:1100px; margin:0 auto; padding:0 16px 16px;
+    position:relative; max-width:1100px; margin:0 auto; padding:0 16px 16px;
   }
+  .banner-viewport{
+    position:relative; width:100%; overflow:hidden; border-radius:16px; box-shadow:var(--shadow);
+    background:var(--cream-2);
+  }
+  .banner-slide{
+    position:absolute; inset:0; opacity:0; pointer-events:none;
+    transition:opacity 0.6s ease;
+  }
+  .banner-slide.active{ opacity:1; pointer-events:auto; }
   .banner-img{
     width:100%;
     height:auto;
     object-fit:contain;
     display:block;
     border-radius:16px;
-    box-shadow:var(--shadow);
     background:var(--cream-2);
   }
 
@@ -759,9 +767,19 @@
   </div>
 </div>
 
-<!-- HOME PAGE BANNER 2 -->
+<!-- HOME PAGE BANNER ROTATOR -->
 <div class="banner-wrap">
-  <img class="banner-img" src="banner 2" alt="সুফ্ফা সুপারশপ ব্যানার ২" loading="lazy" onerror="this.style.display='none'">
+  <div class="banner-viewport" id="bannerViewport">
+    <div class="banner-slide active">
+      <img class="banner-img" src="banner 2" alt="সুফ্ফা সুপারশপ ব্যানার ১" loading="lazy" onerror="this.style.display='none'">
+    </div>
+    <div class="banner-slide">
+      <img class="banner-img" src="banner 3" alt="সুফ্ফা সুপারশপ ব্যানার ২" loading="lazy" onerror="this.style.display='none'">
+    </div>
+    <div class="banner-slide">
+      <img class="banner-img" src="banner 4" alt="সুফ্ফা সুপারশপ ব্যানার ৩" loading="lazy" onerror="this.style.display='none'">
+    </div>
+  </div>
 </div>
 
 <!-- CATEGORY ROW -->
@@ -1031,6 +1049,21 @@
 <div class="toast" id="toast"></div>
 
 <script>
+const homeBannerSlides = Array.from(document.querySelectorAll('.banner-slide'));
+let currentBannerIndex = 0;
+
+function rotateHomeBanner(){
+  if (!homeBannerSlides.length) return;
+  const nextIndex = (currentBannerIndex + 1) % homeBannerSlides.length;
+  homeBannerSlides[currentBannerIndex].classList.remove('active');
+  homeBannerSlides[nextIndex].classList.add('active');
+  currentBannerIndex = nextIndex;
+}
+
+if (homeBannerSlides.length > 1) {
+  setInterval(rotateHomeBanner, 30000);
+}
+
 /* ============ DATA ============ */
 const CATEGORIES = [
   {id:'all', label:'সব', img:'', icon:'🏠', subcats:[]},
@@ -2269,10 +2302,24 @@ function openAdminPanel(){
   }catch(e){ /* ignore */ }
 }
 
-document.getElementById('footerAdminBtn').addEventListener('click', openAdminPanel);
-document.getElementById('menuAdminBtn').addEventListener('click', ()=>{
+function closeMenuDropdown(){
   const menuWrap = document.querySelector('.menu-wrap');
   if (menuWrap) menuWrap.removeAttribute('open');
+}
+
+document.addEventListener('click', (event)=>{
+  const menuWrap = document.querySelector('.menu-wrap');
+  if(!menuWrap) return;
+  if(!menuWrap.contains(event.target)) closeMenuDropdown();
+});
+
+document.addEventListener('keydown', (event)=>{
+  if(event.key === 'Escape') closeMenuDropdown();
+});
+
+document.getElementById('footerAdminBtn').addEventListener('click', openAdminPanel);
+document.getElementById('menuAdminBtn').addEventListener('click', ()=>{
+  closeMenuDropdown();
   openAdminPanel();
 });
 
