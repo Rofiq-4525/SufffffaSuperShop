@@ -284,6 +284,10 @@
   }
   .ferdo-head h1{ font-family:'Tiro Bangla',serif; font-size:20px; color:var(--pine); margin:0 0 2px;}
   .ferdo-head p{ font-size:11.5px; color:var(--leaf); margin:0; font-weight:600;}
+  .ferdo-head::after{
+    content:''; display:block; width:44px; height:3px; margin:10px auto 0;
+    background:var(--mustard); border-radius:999px;
+  }
 
   @media (max-width: 480px){
     .ferdo-head h1{ font-size:18px; }
@@ -318,6 +322,7 @@
     margin-top:16px;
     position:relative;
     padding-top:6px;
+    border:1px solid rgba(218,213,200,0.6);
   }
   .torn-edge{
     height:16px;
@@ -333,15 +338,23 @@
     -webkit-mask-size:20px 16px; mask-size:20px 16px;
     -webkit-mask-repeat:repeat-x; mask-repeat:repeat-x;
   }
-  .ferdo-list{ padding:6px 18px 18px; }
+  .ferdo-list{ padding:6px 12px 18px; }
   .ferdo-item{ border-bottom:1.5px dashed var(--paper-line); }
   .ferdo-item:last-child{ border-bottom:none; }
+  .ferdo-item:nth-child(even) .ferdo-row{ background:rgba(200,155,92,0.055); }
   .ferdo-row{
     display:flex; align-items:center; gap:14px;
-    padding:16px 0;
+    padding:14px 8px;
+    border-radius:12px;
+    transition:background-color .2s ease;
   }
   .ferdo-row.has-variants{ cursor:pointer; user-select:none; }
   .ferdo-row.has-variants:active{ opacity:0.85; }
+  @media (hover:hover){
+    .ferdo-row:hover{ background:var(--cream-2); }
+    .ferdo-row:hover .prod-thumb{ transform:rotate(-2deg) scale(1.05); border-color:var(--mustard); }
+    .ferdo-row.has-variants:hover .variant-chevron{ transform:scale(1.15); }
+  }
   .variant-chevron{
     font-size:20px; color:var(--pine); font-weight:700;
     transition:transform .25s; flex:0 0 auto;
@@ -367,6 +380,7 @@
     width:46px; height:46px; border-radius:10px; flex:0 0 auto;
     overflow:hidden; background:var(--cream-2);
     display:flex; align-items:center; justify-content:center;
+    border:1.5px solid #fff; box-shadow:0 2px 6px rgba(18,60,102,0.1);
   }
   .variant-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
   .variant-thumb .variant-emoji{ font-size:22px; }
@@ -378,9 +392,11 @@
   }
   .prod-thumb{
     width:84px; height:84px; border-radius:16px; flex:0 0 auto;
-    overflow:hidden; background:var(--cream-2);
-    box-shadow:inset 0 0 0 1px rgba(0,0,0,0.06);
+    overflow:hidden; background:linear-gradient(160deg, var(--cream-2), #fff);
+    box-shadow:0 3px 10px rgba(18,60,102,0.10), inset 0 0 0 1px rgba(0,0,0,0.04);
     display:flex; align-items:center; justify-content:center;
+    border:2px solid #fff;
+    transition:transform .25s ease, border-color .25s ease;
   }
   .prod-thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
   .prod-thumb .prod-emoji,
@@ -389,9 +405,12 @@
   }
   .prod-info{ flex:1 1 auto; min-width:0; }
   .prod-info .name{ font-weight:700; font-size:15.5px; color:var(--ink); }
-  .prod-info .unit{ font-size:12px; color:#8a8272; margin-top:2px; }
+  .prod-info .unit{
+    font-size:10.5px; color:#a89e88; margin-top:3px;
+    font-weight:700; letter-spacing:0.4px; text-transform:uppercase;
+  }
   .prod-right{
-    display:flex; flex-direction:column; align-items:flex-end; gap:8px;
+    display:flex; flex-direction:column; align-items:flex-end; gap:9px;
     flex:0 0 auto;
   }
   .qty-stepper{
@@ -404,27 +423,44 @@
   }
   .qty-stepper .qty-val{ min-width:20px; text-align:center; font-weight:700; font-size:13px; }
   .prod-price{
-    font-weight:800; color:var(--sindoor); font-size:17px;
-    white-space:nowrap; text-align:right; padding:2px 4px;
-    letter-spacing:0.2px;
+    position:relative;
+    display:inline-flex; align-items:center;
+    font-family:'Tiro Bangla', serif;
+    font-weight:700; font-size:14.5px; color:var(--sindoor);
+    white-space:nowrap; letter-spacing:0.2px;
+    background:var(--mustard);
+    padding:6px 13px 6px 17px;
+    border-radius:3px 8px 8px 3px;
+    clip-path: polygon(11px 0%, 100% 0%, 100% 100%, 11px 100%, 0% 50%);
+    box-shadow:0 3px 8px rgba(200,155,92,0.35);
+  }
+  .prod-price::before{
+    content:''; position:absolute; left:5px; top:50%; transform:translateY(-50%);
+    width:3.5px; height:3.5px; border-radius:50%; background:rgba(255,255,255,0.85);
   }
   .add-btn{
     flex:0 0 auto; width:34px; height:34px; border-radius:50%; border:none;
     background:var(--leaf); color:#fff; font-size:16px;
     display:flex; align-items:center; justify-content:center;
     box-shadow:0 3px 8px rgba(15,107,46,0.35);
-    transition:transform .15s;
+    transition:transform .15s, box-shadow .15s;
   }
   .add-btn.added{ background:var(--pine); }
   .add-btn:active{ transform:scale(0.88); }
   .add-btn:disabled{ background:#c9c4b7; box-shadow:none; cursor:not-allowed; }
+  @media (hover:hover){
+    .add-btn:not(:disabled):hover{ transform:scale(1.1); box-shadow:0 5px 14px rgba(15,107,46,0.45); }
+  }
   .ferdo-row.hidden{ display:none; }
   .ferdo-row.out-of-stock .prod-thumb{ opacity:0.45; filter:grayscale(60%); }
   .ferdo-row.out-of-stock .prod-info .name{ color:#a89e88; }
-  .stock-tag{ font-size:11px; font-weight:700; margin-top:3px; }
-  .stock-tag.ok{ color:var(--leaf); }
-  .stock-tag.low{ color:var(--mustard-dark); }
-  .stock-tag.out{ color:var(--sindoor); }
+  .stock-tag{
+    display:inline-block; font-size:10px; font-weight:800; margin-top:4px;
+    padding:2px 9px; border-radius:999px; letter-spacing:0.2px;
+  }
+  .stock-tag.ok{ color:var(--leaf); background:rgba(15,107,46,0.09); }
+  .stock-tag.low{ color:var(--mustard-dark); background:rgba(166,124,61,0.13); }
+  .stock-tag.out{ color:var(--sindoor); background:rgba(92,53,23,0.09); }
   .qty-stepper button:disabled{ opacity:0.4; cursor:not-allowed; }
 
   /* ---------- Package "add all" button ---------- */
