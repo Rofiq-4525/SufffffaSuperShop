@@ -295,24 +295,68 @@
   }
 
   .subcat-row{
-    display:flex; gap:8px; overflow-x:auto; padding:12px 2px 4px;
+    display:flex; gap:10px; overflow-x:auto; padding:14px 2px 10px;
     scrollbar-width:none;
   }
   .subcat-row::-webkit-scrollbar{ display:none; }
   .subcat-row.empty{ display:none; }
   .subcat-pill{
-    flex:0 0 auto; padding:7px 16px; border-radius:999px;
-    background:#fff; border:1.5px solid var(--paper-line);
-    font-size:12.5px; font-weight:700; color:var(--pine); white-space:nowrap;
+    flex:0 0 auto; padding:10px 20px; border-radius:999px;
+    background:var(--cream-2); border:1.5px solid transparent;
+    font-size:13px; font-weight:800; color:var(--pine-2); white-space:nowrap;
+    letter-spacing:0.15px;
+    box-shadow:0 1px 0 rgba(255,255,255,0.6) inset, 0 3px 8px rgba(13,48,96,0.07);
+    display:flex; align-items:center; gap:7px;
+    transition: background .25s ease, color .25s ease, border-color .25s ease,
+                box-shadow .25s ease, transform .15s ease;
   }
-  .subcat-pill.active{ background:var(--pine); color:#fff; border-color:var(--pine); }
+  .subcat-pill::before{
+    content:''; width:6px; height:6px; border-radius:50%;
+    background:var(--mustard); flex:0 0 auto;
+    transition: background .25s ease, transform .25s ease;
+  }
+  .subcat-pill:active{
+    transform:scale(0.93);
+    background:var(--pine-2); color:#fff;
+    border-color:var(--pine);
+    box-shadow:0 2px 6px rgba(13,48,96,0.3);
+  }
+  .subcat-pill:active::before{ background:#fff; }
+  .subcat-pill.active{
+    background:linear-gradient(135deg, var(--pine-2), var(--pine));
+    color:#fff; border-color:var(--pine);
+    box-shadow:0 5px 14px rgba(13,48,96,0.38), 0 0 0 3px rgba(13,48,96,0.08);
+  }
+  .subcat-pill.active::before{ background:var(--mustard); transform:scale(1.2); }
+  @media (hover:hover){
+    .subcat-pill:not(.active):hover{
+      background:#fff; border-color:var(--pine-2); color:var(--pine);
+      box-shadow:0 4px 11px rgba(13,48,96,0.14);
+    }
+  }
 
   /* ---------- Package pills (inside ferdo) ---------- */
   #packagePillRow .subcat-pill{
-    background:var(--cream-2); border-color:var(--mustard);
+    background:#fff; border-color:var(--mustard);
+    color:var(--mustard-dark);
   }
+  #packagePillRow .subcat-pill::before{ background:var(--leaf); }
   #packagePillRow .subcat-pill.active{
-    background:var(--mustard-dark); color:#fff; border-color:var(--mustard-dark);
+    background:linear-gradient(135deg, var(--mustard), var(--mustard-dark));
+    color:#fff; border-color:var(--mustard-dark);
+    box-shadow:0 5px 14px rgba(166,124,61,0.42), 0 0 0 3px rgba(166,124,61,0.1);
+  }
+  #packagePillRow .subcat-pill.active::before{ background:#fff; }
+  #packagePillRow .subcat-pill:active{
+    background:var(--mustard-dark); color:#fff;
+    border-color:var(--mustard-dark);
+    box-shadow:0 2px 6px rgba(166,124,61,0.35);
+  }
+  #packagePillRow .subcat-pill:active::before{ background:#fff; }
+  @media (hover:hover){
+    #packagePillRow .subcat-pill:not(.active):hover{
+      border-color:var(--mustard-dark); box-shadow:0 4px 11px rgba(166,124,61,0.22);
+    }
   }
 
   .ferdo-paper{
@@ -556,6 +600,11 @@
     display:flex; justify-content:space-between; padding-top:12px; margin-top:4px;
     font-weight:800; font-size:16px; color:var(--pine);
   }
+  .order-id-badge{
+    display:inline-block; background:var(--cream-2); color:var(--sindoor);
+    font-weight:800; font-size:14px; letter-spacing:0.3px;
+    padding:8px 14px; border-radius:10px; margin-bottom:14px;
+  }
   .confirm-actions{
     display:flex; gap:10px; margin-top:18px;
   }
@@ -739,6 +788,7 @@
   .admin-num-input:focus{ outline:none; border-color:var(--leaf); }
   .admin-num-input.stock-input{ color:var(--leaf); }
   .admin-num-input.price-input{ color:var(--sindoor); }
+  .admin-num-input:disabled{ opacity:0.5; background:var(--cream-2); cursor:not-allowed; }
 
   /* ---------- Admin lock modal ---------- */
   .admin-lock-backdrop{
@@ -936,42 +986,56 @@
     <h2>অর্ডার কনফার্ম করুন</h2>
   </div>
   <div class="confirm-body">
-    <div class="form-card">
-      <h3>ডেলিভারি তথ্য</h3>
-      <div class="field" id="f-name">
-        <label>নাম</label>
-        <input type="text" id="inpName" placeholder="আপনার পূর্ণ নাম">
-        <div class="err-msg">অনুগ্রহ করে নাম লিখুন</div>
+    <div id="checkoutFormView">
+      <div class="form-card">
+        <h3>ডেলিভারি তথ্য</h3>
+        <div class="field" id="f-name">
+          <label>নাম</label>
+          <input type="text" id="inpName" placeholder="আপনার পূর্ণ নাম">
+          <div class="err-msg">অনুগ্রহ করে নাম লিখুন</div>
+        </div>
+        <div class="field" id="f-address">
+          <label>ঠিকানা</label>
+          <textarea id="inpAddress" rows="2" placeholder="বাসা/রোড/এলাকা, থানা, জেলা"></textarea>
+          <div class="err-msg">অনুগ্রহ করে ঠিকানা লিখুন</div>
+        </div>
+        <div class="field" id="f-mobile">
+          <label>মোবাইল নম্বর</label>
+          <input type="tel" id="inpMobile" placeholder="01XXXXXXXXX">
+          <div class="err-msg">সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন</div>
+        </div>
       </div>
-      <div class="field" id="f-address">
-        <label>ঠিকানা</label>
-        <textarea id="inpAddress" rows="2" placeholder="বাসা/রোড/এলাকা, থানা, জেলা"></textarea>
-        <div class="err-msg">অনুগ্রহ করে ঠিকানা লিখুন</div>
+
+      <div class="summary-card">
+        <h3>অর্ডার তালিকা</h3>
+        <div id="summaryList"></div>
+        <div class="summary-total">
+          <span>সর্বমোট</span>
+          <span id="summaryTotal">৳ ০</span>
+        </div>
       </div>
-      <div class="field" id="f-mobile">
-        <label>মোবাইল নম্বর</label>
-        <input type="tel" id="inpMobile" placeholder="01XXXXXXXXX">
-        <div class="err-msg">সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন</div>
+
+      <div class="confirm-actions">
+        <button class="order-btn" id="confirmOrderBtn">অর্ডার কনফার্ম করুন</button>
+        <button class="pdf-btn" id="pdfBtn">⬇ PDF</button>
       </div>
     </div>
 
-    <div class="summary-card">
-      <h3>অর্ডার তালিকা</h3>
-      <div id="summaryList"></div>
-      <div class="summary-total">
-        <span>সর্বমোট</span>
-        <span id="summaryTotal">৳ ০</span>
+    <div id="orderSuccessView" style="display:none;">
+      <div class="summary-card">
+        <h3>✅ অর্ডার সম্পন্ন হয়েছে</h3>
+        <div class="order-id-badge">অর্ডার আইডি: <span id="successOrderId"></span></div>
+        <div id="successSummaryList"></div>
+        <div class="summary-total">
+          <span>সর্বমোট</span>
+          <span id="successSummaryTotal">৳ ০</span>
+        </div>
       </div>
+      <button class="quick-message-btn" type="button" id="quickMessageBtn">
+        📲 হোয়াটসঅ্যাপে জানিয়ে দিন
+      </button>
+      <button class="pdf-btn" id="backToShopBtn" style="margin-top:10px;">ফর্দে ফিরে যান</button>
     </div>
-
-    <div class="confirm-actions">
-      <button class="order-btn" id="confirmOrderBtn">অর্ডার কনফার্ম করুন</button>
-      <button class="pdf-btn" id="pdfBtn">⬇ PDF</button>
-    </div>
-
-    <button class="quick-message-btn" type="button" id="quickMessageBtn">
-      দ্রুত ডেলিভারির জন্য আমাদের মেসেজ করে জানিয়ে দিন
-    </button>
   </div>
 </div>
 
@@ -1015,7 +1079,10 @@
         </div>
         <div class="admin-num-field">
           <span class="lbl">স্টক</span>
-          <input type="number" id="newProdStock" class="admin-num-input stock-input" min="0" step="1" value="50">
+          <select id="newProdStock" class="admin-num-input stock-input">
+            <option value="50">মজুদ আছে</option>
+            <option value="0">স্টক নেই</option>
+          </select>
         </div>
       </div>
       <div class="field">
@@ -1027,7 +1094,10 @@
         <div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap;">
           <input type="text" id="newProdVarName" placeholder="ধরনের নাম, যেমন: সুন্দরবন মধু" class="admin-url-input" style="flex:1.6; min-width:140px;">
           <input type="number" id="newProdVarPrice" class="admin-num-input price-input" placeholder="মূল্য" style="flex:0.7; min-width:70px;" min="0" step="1">
-          <input type="number" id="newProdVarStock" class="admin-num-input stock-input" placeholder="স্টক" style="flex:0.6; min-width:60px;" min="0" step="1" value="20">
+          <select id="newProdVarStock" class="admin-num-input stock-input" style="flex:0.6; min-width:100px;">
+            <option value="20">মজুদ আছে</option>
+            <option value="0">স্টক নেই</option>
+          </select>
           <button class="admin-save-btn" id="newProdVarAddBtn" type="button">যোগ</button>
         </div>
         <div id="newProdVarList"></div>
@@ -1067,9 +1137,15 @@
     </div>
     <div class="form-card">
       <h3>পণ্যের তালিকা — ছবি, মূল্য, স্টক ও মুছে ফেলা</h3>
+      <div class="field" style="margin-bottom:10px;">
+        <input type="text" id="adminProdSearch" class="admin-url-input" placeholder="🔍 পণ্যের নাম দিয়ে খুঁজুন..." style="font-size:13.5px; padding:9px 12px;">
+      </div>
+      <div class="field" style="margin-bottom:12px;">
+        <select id="adminProdCatFilter" style="width:100%; border:1.5px solid var(--paper-line); border-radius:8px; padding:9px 12px; font-size:12.5px; font-family:inherit; background:var(--cream); color:var(--ink); font-weight:700;"></select>
+      </div>
+      <div id="adminProdCount" style="font-size:11.5px; color:var(--leaf); font-weight:700; margin-bottom:8px;"></div>
       <div id="adminProdList"></div>
     </div>
-    <button class="pdf-btn" id="adminResetBtn" style="background:var(--sindoor);">🔄 সব কিছু ডিফল্টে ফিরিয়ে দিন</button>
   </div>
 </div>
 
@@ -1129,15 +1205,15 @@ setInterval(rotateHomeBanner, 30000);
 const CATEGORIES = [
   {id:'all', label:'সব', img:'', icon:'🏠', subcats:[]},
   {id:'meat', label:'গোশত বাজার', img:'', icon:'🥩', subcats:[
-    {id:'beef', label:'গোশত'}, {id:'chicken', label:'মুরগি'}, {id:'nihari', label:'নিহারি'},
-    {id:'fat', label:'চর্বি'}, {id:'head', label:'মাথা'}, {id:'tripe', label:'ভুড়ি'}
+    {id:'beef', label:'গরু/খাশি/মহিষ'}, {id:'chicken', label:'মুরগি'}, {id:'nihari', label:'নিহারি'},
+    {id:'fat', label:'চর্বি'}, {id:'tripe', label:'ভূড়ি'}, {id:'head', label:'মাথা'}
   ]},
   {id:'grocery', label:'মুদি বাজার', img:'', icon:'🛒', subcats:[
-    {id:'rice-dal', label:'চাল-ডাল'}, {id:'oil-sugar-tea', label:'তেল-চিনি-চা'},
-    {id:'flour', label:'আটা-ময়দা'}, {id:'pulses', label:'ডাউল'}
+    {id:'rice', label:'চাউল'}, {id:'pulses', label:'ডাউল'}, {id:'oil', label:'তেল'},
+    {id:'flour', label:'আটা-ময়দা'}, {id:'other', label:'অন্যান্য'}
   ]},
   {id:'cosmetic', label:'প্রসাধনী বাজার', img:'', icon:'💄', subcats:[
-    {id:'beauty', label:'সৌন্দর্য'}, {id:'skin', label:'ত্বক'}, {id:'hair', label:'চুল'}
+    {id:'personal', label:'ব্যক্তিগত পরিচ্ছন্নতা'}, {id:'home', label:'হোম ক্লিনার'}
   ]},
   {id:'fish', label:'মাছের বাজার', img:'', icon:'🐟', subcats:[
     {id:'freshwater', label:'মিঠা পানির মাছ'}, {id:'sea', label:'সামুদ্রিক মাছ'}
@@ -1171,220 +1247,220 @@ const CATEGORIES = [
 ];
 
 const PRODUCTS = [
-  {id:1, name:'গরুর গোশত', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'beef', img:'', stock:50},
-  {id:2, name:'খাশির গোশত', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'goat', img:'', stock:50},
-  {id:3, name:'মহিষের গোশত', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'buffalo', img:'', stock:50},
-  {id:4, name:'পোল্ট্রি মুরগি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'chicken', img:'', stock:50},
-  {id:5, name:'সোনালি মুরগি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'sonali', img:'', stock:50},
-  {id:6, name:'দেশি মুরগি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'desi', img:'', stock:50},
-  {id:7, name:'লেয়ার মুরগি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'layer', img:'', stock:50},
-  {id:8, name:'কবুতর', unit:'প্রতি পিস', price:0, cat:'meat', sub:'pigeon', img:'', stock:50},
-  {id:9, name:'গরুর নিহারি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'nihari', img:'', stock:50},
-  {id:10, name:'খাশির নিহারি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'nihari', img:'', stock:50},
-  {id:11, name:'গরুর ভূড়ি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'tripe', img:'', stock:50},
-  {id:12, name:'ছাগলের ভূড়ি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'tripe', img:'', stock:50},
-  {id:13, name:'গরুর মাথা', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'head', img:'', stock:50},
-  {id:14, name:'ছাগলের মাথা', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'head', img:'', stock:50},
-  {id:15, name:'গরুর কলিজা', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'liver', img:'', stock:50},
-  {id:16, name:'মহিষের কলিজা', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'liver', img:'', stock:50},
-  {id:17, name:'গরুর চর্বি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'fat', img:'', stock:50},
-  {id:18, name:'ছাগলের চর্বি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'fat', img:'', stock:50},
-  {id:19, name:'রুই মাছ', unit:'প্রতি কেজি', price:420, cat:'fish', sub:'freshwater', img:'', stock:50},
-  {id:20, name:'কাতলা মাছ', unit:'প্রতি কেজি', price:460, cat:'fish', sub:'freshwater', img:'', stock:50},
-  {id:21, name:'টেংরা মাছ', unit:'প্রতি কেজি', price:540, cat:'fish', sub:'freshwater', img:'', stock:50},
-  {id:22, name:'সাদা মাছ', unit:'প্রতি কেজি', price:610, cat:'fish', sub:'sea', img:'', stock:50},
-  {id:23, name:'ইলিশ', unit:'প্রতি কেজি', price:980, cat:'fish', sub:'sea', img:'', stock:50},
-  {id:24, name:'মাগুর মাছ', unit:'প্রতি কেজি', price:520, cat:'fish', sub:'freshwater', img:'', stock:50},
-  {id:25, name:'শিং মাছ', unit:'প্রতি কেজি', price:570, cat:'fish', sub:'freshwater', img:'', stock:50},
-  {id:26, name:'সামুদ্রিক কাঁকড়া', unit:'প্রতি কেজি', price:760, cat:'fish', sub:'sea', img:'', stock:50},
-  {id:27, name:'সরিষা তেল (ফিল্টার)', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
-  {id:20, name:'সরিষা তেল (ফিল্টার বাদে)', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
-  {id:21, name:'সয়াবিন তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50,
+  {id:1, name:'গরুর গোশত', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'beef', img:'products/1.jpg', stock:50},
+  {id:2, name:'খাশির গোশত', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'beef', img:'products/2.jpg', stock:50},
+  {id:3, name:'মহিষের গোশত', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'beef', img:'products/3.jpg', stock:50},
+  {id:4, name:'পোল্ট্রি মুরগি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'chicken', img:'products/4.jpg', stock:50},
+  {id:5, name:'সোনালি মুরগি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'chicken', img:'products/5.jpg', stock:50},
+  {id:6, name:'দেশি মুরগি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'chicken', img:'products/6.jpg', stock:50},
+  {id:7, name:'লেয়ার মুরগি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'chicken', img:'products/7.jpg', stock:50},
+  {id:8, name:'কবুতর', unit:'প্রতি পিস', price:0, cat:'meat', sub:'chicken', img:'products/8.jpg', stock:50},
+  {id:9, name:'গরুর নিহারি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'nihari', img:'products/9.jpg', stock:50},
+  {id:10, name:'খাশির নিহারি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'nihari', img:'products/10.jpg', stock:50},
+  {id:11, name:'গরুর ভূড়ি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'tripe', img:'products/11.jpg', stock:50},
+  {id:12, name:'ছাগলের ভূড়ি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'tripe', img:'products/12.jpg', stock:50},
+  {id:13, name:'গরুর মাথা', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'head', img:'products/13.jpg', stock:50},
+  {id:14, name:'ছাগলের মাথা', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'head', img:'products/14.jpg', stock:50},
+  {id:15, name:'গরুর কলিজা', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'beef', img:'products/15.jpg', stock:50},
+  {id:16, name:'মহিষের কলিজা', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'beef', img:'products/16.jpg', stock:50},
+  {id:17, name:'গরুর চর্বি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'fat', img:'products/17.jpg', stock:50},
+  {id:18, name:'ছাগলের চর্বি', unit:'প্রতি কেজি', price:0, cat:'meat', sub:'fat', img:'products/18.jpg', stock:50},
+  {id:19, name:'রুই মাছ', unit:'প্রতি কেজি', price:420, cat:'fish', sub:'freshwater', img:'products/19.jpg', stock:50},
+  {id:20, name:'কাতলা মাছ', unit:'প্রতি কেজি', price:460, cat:'fish', sub:'freshwater', img:'products/20.jpg', stock:50},
+  {id:21, name:'টেংরা মাছ', unit:'প্রতি কেজি', price:540, cat:'fish', sub:'freshwater', img:'products/21.jpg', stock:50},
+  {id:22, name:'সাদা মাছ', unit:'প্রতি কেজি', price:610, cat:'fish', sub:'sea', img:'products/22.jpg', stock:50},
+  {id:23, name:'ইলিশ', unit:'প্রতি কেজি', price:980, cat:'fish', sub:'sea', img:'products/23.jpg', stock:50},
+  {id:24, name:'মাগুর মাছ', unit:'প্রতি কেজি', price:520, cat:'fish', sub:'freshwater', img:'products/24.jpg', stock:50},
+  {id:25, name:'শিং মাছ', unit:'প্রতি কেজি', price:570, cat:'fish', sub:'freshwater', img:'products/25.jpg', stock:50},
+  {id:26, name:'সামুদ্রিক কাঁকড়া', unit:'প্রতি কেজি', price:760, cat:'fish', sub:'sea', img:'products/26.jpg', stock:50},
+  {id:27, name:'সরিষা তেল (ফিল্টার)', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil', img:'products/27.jpg', stock:50},
+  {id:20, name:'সরিষা তেল (ফিল্টার বাদে)', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'oil', img:'products/28.jpg', stock:50},
+  {id:21, name:'সয়াবিন তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil', img:'products/29.jpg', stock:50,
     variants:[
       {id:'v21_1', name:'লিটার', price:0, stock:50, img:''},
       {id:'v21_2', name:'কেজি', price:0, stock:50, img:''}
     ]},
-  {id:22, name:'পাম তেল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50,
+  {id:22, name:'পাম তেল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'oil', img:'products/30.jpg', stock:50,
     variants:[
       {id:'v22_1', name:'লিটার', price:0, stock:50, img:''},
       {id:'v22_2', name:'কেজি', price:0, stock:50, img:''}
     ]},
-  {id:23, name:'সুপার তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
-  {id:24, name:'অলিভ ওয়েল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
-  {id:25, name:'নারিকেল তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
-  {id:26, name:'তিলের তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
-  {id:27, name:'কালোজিরা তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil-sugar-tea', img:'', stock:50},
-  {id:28, name:'মিনিকেট চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
-  {id:29, name:'আঠাস চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
-  {id:30, name:'লালস্বর্ন চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
-  {id:31, name:'নাজির শাইল চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
-  {id:32, name:'পাইজাম চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
-  {id:33, name:'বাংলামতি চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
-  {id:34, name:'পাকিস্তানি বাশমতি চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
-  {id:35, name:'ইন্ডিয়ান বাশমতি চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
-  {id:36, name:'পোলাও চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
-  {id:36, name:'লাল চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice-dal', img:'', stock:50},
-  {id:37, name:'দেশি লাল আটা', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'flour', img:'', stock:50},
-  {id:38, name:'সাদা আটা', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'flour', img:'', stock:50},
-  {id:39, name:'ময়দা', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'flour', img:'', stock:50},
-  {id:40, name:'চাউলের আটা', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'flour', img:'', stock:50},
-  {id:41, name:'ঝালের গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
-  {id:42, name:'হলুদের গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
-  {id:43, name:'ধনিয়ার গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
-  {id:44, name:'জিরা গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
-  {id:45, name:'লবণ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
-  {id:46, name:'বীট লবণ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
-  {id:47, name:'পিংক সল্ট', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'', stock:50},
-  {id:48, name:'জিরা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:49, name:'শাহি জিরা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:50, name:'দারুচিনি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:51, name:'দারুচিনি (সেইগন)', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:52, name:'দারুচিনি (সিলং)', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:53, name:'এলাচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:54, name:'শাহী এলাচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:55, name:'কালো গোলমরিচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:56, name:'সাদা গোলমরিচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:57, name:'লবঙ্গ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:58, name:'তেজপাতা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:59, name:'ধনিয়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:60, name:'মৌরি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:61, name:'মেথি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:62, name:'জোয়ান', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:63, name:'পাচফোড়ন', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:64, name:'জয়ফল', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:65, name:'জয়ত্রি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:66, name:'স্টার আনিস', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:67, name:'কাবাব চিনি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:68, name:'পোস্ত দানা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:69, name:'রাধুনি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:70, name:'দেশি সরিষা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:71, name:'মাঘী সরিষা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:72, name:'চুইঝাল', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'', stock:50},
-  {id:73, name:'মশুর ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
-  {id:74, name:'মুগ ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
-  {id:75, name:'কলাই ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
-  {id:76, name:'ছোলা ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
-  {id:77, name:'মটর ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
-  {id:78, name:'খেশারি ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
-  {id:79, name:'আইরি ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
-  {id:80, name:'বক্রম ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'', stock:50},
-  {id:81, name:'সরিষা ফুলের মধু', unit:'প্রতি বোতল (৫০০ গ্রাম)', price:0, cat:'organic', sub:'honey', img:'', stock:50},
-  {id:82, name:'লিচু ফুলের মধু', unit:'প্রতি বোতল (৫০০ গ্রাম)', price:0, cat:'organic', sub:'honey', img:'', stock:50},
-  {id:83, name:'কালোজিরা মধু', unit:'প্রতি বোতল (৫০০ গ্রাম)', price:0, cat:'organic', sub:'honey', img:'', stock:50},
-  {id:84, name:'ঘি (মাখনের)', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'ghee', img:'', stock:50},
-  {id:85, name:'ঘি (সরের)', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'ghee', img:'', stock:50},
-  {id:86, name:'কাজু বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'', stock:50},
-  {id:87, name:'কাজু বাদাম ভাজা', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'', stock:50},
-  {id:88, name:'কাঠ বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'', stock:50},
-  {id:89, name:'আখরোট বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'', stock:50},
-  {id:90, name:'দেশি চিনা বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'', stock:50},
-  {id:91, name:'থাই চিনা বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'', stock:50},
-  {id:92, name:'পেস্তা বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'', stock:50},
-  {id:93, name:'আজোয়া খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
-  {id:94, name:'মরিয়ম খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
-  {id:95, name:'মেডজুল খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
-  {id:96, name:'সুক্কারি খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
-  {id:97, name:'দাবাস খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
-  {id:98, name:'মাবরুম খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
-  {id:99, name:'সাফায়ি খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
-  {id:100, name:'কলমি খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
-  {id:101, name:'লুলু খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
-  {id:102, name:'মাশরুক খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
-  {id:103, name:'ছড়া খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
-  {id:104, name:'খুরমা খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'', stock:50},
-  {id:105, name:'সাদা তিল', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
-  {id:106, name:'কালো তিল', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
-  {id:107, name:'চিয়া সীড', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
-  {id:108, name:'সূর্যমুখী বীজ', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
-  {id:109, name:'পামকিন সীড', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
-  {id:110, name:'তরমুজ বীজ', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
-  {id:111, name:'কালোজিরা', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
-  {id:112, name:'তিশি/মষনী', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
-  {id:113, name:'তুকমা দানা', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'', stock:50},
-  {id:114, name:'তাল মিসরি', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'', stock:50},
-  {id:115, name:'মিসরি', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'', stock:50},
-  {id:116, name:'লাল চিনি', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'', stock:50},
-  {id:117, name:'সাদা চিনি', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'', stock:50},
-  {id:118, name:'খেজুরের গুড়', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'', stock:50},
-  {id:119, name:'আখের গুড়', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'', stock:50},
-  {id:120, name:'গোল্ডেন সিডলেস কিসমিস', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'raisins', img:'', stock:50},
-  {id:121, name:'গোল্ডেন কিসমিস (সীডসহ)', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'raisins', img:'', stock:50},
-  {id:122, name:'কালো কিসমিস', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'raisins', img:'', stock:50},
-  {id:123, name:'জর্দা আলু বোখরা', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'', stock:50},
-  {id:124, name:'লাল সাকুরা পাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'', stock:50},
-  {id:125, name:'কালো সাকুরা পাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'', stock:50},
-  {id:126, name:'এপ্রিকট', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'', stock:50},
-  {id:127, name:'তীনফল', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'', stock:50},
-  {id:128, name:'জায়তুন', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'', stock:50},
-  {id:129, name:'ব্ল্যাক গার্লিক / কালো রসুন', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'garlic', img:'', stock:50},
-  {id:130, name:'আম', unit:'প্রতি কেজি', price:90, cat:'fruit', sub:'fresh-fruit', img:'', stock:50},
-  {id:131, name:'কাঁঠাল', unit:'প্রতি কেজি', price:115, cat:'fruit', sub:'fresh-fruit', img:'', stock:50},
-  {id:132, name:'লিচু', unit:'প্রতি কেজি', price:180, cat:'fruit', sub:'fresh-fruit', img:'', stock:50},
-  {id:133, name:'কমলা', unit:'প্রতি কেজি', price:110, cat:'fruit', sub:'fresh-fruit', img:'', stock:50},
-  {id:134, name:'লেবু', unit:'প্রতি কেজি', price:60, cat:'fruit', sub:'fresh-fruit', img:'', stock:50},
-  {id:135, name:'নাশপাতি', unit:'প্রতি কেজি', price:120, cat:'fruit', sub:'fresh-fruit', img:'', stock:50},
-  {id:136, name:'কলা', unit:'প্রতি কেজি', price:68, cat:'fruit', sub:'fresh-fruit', img:'', stock:50},
-  {id:137, name:'আঙুর', unit:'প্রতি কেজি', price:150, cat:'fruit', sub:'fresh-fruit', img:'', stock:50},
-  {id:138, name:'পেয়ারা', unit:'প্রতি কেজি', price:75, cat:'fruit', sub:'fresh-fruit', img:'', stock:50},
-  {id:139, name:'শশা', unit:'প্রতি কেজি', price:35, cat:'vegetable', sub:'seasonal', img:'', stock:50},
-  {id:131, name:'কুমড়া', unit:'প্রতি কেজি', price:42, cat:'vegetable', sub:'seasonal', img:'', stock:50},
-  {id:132, name:'বেগুন', unit:'প্রতি কেজি', price:48, cat:'vegetable', sub:'seasonal', img:'', stock:50},
-  {id:133, name:'টমেটো', unit:'প্রতি কেজি', price:55, cat:'vegetable', sub:'seasonal', img:'', stock:50},
-  {id:134, name:'লাল শাক', unit:'প্রতি কেজি', price:30, cat:'vegetable', sub:'leafy', img:'', stock:50},
-  {id:135, name:'পালং শাক', unit:'প্রতি কেজি', price:28, cat:'vegetable', sub:'leafy', img:'', stock:50},
-  {id:136, name:'লাউ', unit:'প্রতি কেজি', price:36, cat:'vegetable', sub:'leafy', img:'', stock:50},
-  {id:137, name:'সরিষা শাক', unit:'প্রতি কেজি', price:32, cat:'vegetable', sub:'leafy', img:'', stock:50},
-  {id:138, name:'পুদিনা শাক', unit:'প্রতি কেজি', price:34, cat:'vegetable', sub:'leafy', img:'', stock:50},
-  {id:139, name:'বাঁধাকপি', unit:'প্রতি কেজি', price:40, cat:'vegetable', sub:'root', img:'', stock:50},
-  {id:140, name:'ফুলকপি', unit:'প্রতি কেজি', price:52, cat:'vegetable', sub:'root', img:'', stock:50},
-  {id:141, name:'গোলআলু', unit:'প্রতি কেজি', price:30, cat:'vegetable', sub:'root', img:'', stock:50},
-  {id:142, name:'আলু', unit:'প্রতি কেজি', price:28, cat:'vegetable', sub:'root', img:'', stock:50},
-  {id:143, name:'বাটি', unit:'প্রতি কেজি', price:26, cat:'vegetable', sub:'root', img:'', stock:50},
-  {id:144, name:'মুলা', unit:'প্রতি কেজি', price:24, cat:'vegetable', sub:'root', img:'', stock:50},
-  {id:145, name:'শালগম', unit:'প্রতি কেজি', price:25, cat:'vegetable', sub:'root', img:'', stock:50},
-  {id:146, name:'রসুন', unit:'প্রতি কেজি', price:72, cat:'vegetable', sub:'root', img:'', stock:50},
-  {id:147, name:'পিয়াজ', unit:'প্রতি কেজি', price:38, cat:'vegetable', sub:'root', img:'', stock:50},
-  {id:148, name:'পেঁয়াজ', unit:'প্রতি কেজি', price:36, cat:'vegetable', sub:'root', img:'', stock:50},
-  {id:149, name:'আদা', unit:'প্রতি কেজি', price:80, cat:'vegetable', sub:'root', img:'', stock:50},
-  {id:150, name:'হলুদ', unit:'প্রতি কেজি', price:88, cat:'vegetable', sub:'root', img:'', stock:50},
-  {id:151, name:'মরিচ', unit:'প্রতি কেজি', price:70, cat:'vegetable', sub:'seasonal', img:'', stock:50},
-  {id:152, name:'কাঁচা মরিচ', unit:'প্রতি কেজি', price:65, cat:'vegetable', sub:'seasonal', img:'', stock:50},
-  {id:153, name:'ধনেপাতা', unit:'প্রতি কেজি', price:20, cat:'vegetable', sub:'leafy', img:'', stock:50},
-  {id:154, name:'পার্সি', unit:'প্রতি কেজি', price:22, cat:'vegetable', sub:'leafy', img:'', stock:50},
-  {id:155, name:'লাল বেগুন', unit:'প্রতি কেজি', price:50, cat:'vegetable', sub:'seasonal', img:'', stock:50},
-  {id:156, name:'সীম', unit:'প্রতি কেজি', price:45, cat:'vegetable', sub:'seasonal', img:'', stock:50},
-  {id:157, name:'চিচিঙ্গা', unit:'প্রতি কেজি', price:54, cat:'vegetable', sub:'seasonal', img:'', stock:50},
-  {id:158, name:'ঝিঙে', unit:'প্রতি কেজি', price:56, cat:'vegetable', sub:'seasonal', img:'', stock:50},
-  {id:159, name:'ঝোল', unit:'প্রতি কেজি', price:46, cat:'vegetable', sub:'seasonal', img:'', stock:50},
-  {id:160, name:'দুধ কুমড়া', unit:'প্রতি কেজি', price:44, cat:'vegetable', sub:'seasonal', img:'', stock:50},
-  {id:161, name:'জিলাপি', unit:'প্রতি প্যাকেট', price:220, cat:'sweet', sub:'sweets', img:'', stock:50},
-  {id:162, name:'রসগোল্লা', unit:'প্রতি প্যাকেট', price:240, cat:'sweet', sub:'sweets', img:'', stock:50},
-  {id:163, name:'চানাচুর', unit:'প্রতি প্যাকেট', price:180, cat:'sweet', sub:'snacks', img:'', stock:50},
-  {id:164, name:'সামা', unit:'প্রতি প্যাকেট', price:200, cat:'sweet', sub:'sweets', img:'', stock:50},
-  {id:165, name:'শিরাপি', unit:'প্রতি প্যাকেট', price:210, cat:'sweet', sub:'sweets', img:'', stock:50},
-  {id:166, name:'মুদি বiskut', unit:'প্রতি প্যাকেট', price:160, cat:'sweet', sub:'snacks', img:'', stock:50},
-  {id:167, name:'টিসি শার্ট', unit:'প্রতি পিস', price:650, cat:'clothing', sub:'men', img:'', stock:50},
-  {id:168, name:'প্যান্ট', unit:'প্রতি পিস', price:780, cat:'clothing', sub:'men', img:'', stock:50},
-  {id:169, name:'কুর্তা', unit:'প্রতি পিস', price:920, cat:'clothing', sub:'men', img:'', stock:50},
-  {id:170, name:'সারি', unit:'প্রতি পিস', price:980, cat:'clothing', sub:'women', img:'', stock:50},
-  {id:171, name:'শাড়ি', unit:'প্রতি পিস', price:1200, cat:'clothing', sub:'women', img:'', stock:50},
-  {id:172, name:'ফতোয়ান', unit:'প্রতি পিস', price:720, cat:'clothing', sub:'women', img:'', stock:50},
-  {id:173, name:'বেবি শার্ট', unit:'প্রতি পিস', price:480, cat:'clothing', sub:'kids', img:'', stock:50},
-  {id:174, name:'কিডস পোশাক সেট', unit:'প্রতি সেট', price:560, cat:'clothing', sub:'kids', img:'', stock:50},
-  {id:175, name:'টাইলস ক্লিনার', unit:'প্রতি পিস', price:0, cat:'clean', sub:'tiles-cleaner', img:'', stock:50,
+  {id:23, name:'সুপার তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil', img:'products/31.jpg', stock:50},
+  {id:24, name:'অলিভ ওয়েল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil', img:'products/32.jpg', stock:50},
+  {id:25, name:'নারিকেল তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil', img:'products/33.jpg', stock:50},
+  {id:26, name:'তিলের তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil', img:'products/34.jpg', stock:50},
+  {id:27, name:'কালোজিরা তেল', unit:'প্রতি লিটার', price:0, cat:'grocery', sub:'oil', img:'products/35.jpg', stock:50},
+  {id:28, name:'মিনিকেট চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice', img:'products/36.jpg', stock:50},
+  {id:29, name:'আঠাস চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice', img:'products/37.jpg', stock:50},
+  {id:30, name:'লালস্বর্ন চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice', img:'products/38.jpg', stock:50},
+  {id:31, name:'নাজির শাইল চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice', img:'products/39.jpg', stock:50},
+  {id:32, name:'পাইজাম চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice', img:'products/40.jpg', stock:50},
+  {id:33, name:'বাংলামতি চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice', img:'products/41.jpg', stock:50},
+  {id:34, name:'পাকিস্তানি বাশমতি চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice', img:'products/42.jpg', stock:50},
+  {id:35, name:'ইন্ডিয়ান বাশমতি চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice', img:'products/43.jpg', stock:50},
+  {id:36, name:'পোলাও চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice', img:'products/44.jpg', stock:50},
+  {id:36, name:'লাল চাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'rice', img:'products/45.jpg', stock:50},
+  {id:37, name:'দেশি লাল আটা', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'flour', img:'products/46.jpg', stock:50},
+  {id:38, name:'সাদা আটা', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'flour', img:'products/47.jpg', stock:50},
+  {id:39, name:'ময়দা', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'flour', img:'products/48.jpg', stock:50},
+  {id:40, name:'চাউলের আটা', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'flour', img:'products/49.jpg', stock:50},
+  {id:41, name:'ঝালের গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'products/50.jpg', stock:50},
+  {id:42, name:'হলুদের গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'products/51.jpg', stock:50},
+  {id:43, name:'ধনিয়ার গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'products/52.jpg', stock:50},
+  {id:44, name:'জিরা গুড়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'products/53.jpg', stock:50},
+  {id:45, name:'লবণ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'products/54.jpg', stock:50},
+  {id:46, name:'বীট লবণ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'products/55.jpg', stock:50},
+  {id:47, name:'পিংক সল্ট', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'powder', img:'products/56.jpg', stock:50},
+  {id:48, name:'জিরা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/57.jpg', stock:50},
+  {id:49, name:'শাহি জিরা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/58.jpg', stock:50},
+  {id:50, name:'দারুচিনি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/59.jpg', stock:50},
+  {id:51, name:'দারুচিনি (সেইগন)', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/60.jpg', stock:50},
+  {id:52, name:'দারুচিনি (সিলং)', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/61.jpg', stock:50},
+  {id:53, name:'এলাচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/62.jpg', stock:50},
+  {id:54, name:'শাহী এলাচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/63.jpg', stock:50},
+  {id:55, name:'কালো গোলমরিচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/64.jpg', stock:50},
+  {id:56, name:'সাদা গোলমরিচ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/65.jpg', stock:50},
+  {id:57, name:'লবঙ্গ', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/66.jpg', stock:50},
+  {id:58, name:'তেজপাতা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/67.jpg', stock:50},
+  {id:59, name:'ধনিয়া', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/68.jpg', stock:50},
+  {id:60, name:'মৌরি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/69.jpg', stock:50},
+  {id:61, name:'মেথি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/70.jpg', stock:50},
+  {id:62, name:'জোয়ান', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/71.jpg', stock:50},
+  {id:63, name:'পাচফোড়ন', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/72.jpg', stock:50},
+  {id:64, name:'জয়ফল', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/73.jpg', stock:50},
+  {id:65, name:'জয়ত্রি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/74.jpg', stock:50},
+  {id:66, name:'স্টার আনিস', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/75.jpg', stock:50},
+  {id:67, name:'কাবাব চিনি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/76.jpg', stock:50},
+  {id:68, name:'পোস্ত দানা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/77.jpg', stock:50},
+  {id:69, name:'রাধুনি', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/78.jpg', stock:50},
+  {id:70, name:'দেশি সরিষা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/79.jpg', stock:50},
+  {id:71, name:'মাঘী সরিষা', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/80.jpg', stock:50},
+  {id:72, name:'চুইঝাল', unit:'প্রতি কেজি', price:0, cat:'spice', sub:'whole', img:'products/81.jpg', stock:50},
+  {id:73, name:'মশুর ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'products/82.jpg', stock:50},
+  {id:74, name:'মুগ ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'products/83.jpg', stock:50},
+  {id:75, name:'কলাই ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'products/84.jpg', stock:50},
+  {id:76, name:'ছোলা ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'products/85.jpg', stock:50},
+  {id:77, name:'মটর ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'products/86.jpg', stock:50},
+  {id:78, name:'খেশারি ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'products/87.jpg', stock:50},
+  {id:79, name:'আইরি ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'products/88.jpg', stock:50},
+  {id:80, name:'বক্রম ডাউল', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'pulses', img:'products/89.jpg', stock:50},
+  {id:81, name:'সরিষা ফুলের মধু', unit:'প্রতি বোতল (৫০০ গ্রাম)', price:0, cat:'organic', sub:'honey', img:'products/90.jpg', stock:50},
+  {id:82, name:'লিচু ফুলের মধু', unit:'প্রতি বোতল (৫০০ গ্রাম)', price:0, cat:'organic', sub:'honey', img:'products/91.jpg', stock:50},
+  {id:83, name:'কালোজিরা মধু', unit:'প্রতি বোতল (৫০০ গ্রাম)', price:0, cat:'organic', sub:'honey', img:'products/92.jpg', stock:50},
+  {id:84, name:'ঘি (মাখনের)', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'ghee', img:'products/93.jpg', stock:50},
+  {id:85, name:'ঘি (সরের)', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'ghee', img:'products/94.jpg', stock:50},
+  {id:86, name:'কাজু বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'products/95.jpg', stock:50},
+  {id:87, name:'কাজু বাদাম ভাজা', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'products/96.jpg', stock:50},
+  {id:88, name:'কাঠ বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'products/97.jpg', stock:50},
+  {id:89, name:'আখরোট বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'products/98.jpg', stock:50},
+  {id:90, name:'দেশি চিনা বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'products/99.jpg', stock:50},
+  {id:91, name:'থাই চিনা বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'products/100.jpg', stock:50},
+  {id:92, name:'পেস্তা বাদাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'nuts', img:'products/101.jpg', stock:50},
+  {id:93, name:'আজোয়া খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'products/102.jpg', stock:50},
+  {id:94, name:'মরিয়ম খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'products/103.jpg', stock:50},
+  {id:95, name:'মেডজুল খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'products/104.jpg', stock:50},
+  {id:96, name:'সুক্কারি খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'products/105.jpg', stock:50},
+  {id:97, name:'দাবাস খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'products/106.jpg', stock:50},
+  {id:98, name:'মাবরুম খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'products/107.jpg', stock:50},
+  {id:99, name:'সাফায়ি খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'products/108.jpg', stock:50},
+  {id:100, name:'কলমি খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'products/109.jpg', stock:50},
+  {id:101, name:'লুলু খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'products/110.jpg', stock:50},
+  {id:102, name:'মাশরুক খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'products/111.jpg', stock:50},
+  {id:103, name:'ছড়া খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'products/112.jpg', stock:50},
+  {id:104, name:'খুরমা খেজুর', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dates', img:'products/113.jpg', stock:50},
+  {id:105, name:'সাদা তিল', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'products/114.jpg', stock:50},
+  {id:106, name:'কালো তিল', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'products/115.jpg', stock:50},
+  {id:107, name:'চিয়া সীড', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'products/116.jpg', stock:50},
+  {id:108, name:'সূর্যমুখী বীজ', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'products/117.jpg', stock:50},
+  {id:109, name:'পামকিন সীড', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'products/118.jpg', stock:50},
+  {id:110, name:'তরমুজ বীজ', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'products/119.jpg', stock:50},
+  {id:111, name:'কালোজিরা', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'products/120.jpg', stock:50},
+  {id:112, name:'তিশি/মষনী', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'products/121.jpg', stock:50},
+  {id:113, name:'তুকমা দানা', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'seeds', img:'products/122.jpg', stock:50},
+  {id:114, name:'তাল মিসরি', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'products/123.jpg', stock:50},
+  {id:115, name:'মিসরি', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'products/124.jpg', stock:50},
+  {id:116, name:'লাল চিনি', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'products/125.jpg', stock:50},
+  {id:117, name:'সাদা চিনি', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'products/126.jpg', stock:50},
+  {id:118, name:'খেজুরের গুড়', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'products/127.jpg', stock:50},
+  {id:119, name:'আখের গুড়', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'sugar', img:'products/128.jpg', stock:50},
+  {id:120, name:'গোল্ডেন সিডলেস কিসমিস', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'raisins', img:'products/129.jpg', stock:50},
+  {id:121, name:'গোল্ডেন কিসমিস (সীডসহ)', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'raisins', img:'products/130.jpg', stock:50},
+  {id:122, name:'কালো কিসমিস', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'raisins', img:'products/131.jpg', stock:50},
+  {id:123, name:'জর্দা আলু বোখরা', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'products/132.jpg', stock:50},
+  {id:124, name:'লাল সাকুরা পাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'products/133.jpg', stock:50},
+  {id:125, name:'কালো সাকুরা পাম', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'products/134.jpg', stock:50},
+  {id:126, name:'এপ্রিকট', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'products/135.jpg', stock:50},
+  {id:127, name:'তীনফল', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'products/136.jpg', stock:50},
+  {id:128, name:'জায়তুন', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'dried-fruit', img:'products/137.jpg', stock:50},
+  {id:129, name:'ব্ল্যাক গার্লিক / কালো রসুন', unit:'প্রতি কেজি', price:0, cat:'organic', sub:'garlic', img:'products/138.jpg', stock:50},
+  {id:130, name:'আম', unit:'প্রতি কেজি', price:90, cat:'fruit', sub:'fresh-fruit', img:'products/139.jpg', stock:50},
+  {id:131, name:'কাঁঠাল', unit:'প্রতি কেজি', price:115, cat:'fruit', sub:'fresh-fruit', img:'products/140.jpg', stock:50},
+  {id:132, name:'লিচু', unit:'প্রতি কেজি', price:180, cat:'fruit', sub:'fresh-fruit', img:'products/141.jpg', stock:50},
+  {id:133, name:'কমলা', unit:'প্রতি কেজি', price:110, cat:'fruit', sub:'fresh-fruit', img:'products/142.jpg', stock:50},
+  {id:134, name:'লেবু', unit:'প্রতি কেজি', price:60, cat:'fruit', sub:'fresh-fruit', img:'products/143.jpg', stock:50},
+  {id:135, name:'নাশপাতি', unit:'প্রতি কেজি', price:120, cat:'fruit', sub:'fresh-fruit', img:'products/144.jpg', stock:50},
+  {id:136, name:'কলা', unit:'প্রতি কেজি', price:68, cat:'fruit', sub:'fresh-fruit', img:'products/145.jpg', stock:50},
+  {id:137, name:'আঙুর', unit:'প্রতি কেজি', price:150, cat:'fruit', sub:'fresh-fruit', img:'products/146.jpg', stock:50},
+  {id:138, name:'পেয়ারা', unit:'প্রতি কেজি', price:75, cat:'fruit', sub:'fresh-fruit', img:'products/147.jpg', stock:50},
+  {id:139, name:'শশা', unit:'প্রতি কেজি', price:35, cat:'vegetable', sub:'seasonal', img:'products/148.jpg', stock:50},
+  {id:131, name:'কুমড়া', unit:'প্রতি কেজি', price:42, cat:'vegetable', sub:'seasonal', img:'products/149.jpg', stock:50},
+  {id:132, name:'বেগুন', unit:'প্রতি কেজি', price:48, cat:'vegetable', sub:'seasonal', img:'products/150.jpg', stock:50},
+  {id:133, name:'টমেটো', unit:'প্রতি কেজি', price:55, cat:'vegetable', sub:'seasonal', img:'products/151.jpg', stock:50},
+  {id:134, name:'লাল শাক', unit:'প্রতি কেজি', price:30, cat:'vegetable', sub:'leafy', img:'products/152.jpg', stock:50},
+  {id:135, name:'পালং শাক', unit:'প্রতি কেজি', price:28, cat:'vegetable', sub:'leafy', img:'products/153.jpg', stock:50},
+  {id:136, name:'লাউ', unit:'প্রতি কেজি', price:36, cat:'vegetable', sub:'leafy', img:'products/154.jpg', stock:50},
+  {id:137, name:'সরিষা শাক', unit:'প্রতি কেজি', price:32, cat:'vegetable', sub:'leafy', img:'products/155.jpg', stock:50},
+  {id:138, name:'পুদিনা শাক', unit:'প্রতি কেজি', price:34, cat:'vegetable', sub:'leafy', img:'products/156.jpg', stock:50},
+  {id:139, name:'বাঁধাকপি', unit:'প্রতি কেজি', price:40, cat:'vegetable', sub:'root', img:'products/157.jpg', stock:50},
+  {id:140, name:'ফুলকপি', unit:'প্রতি কেজি', price:52, cat:'vegetable', sub:'root', img:'products/158.jpg', stock:50},
+  {id:141, name:'গোলআলু', unit:'প্রতি কেজি', price:30, cat:'vegetable', sub:'root', img:'products/159.jpg', stock:50},
+  {id:142, name:'আলু', unit:'প্রতি কেজি', price:28, cat:'vegetable', sub:'root', img:'products/160.jpg', stock:50},
+  {id:143, name:'বাটি', unit:'প্রতি কেজি', price:26, cat:'vegetable', sub:'root', img:'products/161.jpg', stock:50},
+  {id:144, name:'মুলা', unit:'প্রতি কেজি', price:24, cat:'vegetable', sub:'root', img:'products/162.jpg', stock:50},
+  {id:145, name:'শালগম', unit:'প্রতি কেজি', price:25, cat:'vegetable', sub:'root', img:'products/163.jpg', stock:50},
+  {id:146, name:'রসুন', unit:'প্রতি কেজি', price:72, cat:'vegetable', sub:'root', img:'products/164.jpg', stock:50},
+  {id:147, name:'পিয়াজ', unit:'প্রতি কেজি', price:38, cat:'vegetable', sub:'root', img:'products/165.jpg', stock:50},
+  {id:148, name:'পেঁয়াজ', unit:'প্রতি কেজি', price:36, cat:'vegetable', sub:'root', img:'products/166.jpg', stock:50},
+  {id:149, name:'আদা', unit:'প্রতি কেজি', price:80, cat:'vegetable', sub:'root', img:'products/167.jpg', stock:50},
+  {id:150, name:'হলুদ', unit:'প্রতি কেজি', price:88, cat:'vegetable', sub:'root', img:'products/168.jpg', stock:50},
+  {id:151, name:'মরিচ', unit:'প্রতি কেজি', price:70, cat:'vegetable', sub:'seasonal', img:'products/169.jpg', stock:50},
+  {id:152, name:'কাঁচা মরিচ', unit:'প্রতি কেজি', price:65, cat:'vegetable', sub:'seasonal', img:'products/170.jpg', stock:50},
+  {id:153, name:'ধনেপাতা', unit:'প্রতি কেজি', price:20, cat:'vegetable', sub:'leafy', img:'products/171.jpg', stock:50},
+  {id:154, name:'পার্সি', unit:'প্রতি কেজি', price:22, cat:'vegetable', sub:'leafy', img:'products/172.jpg', stock:50},
+  {id:155, name:'লাল বেগুন', unit:'প্রতি কেজি', price:50, cat:'vegetable', sub:'seasonal', img:'products/173.jpg', stock:50},
+  {id:156, name:'সীম', unit:'প্রতি কেজি', price:45, cat:'vegetable', sub:'seasonal', img:'products/174.jpg', stock:50},
+  {id:157, name:'চিচিঙ্গা', unit:'প্রতি কেজি', price:54, cat:'vegetable', sub:'seasonal', img:'products/175.jpg', stock:50},
+  {id:158, name:'ঝিঙে', unit:'প্রতি কেজি', price:56, cat:'vegetable', sub:'seasonal', img:'products/176.jpg', stock:50},
+  {id:159, name:'ঝোল', unit:'প্রতি কেজি', price:46, cat:'vegetable', sub:'seasonal', img:'products/177.jpg', stock:50},
+  {id:160, name:'দুধ কুমড়া', unit:'প্রতি কেজি', price:44, cat:'vegetable', sub:'seasonal', img:'products/178.jpg', stock:50},
+  {id:161, name:'জিলাপি', unit:'প্রতি প্যাকেট', price:220, cat:'sweet', sub:'sweets', img:'products/179.jpg', stock:50},
+  {id:162, name:'রসগোল্লা', unit:'প্রতি প্যাকেট', price:240, cat:'sweet', sub:'sweets', img:'products/180.jpg', stock:50},
+  {id:163, name:'চানাচুর', unit:'প্রতি প্যাকেট', price:180, cat:'sweet', sub:'snacks', img:'products/181.jpg', stock:50},
+  {id:164, name:'সামা', unit:'প্রতি প্যাকেট', price:200, cat:'sweet', sub:'sweets', img:'products/182.jpg', stock:50},
+  {id:165, name:'শিরাপি', unit:'প্রতি প্যাকেট', price:210, cat:'sweet', sub:'sweets', img:'products/183.jpg', stock:50},
+  {id:166, name:'মুদি বiskut', unit:'প্রতি প্যাকেট', price:160, cat:'sweet', sub:'snacks', img:'products/184.jpg', stock:50},
+  {id:167, name:'টিসি শার্ট', unit:'প্রতি পিস', price:650, cat:'clothing', sub:'men', img:'products/185.jpg', stock:50},
+  {id:168, name:'প্যান্ট', unit:'প্রতি পিস', price:780, cat:'clothing', sub:'men', img:'products/186.jpg', stock:50},
+  {id:169, name:'কুর্তা', unit:'প্রতি পিস', price:920, cat:'clothing', sub:'men', img:'products/187.jpg', stock:50},
+  {id:170, name:'সারি', unit:'প্রতি পিস', price:980, cat:'clothing', sub:'women', img:'products/188.jpg', stock:50},
+  {id:171, name:'শাড়ি', unit:'প্রতি পিস', price:1200, cat:'clothing', sub:'women', img:'products/189.jpg', stock:50},
+  {id:172, name:'ফতোয়ান', unit:'প্রতি পিস', price:720, cat:'clothing', sub:'women', img:'products/190.jpg', stock:50},
+  {id:173, name:'বেবি শার্ট', unit:'প্রতি পিস', price:480, cat:'clothing', sub:'kids', img:'products/191.jpg', stock:50},
+  {id:174, name:'কিডস পোশাক সেট', unit:'প্রতি সেট', price:560, cat:'clothing', sub:'kids', img:'products/192.jpg', stock:50},
+  {id:175, name:'টাইলস ক্লিনার', unit:'প্রতি পিস', price:0, cat:'cosmetic', sub:'home', img:'products/193.jpg', stock:50,
     variants:[
       {id:'v130_1', name:'টিক্সল', price:0, stock:50, img:''},
       {id:'v130_2', name:'নেক্সল', price:0, stock:50, img:''},
       {id:'v130_3', name:'ফিক্সল', price:0, stock:50, img:''},
       {id:'v130_4', name:'ভিক্সল', price:0, stock:50, img:''}
     ]},
-  {id:131, name:'টয়লেট ক্লিনার', unit:'প্রতি পিস', price:0, cat:'clean', sub:'toilet-cleaner', img:'', stock:50,
+  {id:131, name:'টয়লেট ক্লিনার', unit:'প্রতি পিস', price:0, cat:'cosmetic', sub:'home', img:'products/194.jpg', stock:50,
     variants:[
       {id:'v131_1', name:'Harpic', price:0, stock:50, img:''},
       {id:'v131_2', name:'Harpoon', price:0, stock:50, img:''},
       {id:'v131_3', name:'powerX', price:0, stock:50, img:''}
     ]},
-  {id:132, name:'সাবান', unit:'প্রতি পিস', price:0, cat:'clean', sub:'soap', img:'', stock:50,
+  {id:132, name:'সাবান', unit:'প্রতি পিস', price:0, cat:'cosmetic', sub:'personal', img:'products/195.jpg', stock:50,
     variants:[
       {id:'v132_1', name:'Lux', price:0, stock:50, img:''},
       {id:'v132_2', name:'Lifebouy', price:0, stock:50, img:''},
@@ -1393,31 +1469,31 @@ const PRODUCTS = [
       {id:'v132_5', name:'Dove', price:0, stock:50, img:''},
       {id:'v132_6', name:'Bactrol', price:0, stock:50, img:''}
     ]},
-  {id:132.5, name:'মিনি সাবান', unit:'প্রতি পিস', price:0, cat:'clean', sub:'mini-soap', img:'', stock:50,
+  {id:132.5, name:'মিনি সাবান', unit:'প্রতি পিস', price:0, cat:'cosmetic', sub:'personal', img:'products/196.jpg', stock:50,
     variants:[
       {id:'v132m_1', name:'Lux', price:0, stock:50, img:''},
       {id:'v132m_2', name:'Lifebouy', price:0, stock:50, img:''},
       {id:'v132m_3', name:'Dettol', price:0, stock:50, img:''},
       {id:'v132m_4', name:'Bactrol', price:0, stock:50, img:''}
     ]},
-  {id:133, name:'কাপড় কাচা সাবান', unit:'প্রতি পিস', price:0, cat:'clean', sub:'laundry-soap', img:'', stock:50,
+  {id:133, name:'কাপড় কাচা সাবান', unit:'প্রতি পিস', price:0, cat:'cosmetic', sub:'home', img:'products/197.jpg', stock:50,
     variants:[
       {id:'v133_1', name:'তিব্বত বল সাবান', price:0, stock:50, img:''},
-      {id:'v133_2', name:'হুইল কাপড় কাচা সাবান', price:0, stock:50, img:''},
+      {id:'v133_2', name:'হুইল কাপড় কাচা সাবান', price:0, stock:50, img:''},
       {id:'v133_3', name:'অচল সাবান', price:0, stock:50, img:''},
-      {id:'v133_4', name:'চাকা কাপড় কাচা সাবান', price:0, stock:50, img:''}
+      {id:'v133_4', name:'চাকা কাপড় কাচা সাবান', price:0, stock:50, img:''}
     ]},
-  {id:134, name:'ডিটারজেন্ট পাউডার', unit:'প্রতি কেজি', price:0, cat:'clean', sub:'detergent', img:'', stock:50,
+  {id:134, name:'ডিটারজেন্ট পাউডার', unit:'প্রতি কেজি', price:0, cat:'cosmetic', sub:'home', img:'products/198.jpg', stock:50,
     variants:[
       {id:'v134_1', name:'হুইল', price:0, stock:50, img:''},
       {id:'v134_2', name:'রিন', price:0, stock:50, img:''},
       {id:'v134_3', name:'তিব্বত', price:0, stock:50, img:''},
-      {id:'v134_4', name:'কেয়া', price:0, stock:50, img:''},
+      {id:'v134_4', name:'কেয়া', price:0, stock:50, img:''},
       {id:'v134_5', name:'fast wash', price:0, stock:50, img:''},
       {id:'v134_6', name:'চাকা', price:0, stock:50, img:''},
       {id:'v134_7', name:'surf excel', price:0, stock:50, img:''}
     ]},
-  {id:135, name:'শ্যাম্পু', unit:'প্রতি পিস', price:0, cat:'clean', sub:'shampoo', img:'', stock:50,
+  {id:135, name:'শ্যাম্পু', unit:'প্রতি পিস', price:0, cat:'cosmetic', sub:'personal', img:'products/199.jpg', stock:50,
     variants:[
       {id:'v135_1', name:'Clear', price:0, stock:50, img:''},
       {id:'v135_2', name:'Lifebouy', price:0, stock:50, img:''},
@@ -1425,21 +1501,21 @@ const PRODUCTS = [
       {id:'v135_4', name:'parachute', price:0, stock:50, img:''},
       {id:'v135_5', name:'Dove', price:0, stock:50, img:''},
       {id:'v135_6', name:'sansilk', price:0, stock:50, img:''},
-      {id:'v135_7', name:'কেয়া', price:0, stock:50, img:''},
+      {id:'v135_7', name:'কেয়া', price:0, stock:50, img:''},
       {id:'v135_8', name:'revive', price:0, stock:50, img:''}
     ]},
-  {id:136, name:'ভিম বার', unit:'প্রতি পিস', price:0, cat:'clean', sub:'vim-bar', img:'', stock:50,
+  {id:136, name:'ভিম বার', unit:'প্রতি পিস', price:0, cat:'cosmetic', sub:'home', img:'products/200.jpg', stock:50,
     variants:[
       {id:'v136_1', name:'vim', price:0, stock:50, img:''},
       {id:'v136_2', name:'lemon blast', price:0, stock:50, img:''}
     ]},
-  {id:137, name:'ভিম লিকুইড', unit:'প্রতি পিস', price:0, cat:'clean', sub:'vim-liquid', img:'', stock:50,
+  {id:137, name:'ভিম লিকুইড', unit:'প্রতি পিস', price:0, cat:'cosmetic', sub:'home', img:'products/201.jpg', stock:50,
     variants:[
       {id:'v137_1', name:'vim liquid', price:0, stock:50, img:''},
       {id:'v137_2', name:'গ্লিটার', price:0, stock:50, img:''},
       {id:'v137_3', name:'lemon blast', price:0, stock:50, img:''}
     ]},
-  {id:138, name:'হ্যান্ডওয়াশ', unit:'প্রতি পিস', price:0, cat:'clean', sub:'handwash', img:'', stock:50,
+  {id:138, name:'হ্যান্ডওয়াশ', unit:'প্রতি পিস', price:0, cat:'cosmetic', sub:'personal', img:'products/202.jpg', stock:50,
     variants:[
       {id:'v138_1', name:'Bactrol', price:0, stock:50, img:''},
       {id:'v138_2', name:'Lifebouy', price:0, stock:50, img:''},
@@ -1449,36 +1525,39 @@ const PRODUCTS = [
       {id:'v138_6', name:'amana', price:0, stock:50, img:''},
       {id:'v138_7', name:'লুজ', price:0, stock:50, img:''}
     ]},
-  {id:139, name:'টয়লেট টিস্যু', unit:'প্রতি প্যাকেট', price:0, cat:'clean', sub:'toilet-tissue', img:'', stock:50,
+  {id:139, name:'টয়লেট টিস্যু', unit:'প্রতি প্যাকেট', price:0, cat:'cosmetic', sub:'home', img:'products/203.jpg', stock:50,
     variants:[
       {id:'v139_1', name:'বসুন্ধরা', price:0, stock:50, img:''},
       {id:'v139_2', name:'peal', price:0, stock:50, img:''}
     ]},
-  {id:140, name:'কিচেন টিস্যু', unit:'প্রতি প্যাকেট', price:0, cat:'clean', sub:'kitchen-tissue', img:'', stock:50,
+  {id:140, name:'কিচেন টিস্যু', unit:'প্রতি প্যাকেট', price:0, cat:'cosmetic', sub:'home', img:'products/204.jpg', stock:50,
     variants:[
       {id:'v140_1', name:'বসুন্ধরা', price:0, stock:50, img:''},
       {id:'v140_2', name:'easy', price:0, stock:50, img:''}
     ]},
-  {id:141, name:'টুথপেষ্ট', unit:'প্রতি পিস', price:0, cat:'clean', sub:'toothpaste', img:'', stock:50,
+  {id:141, name:'টুথপেষ্ট', unit:'প্রতি পিস', price:0, cat:'cosmetic', sub:'personal', img:'products/205.jpg', stock:50,
     variants:[
       {id:'v141_1', name:'মেডিপ্লাস', price:0, stock:50, img:''},
       {id:'v141_2', name:'colgate', price:0, stock:50, img:''},
       {id:'v141_3', name:'পেপসুডেন্ট', price:0, stock:50, img:''},
       {id:'v141_4', name:'সেনসুডাইন', price:0, stock:50, img:''}
     ]},
-  {id:142, name:'গুডনাইট', unit:'প্রতি প্যাকেট', price:0, cat:'clean', sub:'goodnight', img:'', stock:50},
-  {id:143, name:'মশার কয়েল', unit:'প্রতি প্যাকেট', price:0, cat:'clean', sub:'mosquito', img:'', stock:50},
-  {id:144, name:'এরোসল', unit:'প্রতি পিস', price:0, cat:'clean', sub:'mosquito', img:'', stock:50},
-  {id:145, name:'ঘামাচি পাউডার', unit:'প্রতি পিস', price:0, cat:'clean', sub:'first-aid', img:'', stock:50},
-  {id:146, name:'হেয়ার ওয়েল', unit:'প্রতি পিস', price:0, cat:'clean', sub:'hair-oil', img:'', stock:50},
-  {id:147, name:'ফার্স্ট এইড বক্স', unit:'প্রতি পিস', price:0, cat:'clean', sub:'first-aid', img:'', stock:50},
-  {id:148, name:'মেশওয়াক', unit:'প্রতি পিস', price:0, cat:'islamic', sub:'prayer', img:'', stock:50},
-  {id:149, name:'জায়নামাজ', unit:'প্রতি পিস', price:0, cat:'islamic', sub:'prayer', img:'', stock:50},
-  {id:150, name:'ট্রাভেল জায়নামাজ', unit:'প্রতি পিস', price:0, cat:'islamic', sub:'prayer', img:'', stock:50},
-  {id:151, name:'টুপি', unit:'প্রতি পিস', price:0, cat:'islamic', sub:'cap', img:'', stock:50},
-  {id:152, name:'আতর', unit:'প্রতি বোতল', price:0, cat:'islamic', sub:'fragrance', img:'', stock:50},
-  {id:153, name:'সকল ধরনের বই', unit:'প্রতি পিস', price:0, cat:'books', sub:'books', img:'', stock:50},
-  {id:154, name:'স্টেশনারি', unit:'প্রতি পিস', price:0, cat:'books', sub:'stationery', img:'', stock:50}
+  {id:142, name:'গুডনাইট', unit:'প্রতি প্যাকেট', price:0, cat:'cosmetic', sub:'home', img:'products/206.jpg', stock:50},
+  {id:143, name:'মশার কয়েল', unit:'প্রতি প্যাকেট', price:0, cat:'cosmetic', sub:'home', img:'products/207.jpg', stock:50},
+  {id:144, name:'এরোসল', unit:'প্রতি পিস', price:0, cat:'cosmetic', sub:'home', img:'products/208.jpg', stock:50},
+  {id:145, name:'ঘামাচি পাউডার', unit:'প্রতি পিস', price:0, cat:'cosmetic', sub:'personal', img:'products/209.jpg', stock:50},
+  {id:146, name:'হেয়ার ওয়েল', unit:'প্রতি পিস', price:0, cat:'cosmetic', sub:'personal', img:'products/210.jpg', stock:50},
+  {id:147, name:'ফার্স্ট এইড বক্স', unit:'প্রতি পিস', price:0, cat:'cosmetic', sub:'home', img:'products/211.jpg', stock:50},
+  {id:148, name:'মেশওয়াক', unit:'প্রতি পিস', price:0, cat:'islamic', sub:'prayer', img:'products/212.jpg', stock:50},
+  {id:149, name:'জায়নামাজ', unit:'প্রতি পিস', price:0, cat:'islamic', sub:'prayer', img:'products/213.jpg', stock:50},
+  {id:150, name:'ট্রাভেল জায়নামাজ', unit:'প্রতি পিস', price:0, cat:'islamic', sub:'prayer', img:'products/214.jpg', stock:50},
+  {id:151, name:'টুপি', unit:'প্রতি পিস', price:0, cat:'islamic', sub:'cap', img:'products/215.jpg', stock:50},
+  {id:152, name:'আতর', unit:'প্রতি বোতল', price:0, cat:'islamic', sub:'fragrance', img:'products/216.jpg', stock:50},
+  {id:153, name:'সকল ধরনের বই', unit:'প্রতি পিস', price:0, cat:'books', sub:'books', img:'products/217.jpg', stock:50},
+  {id:154, name:'স্টেশনারি', unit:'প্রতি পিস', price:0, cat:'books', sub:'stationery', img:'products/218.jpg', stock:50},
+  {id:5001, name:'চিনি (লাল)', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'other', img:'products/219.jpg', stock:50},
+  {id:5002, name:'চিনি (সাদা)', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'other', img:'products/220.jpg', stock:50},
+  {id:5003, name:'ডিম', unit:'প্রতি হালি', price:0, cat:'grocery', sub:'other', img:'products/221.jpg', stock:50}
 ];
 
 (function assignDemoPrices(){
@@ -1509,18 +1588,18 @@ const PRODUCTS = [
       if (name.includes('নিহারি')) base = 760;
       else if (name.includes('চর্বি')) base = 440;
       else if (name.includes('মুরগি') || name.includes('কবুতর')) base = 560;
-      else if (name.includes('মাথা') || name.includes('ভূড়ি') || name.includes('কলিজা')) base = 510;
+      else if (name.includes('মাথা') || name.includes('ভূড়ি') || name.includes('কলিজা')) base = 510;
     }
     if (product.cat === 'grocery') {
       if (name.includes('তেল')) base = 210;
       else if (name.includes('চাউল')) base = 58;
-      else if (name.includes('আটা') || name.includes('ময়দা')) base = 52;
+      else if (name.includes('আটা') || name.includes('ময়দা')) base = 52;
       else if (name.includes('ডাউল')) base = 80;
     }
     if (product.cat === 'spice') {
       if (name.includes('জিরা') || name.includes('মরিচ') || name.includes('দারুচিনি') || name.includes('এলাচ') || name.includes('লবঙ্গ')) base = 320;
-      else if (name.includes('গুঁড়া') || name.includes('গুড়া')) base = 180;
-      else if (name.includes('পোস্ত') || name.includes('জয়ফল') || name.includes('আনিস')) base = 430;
+      else if (name.includes('গুঁড়া') || name.includes('গুড়া')) base = 180;
+      else if (name.includes('পোস্ত') || name.includes('জয়ফল') || name.includes('আনিস')) base = 430;
     }
     if (product.cat === 'organic') {
       if (name.includes('মধু')) base = 880;
@@ -1529,12 +1608,12 @@ const PRODUCTS = [
       else if (name.includes('বীজ') || name.includes('দানা') || name.includes('মিসরি')) base = 260;
     }
     if (product.cat === 'clean') {
-      if (name.includes('টাইলস') || name.includes('টয়লেট') || name.includes('ভিম') || name.includes('কিচেন') || name.includes('টিস্যু')) base = 220;
-      else if (name.includes('সাবান') || name.includes('শ্যাম্পু') || name.includes('হ্যান্ডওয়াশ') || name.includes('টুথপেষ্ট')) base = 180;
+      if (name.includes('টাইলস') || name.includes('টয়লেট') || name.includes('ভিম') || name.includes('কিচেন') || name.includes('টিস্যু')) base = 220;
+      else if (name.includes('সাবান') || name.includes('শ্যাম্পু') || name.includes('হ্যান্ডওয়াশ') || name.includes('টুথপেষ্ট')) base = 180;
       else if (name.includes('গুডনাইট') || name.includes('মশার') || name.includes('এরোসল') || name.includes('ঘামাচি')) base = 120;
     }
     if (product.cat === 'islamic') {
-      if (name.includes('জায়নামাজ') || name.includes('ট্রাভেল')) base = 480;
+      if (name.includes('জায়নামাজ') || name.includes('ট্রাভেল')) base = 480;
       else if (name.includes('টুপি') || name.includes('আতর')) base = 360;
     }
     if (product.cat === 'fish') base = 520;
@@ -1582,10 +1661,10 @@ const PRODUCTS = [
 })();
 
 /* Ensure all meat products use the allowed subcategories.
-   Any existing meat item whose `sub` is not one of the five allowed
+   Any existing meat item whose `sub` is not one of the six allowed
    will be remapped to 'beef' (গোশত) so it appears under the requested group. */
 (function normalizeMeatSubcats(){
-  const allowed = ['beef','nihari','fat','head','tripe'];
+  const allowed = ['beef','chicken','nihari','fat','head','tripe'];
   PRODUCTS.forEach(p=>{
     try{
       if(p.cat === 'meat' && !allowed.includes(p.sub)) p.sub = 'beef';
@@ -1916,7 +1995,6 @@ const pkgAddAllBtn = document.getElementById('pkgAddAllBtn');
 const pkgSaveNote = document.getElementById('pkgSaveNote');
 function stockTagHtml(stock){
   if(stock <= 0) return `<div class="stock-tag out">স্টক নেই</div>`;
-  if(stock <= 10) return `<div class="stock-tag low">মজুদ: ${toBn(stock)}টি বাকি</div>`;
   return `<div class="stock-tag ok">মজুদ আছে</div>`;
 }
 
@@ -1994,7 +2072,7 @@ function buildFerdoRow(p){
         <div class="variant-thumb">${thumbHtml(v.img || p.img, v.name, getCategoryIcon(p.cat), 'variant-emoji')}</div>
         <div class="variant-info">
           <div class="vname">${v.name}</div>
-          ${vOut ? '<div class="stock-tag out">স্টক নেই</div>' : (v.stock<=10 ? `<div class="stock-tag low">মজুদ: ${toBn(v.stock)}টি বাকি</div>` : '')}
+          ${vOut ? '<div class="stock-tag out">স্টক নেই</div>' : ''}
         </div>
         <div class="qty-stepper">
           <button data-vact="dec" data-parent="${p.id}" data-variant="${v.id}" ${vOut?'disabled':''}>−</button>
@@ -2257,8 +2335,14 @@ function showToast(msg){
 
 /* ============ CONFIRM OVERLAY ============ */
 const overlay = document.getElementById('confirmOverlay');
+const checkoutFormView = document.getElementById('checkoutFormView');
+const orderSuccessView = document.getElementById('orderSuccessView');
+let lastConfirmedOrder = null;
+
 function openConfirm(){
   if(cartCount()===0){ showToast('ফর্দে এখনো কোনো পণ্য যোগ করা হয়নি'); return; }
+  checkoutFormView.style.display = 'block';
+  orderSuccessView.style.display = 'none';
   renderSummary();
   overlay.classList.add('show');
 }
@@ -2301,6 +2385,13 @@ function toggleErr(id, isErr){
   document.getElementById(id).classList.toggle('error', isErr);
 }
 
+/* সংক্ষিপ্ত ও সহজে পড়ার মতো একটা অর্ডার আইডি তৈরি করে, যেটা কাস্টমারকে দেখানো
+   হয় এবং হোয়াটসঅ্যাপ মেসেজেও ব্যবহার হয়। */
+function generateOrderNo(){
+  const digits = Date.now().toString().slice(-6);
+  return 'SUF-' + digits;
+}
+
 /* ============ PDF GENERATION + ORDER CONFIRM ============ */
 document.getElementById('confirmOrderBtn').addEventListener('click', ()=>{
   const data = validateForm();
@@ -2313,6 +2404,7 @@ document.getElementById('confirmOrderBtn').addEventListener('click', ()=>{
 
   const order = {
     id: 'ord_' + Date.now(),
+    orderNo: generateOrderNo(),
     name: data.name, address: data.address, mobile: data.mobile,
     items, total: cartTotal(),
     status: 'নতুন',
@@ -2320,14 +2412,33 @@ document.getElementById('confirmOrderBtn').addEventListener('click', ()=>{
   };
   addOrder(order);
   fsSaveOrder(order);
+  lastConfirmedOrder = order;
 
   cart = {};
   updateCartBar();
-  overlay.classList.remove('show');
   document.getElementById('inpName').value = '';
   document.getElementById('inpAddress').value = '';
   document.getElementById('inpMobile').value = '';
+
+  // অর্ডার কনফার্ম হওয়ার পর সামারি + হোয়াটসঅ্যাপ বাটন দেখানো হয়
+  document.getElementById('successOrderId').textContent = order.orderNo;
+  const successWrap = document.getElementById('successSummaryList');
+  successWrap.innerHTML = order.items.map(it=>`
+    <div class="summary-row">
+      <span class="sname">${it.name}</span>
+      <span class="sqty">× ${toBn(it.qty)}</span>
+      <span class="sprice">${taka(it.price*it.qty)}</span>
+    </div>
+  `).join('');
+  document.getElementById('successSummaryTotal').textContent = taka(order.total);
+
+  checkoutFormView.style.display = 'none';
+  orderSuccessView.style.display = 'block';
   showToast('অর্ডার সম্পন্ন হয়েছে ✓');
+});
+
+document.getElementById('backToShopBtn').addEventListener('click', ()=>{
+  overlay.classList.remove('show');
 });
 
 document.getElementById('pdfBtn').addEventListener('click', ()=>{
@@ -2343,15 +2454,11 @@ document.getElementById('pdfBtn').addEventListener('click', ()=>{
 });
 
 document.getElementById('quickMessageBtn').addEventListener('click', ()=>{
-  const data = validateForm();
-  if(!data) { showToast('তথ্যগুলো সঠিকভাবে পূরণ করুন'); return; }
+  if(!lastConfirmedOrder){ showToast('আগে অর্ডার কনফার্ম করুন'); return; }
+  const order = lastConfirmedOrder;
+  const itemsText = order.items.map(it=>`${it.name} (${it.qty}x)`).join(', ') || 'কোন পণ্য নেই';
 
-  const items = Object.entries(cart).map(([key,qty])=>{
-    const info = getSellable(key);
-    return info ? `${info.name} (${qty}x)` : null;
-  }).filter(Boolean).join(', ') || 'কোন পণ্য নেই';
-
-  const message = `Assalamu Alaikum, আমি ${data.name}. ঠিকানা: ${data.address}. মোবাইল: ${data.mobile}. অর্ডার: ${items}. সর্বমোট: ৳${cartTotal().toLocaleString('en-IN')}. দ্রুত ডেলিভারি চাই।`;
+  const message = `Assalamu Alaikum, আমার অর্ডার আইডি: ${order.orderNo}. নাম: ${order.name}. ঠিকানা: ${order.address}. মোবাইল: ${order.mobile}. অর্ডার: ${itemsText}. সর্বমোট: ৳${order.total.toLocaleString('en-IN')}. দয়া করে দ্রুত কনফার্ম করুন।`;
   const encoded = encodeURIComponent(message);
   window.open(`https://wa.me/8801738338138?text=${encoded}`, '_blank');
 });
@@ -2498,16 +2605,6 @@ document.getElementById('adminLockCancel').addEventListener('click', ()=> adminL
 adminLockInput.addEventListener('keydown', e=>{ if(e.key === 'Enter') tryAdminUnlock(); });
 
 document.getElementById('adminBackBtn').addEventListener('click', ()=> adminOverlay.classList.remove('show'));
-document.getElementById('adminResetBtn').addEventListener('click', ()=>{
-  if(!confirm('ছবি, মূল্য, স্টক, যোগ করা ও মুছে ফেলা পণ্য, এবং প্যাকেজ — সবকিছু ডিফল্টে ফিরিয়ে দিতে চান?')) return;
-  try{
-    localStorage.removeItem(OVR_KEY);
-    localStorage.removeItem(CUSTOM_KEY);
-    localStorage.removeItem(DELETED_KEY);
-    localStorage.removeItem(PACKAGES_KEY);
-  }catch(e){ /* storage unavailable */ }
-  location.reload();
-});
 
 /* ---- Add new product ---- */
 const newProdCatSel = document.getElementById('newProdCat');
@@ -2624,14 +2721,20 @@ function buildAdminProductRow(p){
   row.innerHTML = `
     <div class="admin-fields">
       <div class="admin-name">${p.name} (${p.unit})</div>
+      <div class="variant-price-note" style="display:none; font-size:11px; color:var(--mustard-dark); background:var(--cream-2); border-radius:8px; padding:6px 10px; margin-bottom:8px; line-height:1.5;">
+        ⚠️ এই পণ্যের ভ্যারাইটি আছে — কাস্টমার নিচের ভ্যারাইটির দাম/স্টক দেখে, উপরের সাধারণ দাম/স্টক কাজ করে না। ভ্যারাইটির দাম নিচে বদলান।
+      </div>
       <div class="admin-numrow">
         <div class="admin-num-field">
           <span class="lbl">মূল্য (৳)</span>
           <input type="number" class="admin-num-input price-input" min="0" step="1" value="${p.price}">
         </div>
         <div class="admin-num-field">
-          <span class="lbl">স্টক (পরিমাণ)</span>
-          <input type="number" class="admin-num-input stock-input" min="0" step="1" value="${p.stock}">
+          <span class="lbl">স্টক</span>
+          <select class="admin-num-input stock-input">
+            <option value="50" ${p.stock > 0 ? 'selected' : ''}>মজুদ আছে</option>
+            <option value="0" ${p.stock <= 0 ? 'selected' : ''}>স্টক নেই</option>
+          </select>
         </div>
       </div>
       <div style="font-size:11.5px; font-weight:700; color:var(--leaf); margin:10px 0 6px;">🏷️ ভ্যারাইটি (ঐচ্ছিক)</div>
@@ -2639,7 +2742,10 @@ function buildAdminProductRow(p){
       <div style="display:flex; gap:6px; margin:6px 0 4px; flex-wrap:wrap;">
         <input type="text" class="admin-url-input add-var-name" placeholder="নতুন ধরনের নাম" style="flex:1.4; min-width:120px;">
         <input type="number" class="admin-num-input add-var-price" placeholder="মূল্য" style="flex:0.7; min-width:60px;" min="0" step="1">
-        <input type="number" class="admin-num-input add-var-stock" placeholder="স্টক" style="flex:0.6; min-width:55px;" min="0" step="1" value="20">
+        <select class="admin-num-input add-var-stock" style="flex:0.6; min-width:100px;">
+          <option value="20">মজুদ আছে</option>
+          <option value="0">স্টক নেই</option>
+        </select>
         <button class="admin-save-btn add-var-btn" type="button" style="padding:7px 10px;">যোগ</button>
       </div>
       <div class="admin-btns" style="margin-top:8px;">
@@ -2651,12 +2757,20 @@ function buildAdminProductRow(p){
   `;
   const priceInput = row.querySelector('.price-input');
   const stockInput = row.querySelector('.stock-input');
+  const variantNote = row.querySelector('.variant-price-note');
+  function updateTopFieldsState(){
+    const has = p.variants.length > 0;
+    priceInput.disabled = has;
+    stockInput.disabled = has;
+    variantNote.style.display = has ? 'block' : 'none';
+  }
   const saveBtn = row.querySelector('.save-price-btn');
   const deleteBtn = row.querySelector('.admin-delete-btn');
   const savedTag = row.querySelector('.admin-saved-tag');
   const varListEl = row.querySelector('.admin-var-list');
 
   function renderVarList(){
+    updateTopFieldsState();
     if(p.variants.length === 0){
       varListEl.innerHTML = '<div style="font-size:11.5px;color:#8a8272;">কোনো ভ্যারাইটি নেই</div>';
       return;
@@ -2665,7 +2779,10 @@ function buildAdminProductRow(p){
       <div class="admin-numrow" style="align-items:center; margin-bottom:6px; flex-wrap:wrap;" data-var-idx="${idx}">
         <input type="text" class="admin-num-input var-name-input" style="flex:1.4; min-width:110px;" value="${v.name}">
         <input type="number" class="admin-num-input var-price-input" style="flex:0.7; min-width:55px;" min="0" step="1" value="${v.price}">
-        <input type="number" class="admin-num-input var-stock-input" style="flex:0.6; min-width:50px;" min="0" step="1" value="${v.stock}">
+        <select class="admin-num-input var-stock-input" style="flex:0.6; min-width:100px;">
+          <option value="20" ${v.stock > 0 ? 'selected' : ''}>মজুদ আছে</option>
+          <option value="0" ${v.stock <= 0 ? 'selected' : ''}>স্টক নেই</option>
+        </select>
         <button class="admin-delete-btn var-remove-btn" type="button" style="padding:6px 9px;">✕</button>
       </div>
     `).join('');
@@ -2971,7 +3088,7 @@ function buildOrderCard(order, orders){
   card.innerHTML = `
     <div class="order-top">
       <div>
-        <div class="order-name">${order.name}</div>
+        <div class="order-name">${order.name}${order.orderNo ? ` <span style="color:var(--leaf); font-weight:800; font-size:11.5px;">(${order.orderNo})</span>` : ''}</div>
         <div class="order-contact">📞 ${order.mobile}<br>📍 ${order.address}</div>
       </div>
       <div class="order-time">${formatOrderTime(order.createdAt)}</div>
@@ -3021,14 +3138,19 @@ function renderAdminOrders(){
   const localOrders = loadOrders();
   renderOrdersList(localOrders);
   // তারপর Firestore থেকে সব ডিভাইসের অর্ডার টেনে এনে আপডেট করা হয়
-  db.collection('orders').get().then(snap=>{
-    const cloudOrders = snap.docs.map(d=>d.data());
-    cloudOrders.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
-    if(cloudOrders.length){
-      saveOrdersToStorage(cloudOrders);
-      renderOrdersList(cloudOrders);
-    }
-  }).catch(e=> console.error('Firestore থেকে অর্ডার আনতে সমস্যা হয়েছে', e));
+  // (db না থাকলে বা Firestore ব্যর্থ হলেও যেন এডমিন প্যানেল ভেঙে না যায়, তাই try/catch)
+  try{
+    db.collection('orders').get().then(snap=>{
+      const cloudOrders = snap.docs.map(d=>d.data());
+      cloudOrders.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
+      if(cloudOrders.length){
+        saveOrdersToStorage(cloudOrders);
+        renderOrdersList(cloudOrders);
+      }
+    }).catch(e=> console.error('Firestore থেকে অর্ডার আনতে সমস্যা হয়েছে', e));
+  }catch(e){
+    console.error('Firestore সংযোগ করা যায়নি, স্থানীয় অর্ডার দেখানো হচ্ছে', e);
+  }
 }
 document.getElementById('clearAllOrdersBtn').addEventListener('click', ()=>{
   if(!confirm('সব অর্ডার স্থায়ীভাবে মুছে ফেলতে চান? এই কাজটি ফেরানো যাবে না।')) return;
@@ -3040,13 +3162,50 @@ document.getElementById('clearAllOrdersBtn').addEventListener('click', ()=>{
 
 function renderAdmin(){
   renderAdminOrders();
-  adminProdList.innerHTML = '';
-  PRODUCTS.forEach(p=>{
-    adminProdList.appendChild(buildAdminProductRow(p));
-  });
+  renderAdminProdList();
   renderAdminPackages();
   refreshNewPkgProdOptions();
 }
+
+const adminProdSearch = document.getElementById('adminProdSearch');
+const adminProdCatFilter = document.getElementById('adminProdCatFilter');
+const adminProdCount = document.getElementById('adminProdCount');
+
+function refreshAdminProdCatFilterOptions(){
+  adminProdCatFilter.innerHTML = '';
+  const allOpt = document.createElement('option');
+  allOpt.value = 'all';
+  allOpt.textContent = 'সব ক্যাটাগরি';
+  adminProdCatFilter.appendChild(allOpt);
+  CATEGORIES.filter(c=>c.id!=='all').forEach(c=>{
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.label;
+    adminProdCatFilter.appendChild(opt);
+  });
+}
+refreshAdminProdCatFilterOptions();
+
+function renderAdminProdList(){
+  const term = adminProdSearch.value.trim();
+  const catFilter = adminProdCatFilter.value || 'all';
+  const filtered = PRODUCTS.filter(p=>{
+    const inCat = catFilter==='all' || p.cat===catFilter;
+    const inSearch = !term || p.name.includes(term);
+    return inCat && inSearch;
+  });
+  adminProdList.innerHTML = '';
+  adminProdCount.textContent = `${toBn(filtered.length)} টি পণ্য পাওয়া গেছে`;
+  if(filtered.length === 0){
+    adminProdList.innerHTML = '<div style="font-size:12.5px;color:#8a8272;padding:10px 0;">কোনো পণ্য পাওয়া যায়নি</div>';
+    return;
+  }
+  filtered.forEach(p=>{
+    adminProdList.appendChild(buildAdminProductRow(p));
+  });
+}
+adminProdSearch.addEventListener('input', renderAdminProdList);
+adminProdCatFilter.addEventListener('change', renderAdminProdList);
 </script>
 </body>
 </html>
