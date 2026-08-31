@@ -1207,8 +1207,8 @@ setInterval(rotateHomeBanner, 30000);
 const CATEGORIES = [
   {id:'all', label:'সব', img:'', icon:'🏠', subcats:[]},
   {id:'meat', label:'গোশত বাজার', img:'products/c1.jpg', icon:'🥩', subcats:[
-    {id:'beef', label:'গরু/খাশি/মহিষ'}, {id:'chicken', label:'মুরগি'}, {id:'nihari', label:'নিহারি'},
-    {id:'fat', label:'চর্বি'}, {id:'tripe', label:'ভূড়ি'}, {id:'head', label:'মাথা'}
+    {id:'beef', label:'গরু/খাশি/মহিষ'}, {id:'chicken', label:'মুরগি'}, {id:'duck', label:'হাঁস'},
+    {id:'nihari', label:'নিহারি'}, {id:'fat', label:'চর্বি'}, {id:'tripe', label:'ভূড়ি'}, {id:'head', label:'মাথা'}
   ]},
   {id:'grocery', label:'মুদি বাজার', img:'products/c2.jpg', icon:'🛒', subcats:[
     {id:'rice', label:'চাউল'}, {id:'pulses', label:'ডাউল'}, {id:'oil', label:'তেল'},
@@ -1559,7 +1559,10 @@ const PRODUCTS = [
   {id:218, name:'স্টেশনারি', unit:'প্রতি পিস', price:0, cat:'books', sub:'stationery', img:'products/218.jpg', stock:50},
   {id:219, name:'চিনি (লাল)', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'other', img:'products/219.jpg', stock:50},
   {id:220, name:'চিনি (সাদা)', unit:'প্রতি কেজি', price:0, cat:'grocery', sub:'other', img:'products/220.jpg', stock:50},
-  {id:221, name:'ডিম', unit:'প্রতি হালি', price:0, cat:'grocery', sub:'other', img:'products/221.jpg', stock:50}
+  {id:221, name:'ডিম', unit:'প্রতি হালি', price:0, cat:'grocery', sub:'other', img:'products/221.jpg', stock:50},
+  {id:222, name:'রাজ হাঁস', unit:'প্রতি পিস', price:0, cat:'meat', sub:'duck', img:'products/222.jpg', stock:50},
+  {id:223, name:'পাতি হাঁস', unit:'প্রতি পিস', price:0, cat:'meat', sub:'duck', img:'products/223.jpg', stock:50},
+  {id:224, name:'চিনা হাঁস', unit:'প্রতি পিস', price:0, cat:'meat', sub:'duck', img:'products/224.jpg', stock:50}
 ];
 
 (function assignDemoPrices(){
@@ -1666,7 +1669,7 @@ const PRODUCTS = [
    Any existing meat item whose `sub` is not one of the six allowed
    will be remapped to 'beef' (গোশত) so it appears under the requested group. */
 (function normalizeMeatSubcats(){
-  const allowed = ['beef','chicken','nihari','fat','head','tripe'];
+  const allowed = ['beef','chicken','duck','nihari','fat','head','tripe'];
   PRODUCTS.forEach(p=>{
     try{
       if(p.cat === 'meat' && !allowed.includes(p.sub)) p.sub = 'beef';
