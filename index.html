@@ -1913,7 +1913,7 @@ CATEGORIES.forEach(c=>{
   btn.className = 'cat-card' + (c.id==='all' ? ' active' : '');
   btn.dataset.cat = c.id;
   btn.innerHTML = `
-    <span class="cat-icon">${c.img ? `<img src="${c.img}" alt="${c.label}" loading="lazy">` : `<span class="cat-emoji">${c.icon || '•'}</span>`}</span>
+    <span class="cat-icon">${c.img ? `<img src="${c.img}" alt="${c.label}" loading="lazy" onerror="imgFallback(this)" data-fallback-icon="${c.icon || '•'}" data-fallback-class="cat-emoji">` : `<span class="cat-emoji">${c.icon || '•'}</span>`}</span>
     <span class="cat-label">${c.label}</span>
     <span class="cat-count">${toBn(countFor(c.id))} টি পণ্য</span>
   `;
@@ -2031,9 +2031,38 @@ function getCategoryIcon(catId){
   return cat && cat.icon ? cat.icon : '•';
 }
 
+/* ============ IMAGE EXTENSION FALLBACK ============
+   ছবির ফাইল .jpg না হয়ে .png/.jpeg/.webp ইত্যাদি অন্য ফরম্যাটে থাকলেও যেন
+   স্বয়ংক্রিয়ভাবে খুঁজে লোড করে — একটা ফরম্যাট ব্যর্থ হলে পরেরটা চেষ্টা করে,
+   সবগুলো ব্যর্থ হলে গ্রেসফুলি ইমোজি আইকনে (বা লুকিয়ে) ফিরে যায়। */
+const IMG_EXT_FALLBACKS = ['jpg','png','jpeg','webp','JPG','PNG','JPEG','WEBP','gif'];
+function imgFallback(img){
+  if(img.dataset.imgBase === undefined){
+    img.dataset.imgBase = img.getAttribute('src').replace(/\.[a-zA-Z0-9]+(\?.*)?$/, '');
+    img.dataset.imgIdx = '0';
+  }
+  const idx = parseInt(img.dataset.imgIdx, 10);
+  if(idx < IMG_EXT_FALLBACKS.length){
+    img.dataset.imgIdx = String(idx+1);
+    img.src = img.dataset.imgBase + '.' + IMG_EXT_FALLBACKS[idx];
+  }else{
+    img.onerror = null;
+    const icon = img.dataset.fallbackIcon;
+    const cls = img.dataset.fallbackClass || 'prod-emoji';
+    if(icon){
+      const span = document.createElement('span');
+      span.className = cls;
+      span.textContent = icon;
+      img.replaceWith(span);
+    }else{
+      img.style.display = 'none';
+    }
+  }
+}
+
 function thumbHtml(img, alt, icon, emojiClass){
   if(img){
-    return `<img src="${img}" alt="${alt}" loading="lazy">`;
+    return `<img src="${img}" alt="${alt}" loading="lazy" onerror="imgFallback(this)" data-fallback-icon="${icon || '•'}" data-fallback-class="${emojiClass}">`;
   }
   return `<span class="${emojiClass}">${icon || '•'}</span>`;
 }
@@ -2359,7 +2388,7 @@ function renderSummary(){
     const row = document.createElement('div');
     row.className = 'summary-row';
     row.innerHTML = `
-      <img class="st" src="${info.img}" alt="${info.name}">
+      <img class="st" src="${info.img}" alt="${info.name}" onerror="imgFallback(this)">
       <span class="sname">${info.name}</span>
       <span class="sqty">× ${toBn(qty)}</span>
       <span class="sprice">${taka(info.price*qty)}</span>
