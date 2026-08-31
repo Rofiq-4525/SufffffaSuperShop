@@ -224,25 +224,25 @@
   .cat-row::-webkit-scrollbar{display:none;}
   .cat-row.dragging{cursor:grabbing; scroll-snap-type:none;}
   .cat-card{
-    flex:0 0 auto; scroll-snap-align:start; width:92px;
+    flex:0 0 auto; scroll-snap-align:start; width:100px;
     display:flex; flex-direction:column; align-items:center; gap:6px;
-    background:linear-gradient(180deg, #ffffff, #fbf8f3); border-radius:14px; padding:10px 6px 10px;
+    background:linear-gradient(180deg, #ffffff, #fbf8f3); border-radius:14px; padding:12px 6px 9px;
     box-shadow:0 4px 14px rgba(18,60,102,0.08);
     border:2px solid transparent; user-select:none;
   }
   .cat-card.active{ border-color:var(--mustard); }
   .cat-card .cat-icon{
-    width:44px; height:44px; border-radius:11px; background:var(--cream-2);
+    width:64px; height:64px; border-radius:14px; background:var(--cream-2);
     overflow:hidden; display:flex; align-items:center; justify-content:center;
   }
   .cat-card .cat-icon img{ width:100%; height:100%; object-fit:cover; display:block; }
   .cat-card .cat-icon .cat-emoji{
-    font-size:22px; line-height:1; display:block;
+    font-size:30px; line-height:1; display:block;
   }
-  .cat-card .cat-label{ font-size:11.5px; font-weight:700; color:var(--ink); text-align:center; line-height:1.2; }
+  .cat-card .cat-label{ font-size:10px; font-weight:700; color:var(--ink); text-align:center; line-height:1.2; }
   .cat-card .cat-count{
-    font-size:9px; font-weight:700; color:var(--leaf); background:var(--cream-2);
-    padding:2px 7px; border-radius:999px;
+    font-size:8px; font-weight:700; color:var(--leaf); background:var(--cream-2);
+    padding:2px 6px; border-radius:999px;
   }
 
   @media (max-width: 480px){
@@ -250,14 +250,14 @@
     .cat-row{ gap:8px; padding:4px 10px 8px; }
     .cat-card{
       width: calc((100% - 24px) / 4);
-      min-width:72px;
-      padding:8px 4px 8px;
+      min-width:78px;
+      padding:8px 4px 7px;
       gap:5px;
     }
-    .cat-card .cat-icon{ width:36px; height:36px; border-radius:9px; }
-    .cat-card .cat-icon .cat-emoji{ font-size:18px; }
-    .cat-card .cat-label{ font-size:10px; }
-    .cat-card .cat-count{ font-size:8px; padding:2px 5px; }
+    .cat-card .cat-icon{ width:52px; height:52px; border-radius:12px; }
+    .cat-card .cat-icon .cat-emoji{ font-size:24px; }
+    .cat-card .cat-label{ font-size:9px; }
+    .cat-card .cat-count{ font-size:7.5px; padding:1.5px 5px; }
   }
 
   /* ---------- Desktop: বড় ও সেন্টার করা ক্যাটাগরি কার্ড ---------- */
@@ -266,15 +266,15 @@
     .cat-scroll-wrap{ max-width:1100px; margin:0 auto; }
     .cat-row{ justify-content:center; gap:20px; padding:12px 44px 20px; }
     .cat-card{
-      width:140px;
-      padding:18px 12px 16px;
-      gap:10px;
+      width:150px;
+      padding:20px 12px 14px;
+      gap:8px;
       border-radius:18px;
     }
-    .cat-card .cat-icon{ width:68px; height:68px; border-radius:16px; }
-    .cat-card .cat-icon .cat-emoji{ font-size:32px; }
-    .cat-card .cat-label{ font-size:14.5px; }
-    .cat-card .cat-count{ font-size:11px; padding:3px 10px; }
+    .cat-card .cat-icon{ width:96px; height:96px; border-radius:18px; }
+    .cat-card .cat-icon .cat-emoji{ font-size:44px; }
+    .cat-card .cat-label{ font-size:12.5px; }
+    .cat-card .cat-count{ font-size:10px; padding:3px 9px; }
   }
 
   /* ---------- Ferdo (list) section ---------- */
