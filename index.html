@@ -519,15 +519,17 @@
 
   /* ---------- Custom পরিমাণ (kg/gram/pcs) section under each product ---------- */
   .qty-amount-section{
-    margin:0 12px 10px 12px;
-    padding:8px 10px;
-    display:flex; flex-direction:column; gap:6px;
+    margin:0 8px 8px 8px;
+    padding:7px 8px;
+    display:flex; flex-direction:column; gap:5px;
     align-items:center;
     background:linear-gradient(180deg, var(--warm-soft), #fbf4e8);
     border:1px solid var(--paper-line);
-    border-radius:10px;
+    border-radius:9px;
     box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);
     position:relative;
+    width:calc(100% - 16px);
+    box-sizing:border-box;
   }
   .qty-amount-section::before{
     content:'পরিমাণ লিখুন';
@@ -538,11 +540,12 @@
   }
   .ferdo-row.out-of-stock ~ .qty-amount-section{ opacity:0.5; pointer-events:none; }
   .qty-suggest-row{
-    display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:6px;
+    display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:4px;
+    width:100%;
   }
   .qty-suggest-btn{
     border:1px solid var(--paper-line); background:#fff; color:var(--pine-2);
-    font-size:10px; font-weight:700; padding:4px 8px; border-radius:999px;
+    font-size:9px; font-weight:700; padding:3px 7px; border-radius:999px;
     white-space:nowrap; transition:background .15s ease, border-color .15s ease, color .15s ease, transform .1s ease;
     box-shadow:0 1px 3px rgba(18,60,102,0.05);
   }
@@ -551,26 +554,26 @@
     .qty-suggest-btn:hover{ background:var(--mustard); border-color:var(--mustard); color:#fff; box-shadow:0 3px 8px rgba(200,155,92,0.35); }
   }
   .qty-amount-row{
-    display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:nowrap;
+    display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:nowrap;
     width:100%;
-    min-height:34px;
+    min-height:30px;
   }
   .qty-amount-box{
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
-    width:72px; min-width:72px;
+    width:auto; min-width:0; flex:0 0 auto;
   }
   .qty-amount-box .qty-amount-field{
-    position:relative; width:100%; max-width:58px;
+    position:relative; width:100%; max-width:52px;
   }
   .qty-amount-box .qty-unit-tag{
-    position:absolute; right:6px; top:50%; transform:translateY(-50%);
-    font-size:8.5px; color:var(--pine); font-weight:700; letter-spacing:0.1px;
+    position:absolute; right:5px; top:50%; transform:translateY(-50%);
+    font-size:7.8px; color:var(--pine); font-weight:700; letter-spacing:0.1px;
     white-space:nowrap; pointer-events:none;
   }
   .qty-amount-box input{
-    width:100%; max-width:58px; text-align:center; font-size:12.5px; font-weight:800; color:var(--pine);
+    width:100%; max-width:52px; text-align:center; font-size:11.5px; font-weight:800; color:var(--pine);
     border:1.2px solid var(--paper-line); border-radius:8px; background:#fff;
-    padding:5px 22px 5px 6px; -moz-appearance:textfield;
+    padding:4px 18px 4px 5px; -moz-appearance:textfield;
     transition:border-color .15s ease, box-shadow .15s ease;
   }
   .qty-amount-box input::placeholder{ color:#c9c0ac; font-weight:600; }
@@ -585,22 +588,22 @@
   .qty-amount-price{
     margin-left:0;
     font-family:'Tiro Bangla', serif;
-    font-weight:800; font-size:11.5px; color:#fff;
+    font-weight:800; font-size:10.5px; color:#fff;
     background:linear-gradient(135deg, var(--leaf), var(--leaf-light));
-    padding:6px 10px; border-radius:8px;
+    padding:5px 8px; border-radius:7px;
     white-space:nowrap;
     box-shadow:0 3px 9px rgba(15,107,46,0.28);
     align-self:center;
-    min-width:72px; text-align:center;
+    min-width:58px; text-align:center;
     display:inline-flex; align-items:center; justify-content:center;
     flex:0 0 auto;
     line-height:1.2;
   }
   @media (max-width:380px){
-    .qty-amount-section{ padding:10px; }
-    .qty-amount-row{ gap:6px; }
-    .qty-amount-box input{ width:48px; padding:6px 2px; }
-    .qty-amount-price{ margin-left:0; width:100%; text-align:center; margin-top:2px; }
+    .qty-amount-section{ padding:8px; }
+    .qty-amount-row{ gap:5px; }
+    .qty-amount-box input{ width:46px; max-width:46px; padding:4px 16px 4px 4px; }
+    .qty-amount-price{ min-width:52px; padding:5px 7px; }
   }
 
   /* ---------- Package "add all" button ---------- */
