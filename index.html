@@ -267,14 +267,19 @@
   @media (min-width: 900px){
     .cat-heading{ text-align:center; font-size:24px; }
     .cat-scroll-wrap{ max-width:1100px; margin:0 auto; }
-    .cat-row{ justify-content:center; gap:20px; padding:12px 44px 20px; }
-    .cat-card{
-      width:195px;
-      border-radius:22px;
+    .cat-row{
+      justify-content:flex-start;
+      gap:16px;
+      padding:12px 20px 20px;
+      overflow-x:auto;
     }
-    .cat-card .cat-icon .cat-emoji{ font-size:58px; }
-    .cat-card .cat-label{ font-size:14.5px; padding:14px 10px 3px; }
-    .cat-card .cat-count{ font-size:11.5px; padding:3.5px 11px; margin:7px auto 14px; }
+    .cat-card{
+      width:150px;
+      border-radius:20px;
+    }
+    .cat-card .cat-icon .cat-emoji{ font-size:52px; }
+    .cat-card .cat-label{ font-size:13.5px; padding:12px 8px 3px; }
+    .cat-card .cat-count{ font-size:10.5px; padding:3px 9px; margin:6px auto 12px; }
   }
 
   /* ---------- Ferdo (list) section ---------- */
@@ -511,6 +516,92 @@
     .stock-tag{ font-size:8.5px; font-weight:500; padding:1.5px 7px; margin-top:3px; }
   }
   .qty-stepper button:disabled{ opacity:0.4; cursor:not-allowed; }
+
+  /* ---------- Custom পরিমাণ (kg/gram/pcs) section under each product ---------- */
+  .qty-amount-section{
+    margin:0 12px 10px 12px;
+    padding:8px 10px;
+    display:flex; flex-direction:column; gap:6px;
+    align-items:center;
+    background:linear-gradient(180deg, var(--warm-soft), #fbf4e8);
+    border:1px solid var(--paper-line);
+    border-radius:10px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.6);
+    position:relative;
+  }
+  .qty-amount-section::before{
+    content:'পরিমাণ লিখুন';
+    display:block;
+    font-size:9.5px; font-weight:800; letter-spacing:0.4px;
+    color:var(--mustard-dark); text-transform:uppercase;
+    opacity:0.85;
+  }
+  .ferdo-row.out-of-stock ~ .qty-amount-section{ opacity:0.5; pointer-events:none; }
+  .qty-suggest-row{
+    display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:6px;
+  }
+  .qty-suggest-btn{
+    border:1px solid var(--paper-line); background:#fff; color:var(--pine-2);
+    font-size:10px; font-weight:700; padding:4px 8px; border-radius:999px;
+    white-space:nowrap; transition:background .15s ease, border-color .15s ease, color .15s ease, transform .1s ease;
+    box-shadow:0 1px 3px rgba(18,60,102,0.05);
+  }
+  .qty-suggest-btn:active{ transform:scale(0.94); }
+  @media (hover:hover){
+    .qty-suggest-btn:hover{ background:var(--mustard); border-color:var(--mustard); color:#fff; box-shadow:0 3px 8px rgba(200,155,92,0.35); }
+  }
+  .qty-amount-row{
+    display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:nowrap;
+    width:100%;
+    min-height:34px;
+  }
+  .qty-amount-box{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;
+    width:72px; min-width:72px;
+  }
+  .qty-amount-box .qty-amount-field{
+    position:relative; width:100%; max-width:58px;
+  }
+  .qty-amount-box .qty-unit-tag{
+    position:absolute; right:6px; top:50%; transform:translateY(-50%);
+    font-size:8.5px; color:var(--pine); font-weight:700; letter-spacing:0.1px;
+    white-space:nowrap; pointer-events:none;
+  }
+  .qty-amount-box input{
+    width:100%; max-width:58px; text-align:center; font-size:12.5px; font-weight:800; color:var(--pine);
+    border:1.2px solid var(--paper-line); border-radius:8px; background:#fff;
+    padding:5px 22px 5px 6px; -moz-appearance:textfield;
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  .qty-amount-box input::placeholder{ color:#c9c0ac; font-weight:600; }
+  .qty-amount-box input::-webkit-outer-spin-button,
+  .qty-amount-box input::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+  .qty-amount-box input:focus{
+    outline:none; border-color:var(--leaf); box-shadow:0 0 0 3px rgba(31,122,70,0.12);
+  }
+  .qty-amount-box:has(input:not(:placeholder-shown)) input{
+    border-color:var(--leaf-light); background:rgba(31,122,70,0.04);
+  }
+  .qty-amount-price{
+    margin-left:0;
+    font-family:'Tiro Bangla', serif;
+    font-weight:800; font-size:11.5px; color:#fff;
+    background:linear-gradient(135deg, var(--leaf), var(--leaf-light));
+    padding:6px 10px; border-radius:8px;
+    white-space:nowrap;
+    box-shadow:0 3px 9px rgba(15,107,46,0.28);
+    align-self:center;
+    min-width:72px; text-align:center;
+    display:inline-flex; align-items:center; justify-content:center;
+    flex:0 0 auto;
+    line-height:1.2;
+  }
+  @media (max-width:380px){
+    .qty-amount-section{ padding:10px; }
+    .qty-amount-row{ gap:6px; }
+    .qty-amount-box input{ width:48px; padding:6px 2px; }
+    .qty-amount-price{ margin-left:0; width:100%; text-align:center; margin-top:2px; }
+  }
 
   /* ---------- Package "add all" button ---------- */
   .pkg-add-all-btn{
@@ -1063,8 +1154,12 @@
         <input type="text" id="newProdName" placeholder="যেমন: মিনিকেট চাল">
       </div>
       <div class="field">
-        <label>একক</label>
-        <input type="text" id="newProdUnit" placeholder="যেমন: প্রতি কেজি">
+        <label>বিক্রির একক</label>
+        <select id="newProdUnit" class="admin-num-input">
+          <option value="kg">কেজি</option>
+          <option value="gram">গ্রাম</option>
+          <option value="pcs">পিস</option>
+        </select>
       </div>
       <div class="field">
         <label>ক্যাটাগরি</label>
@@ -1235,13 +1330,10 @@ const CATEGORIES = [
     {id:'raisins', label:'কিসমিস'}, {id:'dried-fruit', label:'শুকনো ফল'}, {id:'garlic', label:'কালো রসুন'}
   ]},
   {id:'fruit', label:'ফলের বাজার', img:'products/c9.jpg', icon:'🍏', subcats:[
-    {id:'fresh-fruit', label:'তাজা ফল'}, {id:'seasonal-fruit', label:'মৌসুমী ফল'}
+    {id:'fresh-fruit', label:'শুকনো ফল'}
   ]},
   {id:'sweet', label:'মিষ্টির বাজার', img:'products/c10.jpg', icon:'🍰', subcats:[
     {id:'sweets', label:'মিষ্টি'}, {id:'snacks', label:'স্ন্যাকস'}
-  ]},
-  {id:'clothing', label:'পোশাক বাজার', img:'products/c11.jpg', icon:'👕', subcats:[
-    {id:'men', label:'পুরুষ'}, {id:'women', label:'নারী'}, {id:'kids', label:'শিশু'}
   ]},
   {id:'readyfood', label:'সুফফা রেডি ফুড', img:'products/c12.jpg', icon:'🍱', subcats:[
     {id:'combo', label:'কম্বো'}, {id:'snack-box', label:'স্ন্যাক বক্স'}, {id:'meal', label:'মেইল'}
@@ -1739,13 +1831,67 @@ function saveDeletedIds(list){
   try{ localStorage.setItem(DELETED_KEY, JSON.stringify(list)); }catch(e){ /* storage unavailable */ }
 }
 let deletedProductIds = loadDeletedIds();
-loadCustomProducts().forEach(p=> PRODUCTS.push(p));
-for(let i=PRODUCTS.length-1; i>=0; i--){
-  if(deletedProductIds.includes(PRODUCTS[i].id)) PRODUCTS.splice(i,1);
+const DEFAULT_PRODUCTS = JSON.parse(JSON.stringify(PRODUCTS));
+const BN_DIGIT = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
+const UNIT_TYPES = {
+  kg: { label: 'কেজি', unitText: 'প্রতি কেজি', suggestions: [1, 0.5, 0.25, 0.1] },
+  gram: { label: 'গ্রাম', unitText: 'প্রতি গ্রাম', suggestions: [500, 250, 100, 50] },
+  pcs: { label: 'পিস', unitText: 'প্রতি পিস', suggestions: [1, 2, 3, 5] }
+};
+function normalizeUnitType(value){
+  const text = String(value || '').toLowerCase();
+  if(/kg|কেজি|kilogram/.test(text)) return 'kg';
+  if(/gram|গ্রাম|g\b|gm\b/.test(text)) return 'gram';
+  if(/pcs|পিস|piece|set|packet|বক্স|বোতল/.test(text)) return 'pcs';
+  return 'kg';
 }
+function getProductUnitType(product){
+  if(!product) return 'kg';
+  if(product.unitType && UNIT_TYPES[product.unitType]) return product.unitType;
+  return normalizeUnitType(product.unit || '');
+}
+function getUnitSuggestionValues(product){
+  const type = getProductUnitType(product);
+  return (UNIT_TYPES[type] || UNIT_TYPES.kg).suggestions;
+}
+function formatUnitSuggestion(type, value){
+  if(type === 'kg'){
+    const grams = Math.round(Number(value) * 1000);
+    return Number(value) < 1 ? `${toBn(grams)} গ্রাম` : `${toBn(Number(value))} কেজি`;
+  }
+  if(type === 'gram') return `${toBn(Number(value))} গ্রাম`;
+  return `${toBn(Number(value))} পিস`;
+}
+function getUnitInputConfig(productId, type){
+  const amt = qtyAmount[productId] || { kg: 0, gram: 0, pcs: 0 };
+  const defaults = {
+    kg: { label: 'কেজি', part: 'kg', value: amt.kg || '', step: '0.1', hidden: type !== 'kg' },
+    gram: { label: 'গ্রাম', part: 'gram', value: amt.gram || '', step: '1', hidden: type !== 'gram' },
+    pcs: { label: 'পিস', part: 'pcs', value: amt.pcs || '', step: '1', hidden: type !== 'pcs' }
+  };
+  return defaults;
+}
+function restoreDefaultCatalog(){
+  PRODUCTS.length = 0;
+  DEFAULT_PRODUCTS.forEach(p=> PRODUCTS.push(JSON.parse(JSON.stringify(p))));
+  loadCustomProducts().forEach(p=> {
+    const existingIndex = PRODUCTS.findIndex(x => x.id === p.id);
+    if(existingIndex > -1) PRODUCTS[existingIndex] = JSON.parse(JSON.stringify(p));
+    else PRODUCTS.push(JSON.parse(JSON.stringify(p)));
+  });
+  for(let i=PRODUCTS.length-1; i>=0; i--){
+    if(deletedProductIds.includes(PRODUCTS[i].id)) PRODUCTS.splice(i,1);
+  }
+}
+restoreDefaultCatalog();
 
 /* ============ default stock (admin can edit per product) ============ */
-PRODUCTS.forEach(p=>{ if(typeof p.stock !== 'number') p.stock = 50; });
+PRODUCTS.forEach(p=>{
+  if(typeof p.stock !== 'number') p.stock = 50;
+  p.unitType = getProductUnitType(p);
+  if(!p.unit || !String(p.unit).trim()) p.unit = UNIT_TYPES[p.unitType].unitText;
+  else if(!p.unitType || !UNIT_TYPES[p.unitType]) p.unitType = getProductUnitType(p);
+});
 
 /* ============ ADMIN OVERRIDES: images, price, stock (persisted in this browser) ============ */
 const OVR_KEY = 'suffaImageOverrides';
@@ -1771,8 +1917,6 @@ PRODUCTS.forEach(p=>{
   if(ov.stock != null && ov.stock !== '') p.stock = Number(ov.stock);
   if(ov.variants) p.variants = ov.variants;
 });
-
-const BN_DIGIT = ['০','১','২','৩','৪','৫','৬','৭','৮','৯'];
 
 /* ============ FIREBASE / FIRESTORE SYNC HELPERS ============
    এই ফাংশনগুলো দাম, স্টক, প্যাকেজ ও অর্ডার সব ডিভাইসে শেয়ার করার জন্য
@@ -1847,6 +1991,9 @@ async function loadCloudData(){
       const idx = PRODUCTS.findIndex(p=>p.id===idNum);
       if(idx>-1) PRODUCTS.splice(idx,1);
     });
+    if(PRODUCTS.length === 0){
+      restoreDefaultCatalog();
+    }
 
     // ৩) প্যাকেজসমূহ
     const pkgSnap = await db.collection('packages').get();
@@ -1877,6 +2024,7 @@ let cart = {}; // id (number) or "v_<parentId>_<variantId>" (string) -> qty in b
 let qtyDraft = {}; // id -> stepper qty before adding
 PRODUCTS.forEach(p => qtyDraft[p.id] = 1);
 let variantQtyDraft = {}; // "<parentId>_<variantId>" -> stepper qty before adding
+let qtyAmount = {}; // id -> {kg, gram, pcs} custom পরিমাণ entered by customer
 let activeCat = 'all';
 let activeSub = 'all';
 let searchTerm = '';
@@ -2142,6 +2290,39 @@ function buildFerdoRow(p){
       <button class="add-btn" id="add-${p.id}" data-id="${p.id}" aria-label="ব্যাগে যোগ করুন" ${outOfStock ? 'disabled' : ''}>＋</button>
     `;
     wrapper.appendChild(row);
+
+    const unitType = getProductUnitType(p);
+    if(unitType !== 'pcs'){
+      if(qtyAmount[p.id] === undefined) qtyAmount[p.id] = { kg:0, gram:0, pcs:0 };
+      const amt = qtyAmount[p.id];
+      const suggestionValues = getUnitSuggestionValues(p);
+      const amtSection = document.createElement('div');
+      amtSection.className = 'qty-amount-section';
+      const suggestionMarkup = suggestionValues.map(v=>{
+        if(unitType === 'kg') return `<button type="button" class="qty-suggest-btn" data-id="${p.id}" data-kg="${v}" data-gram="0" data-pcs="0">${formatUnitSuggestion('kg', v)}</button>`;
+        if(unitType === 'gram') return `<button type="button" class="qty-suggest-btn" data-id="${p.id}" data-kg="0" data-gram="${v}" data-pcs="0">${formatUnitSuggestion('gram', v)}</button>`;
+        return `<button type="button" class="qty-suggest-btn" data-id="${p.id}" data-kg="0" data-gram="0" data-pcs="${v}">${formatUnitSuggestion('pcs', v)}</button>`;
+      }).join('');
+      const amountBoxes = [
+        { part: 'kg', label: 'কেজি', value: amt.kg || '', step: '0.1', active: unitType === 'kg' },
+        { part: 'gram', label: 'গ্রাম', value: amt.gram || '', step: '1', active: unitType === 'gram' },
+        { part: 'pcs', label: 'পিস', value: amt.pcs || '', step: '1', active: unitType === 'pcs' }
+      ];
+      const amountMarkup = amountBoxes.map(box=>`
+        <div class="qty-amount-box" style="display:${box.active ? 'flex' : 'none'}; position:relative;">
+          <div class="qty-amount-field">
+            <input type="number" min="0" step="${box.step}" inputmode="numeric" class="qty-amount-input" data-id="${p.id}" data-part="${box.part}" id="qa-${box.part}-${p.id}" value="${box.value}" placeholder="0" data-unit-label="${box.label}">
+            <span class="qty-unit-tag">${box.label}</span>
+          </div>
+        </div>
+      `).join('');
+      const currentTotal = unitType === 'kg' ? (amt.kg || 0) : (amt.gram || 0) / 1000;
+      amtSection.innerHTML = `
+        <div class="qty-suggest-row">${suggestionMarkup}</div>
+        <div class="qty-amount-row">${amountMarkup}<div class="qty-amount-price" id="qap-${p.id}">${taka(Math.round(p.price * currentTotal))}</div></div>
+      `;
+      wrapper.appendChild(amtSection);
+    }
   }
 
   return wrapper;
@@ -2223,6 +2404,57 @@ function attachFerdoListeners(){
       updateCartBar();
     });
   });
+
+  /* ---- unit-based quantity suggestion buttons ---- */
+  ferdoList.querySelectorAll('.qty-suggest-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const id = +btn.dataset.id;
+      const p = PRODUCTS.find(x=>x.id===id);
+      const unitType = getProductUnitType(p);
+      const kg = +btn.dataset.kg || 0;
+      const gram = +btn.dataset.gram || 0;
+      const pcs = +btn.dataset.pcs || 0;
+      qtyAmount[id] = { kg: 0, gram: 0, pcs: 0 };
+      if(unitType === 'kg') qtyAmount[id].kg = kg || 0;
+      else if(unitType === 'gram') qtyAmount[id].gram = gram || 0;
+      else qtyAmount[id].pcs = pcs || 0;
+      if(document.getElementById(`qa-kg-${id}`)) document.getElementById(`qa-kg-${id}`).value = qtyAmount[id].kg || '';
+      if(document.getElementById(`qa-gram-${id}`)) document.getElementById(`qa-gram-${id}`).value = qtyAmount[id].gram || '';
+      if(document.getElementById(`qa-pcs-${id}`)) document.getElementById(`qa-pcs-${id}`).value = qtyAmount[id].pcs || '';
+      updateAmountPrice(id);
+    });
+  });
+
+  /* ---- unit-based amount input sync ---- */
+  ferdoList.querySelectorAll('.qty-amount-input').forEach(inp=>{
+    inp.addEventListener('click', e=> e.stopPropagation());
+    inp.addEventListener('input', ()=>{
+      const id = +inp.dataset.id;
+      const p = PRODUCTS.find(x=>x.id===id);
+      const part = inp.dataset.part;
+      if(!p) return;
+      const type = getProductUnitType(p);
+      const value = Math.max(0, +inp.value || 0);
+      const next = { kg: 0, gram: 0, pcs: 0 };
+      if(type === 'kg') next.kg = part === 'kg' ? value : 0;
+      else if(type === 'gram') next.gram = part === 'gram' ? value : 0;
+      else next.pcs = part === 'pcs' ? value : 0;
+      qtyAmount[id] = next;
+      updateAmountPrice(id);
+    });
+  });
+}
+
+function updateAmountPrice(id){
+  const p = PRODUCTS.find(x=>x.id===id);
+  if(!p) return;
+  const amt = qtyAmount[id] || { kg:0, gram:0, pcs:0 };
+  const type = getProductUnitType(p);
+  const totalUnits = type === 'kg' ? (amt.kg || 0) : type === 'gram' ? (amt.gram || 0) / 1000 : (amt.pcs || 0);
+  const price = Math.round(p.price * totalUnits);
+  const el = document.getElementById('qap-'+id);
+  if(el) el.textContent = taka(price);
 }
 
 function updatePkgSaveNote(){
@@ -2706,7 +2938,8 @@ renderNewProdVarList();
 
 document.getElementById('addProductBtn').addEventListener('click', ()=>{
   const name = document.getElementById('newProdName').value.trim();
-  const unit = document.getElementById('newProdUnit').value.trim();
+  const unitType = document.getElementById('newProdUnit').value;
+  const unit = UNIT_TYPES[unitType] ? UNIT_TYPES[unitType].unitText : 'প্রতি কেজি';
   const cat = newProdCatSel.value;
   const sub = newProdSubSel.value || undefined;
   const price = Number(document.getElementById('newProdPrice').value);
@@ -2715,13 +2948,13 @@ document.getElementById('addProductBtn').addEventListener('click', ()=>{
   const img = urlVal || 'https://loremflickr.com/200/200/grocery';
 
   if(!name){ showToast('পণ্যের নাম দিন'); return; }
-  if(!unit){ showToast('একক দিন'); return; }
+  if(!unitType){ showToast('একক নির্বাচন করুন'); return; }
   if(!cat){ showToast('ক্যাটাগরি নির্বাচন করুন'); return; }
   if(isNaN(price) || price < 0){ showToast('সঠিক মূল্য দিন'); return; }
   if(isNaN(stock) || stock < 0){ showToast('সঠিক স্টক পরিমাণ দিন'); return; }
 
   const newProduct = {
-    id: Date.now(), name, unit, price, stock, cat, sub, img,
+    id: Date.now(), name, unit, unitType, price, stock, cat, sub, img,
     variants: newProdVariants.length ? newProdVariants.map(v=>({...v})) : undefined
   };
   PRODUCTS.push(newProduct);
@@ -2729,13 +2962,13 @@ document.getElementById('addProductBtn').addEventListener('click', ()=>{
   custom.push(newProduct);
   saveCustomProducts(custom);
   fsSaveProduct(newProduct.id, {
-    isCustom:true, name, unit, price, stock, cat, sub, img,
+    isCustom:true, name, unit, unitType, price, stock, cat, sub, img,
     variants: newProdVariants.length ? newProdVariants.map(v=>({...v})) : []
   });
 
   // reset form
   document.getElementById('newProdName').value = '';
-  document.getElementById('newProdUnit').value = '';
+  document.getElementById('newProdUnit').value = 'kg';
   document.getElementById('newProdPrice').value = '';
   document.getElementById('newProdStock').value = '50';
   document.getElementById('newProdImgUrl').value = '';
@@ -2768,6 +3001,14 @@ function buildAdminProductRow(p){
           <select class="admin-num-input stock-input">
             <option value="50" ${p.stock > 0 ? 'selected' : ''}>মজুদ আছে</option>
             <option value="0" ${p.stock <= 0 ? 'selected' : ''}>স্টক নেই</option>
+          </select>
+        </div>
+        <div class="admin-num-field">
+          <span class="lbl">বিক্রির একক</span>
+          <select class="admin-num-input unit-select">
+            <option value="kg" ${getProductUnitType(p)==='kg' ? 'selected' : ''}>কেজি</option>
+            <option value="gram" ${getProductUnitType(p)==='gram' ? 'selected' : ''}>গ্রাম</option>
+            <option value="pcs" ${getProductUnitType(p)==='pcs' ? 'selected' : ''}>পিস</option>
           </select>
         </div>
       </div>
@@ -2868,6 +3109,7 @@ function buildAdminProductRow(p){
   saveBtn.addEventListener('click', ()=>{
     const priceVal = Number(priceInput.value);
     const stockVal = Number(stockInput.value);
+    const unitType = row.querySelector('.unit-select').value;
     if(isNaN(priceVal) || priceVal < 0){ showToast('সঠিক মূল্য দিন'); return; }
     if(isNaN(stockVal) || stockVal < 0){ showToast('সঠিক স্টক পরিমাণ দিন'); return; }
 
@@ -2885,14 +3127,16 @@ function buildAdminProductRow(p){
 
     p.price = priceVal;
     p.stock = stockVal;
+    p.unitType = UNIT_TYPES[unitType] ? unitType : 'kg';
+    p.unit = UNIT_TYPES[p.unitType].unitText;
 
     imageOverrides.prod[p.id] = {
-      price: p.price, stock: p.stock,
+      price: p.price, stock: p.stock, unitType: p.unitType, unit: p.unit,
       variants: p.variants.length ? p.variants.map(v=>({...v})) : undefined
     };
     saveOverridesToStorage(imageOverrides);
     fsSaveProduct(p.id, {
-      price: p.price, stock: p.stock,
+      price: p.price, stock: p.stock, unitType: p.unitType, unit: p.unit,
       variants: p.variants.length ? p.variants.map(v=>({...v})) : []
     });
 
