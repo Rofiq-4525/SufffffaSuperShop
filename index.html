@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   :root{
     --pine:#123C66;
@@ -669,6 +671,57 @@
   .back-btn{ background:rgba(255,255,255,0.15); border:none; color:#fff; width:34px; height:34px; border-radius:50%; font-size:16px;}
   .confirm-top h2{ font-family:'Tiro Bangla',serif; font-size:19px; margin:0;}
   .confirm-body{ max-width:600px; margin:0 auto; padding:20px 16px 60px; }
+  .admin-tabbar{
+    display:flex; gap:6px; overflow-x:auto; padding:10px 12px; background:var(--pine);
+    position:sticky; top:66px; z-index:4; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+  }
+  .admin-tabbar::-webkit-scrollbar{ display:none; }
+  .admin-tab-btn{
+    flex:0 0 auto; background:rgba(255,255,255,0.14); color:#fff; border:none; border-radius:999px;
+    padding:8px 14px; font-family:inherit; font-size:12.5px; font-weight:700; white-space:nowrap; cursor:pointer;
+    transition:background .15s;
+  }
+  .admin-tab-btn.active{ background:#fff; color:var(--pine); }
+  .admin-tab-panel{ display:none; }
+  .admin-tab-panel.active{ display:block; }
+  .price-mgmt-table{ width:100%; border-collapse:collapse; font-size:13px; }
+  .price-mgmt-table th{
+    text-align:left; padding:8px 6px; border-bottom:2px solid var(--paper-line); color:var(--leaf); font-size:12px; font-weight:700;
+    position:sticky; top:0; background:#fff;
+  }
+  .price-mgmt-table td{ padding:7px 6px; border-bottom:1px solid var(--paper-line); vertical-align:middle; }
+  .price-mgmt-table tr:nth-child(even){ background:var(--cream-2); }
+  .price-mgmt-row-name{ font-weight:600; color:var(--ink); }
+  .price-mgmt-row-cat{ display:block; font-size:10.5px; font-weight:500; color:#9a927e; margin-top:2px; }
+  .price-mgmt-input-wrap{ display:flex; align-items:center; gap:22px; }
+  .price-mgmt-input-wrap .taka{ font-weight:700; color:var(--leaf); font-size:13px; }
+  .price-mgmt-input{
+    width:78px; border:1.5px solid var(--paper-line); border-radius:8px; padding:6px 8px;
+    font-family:inherit; font-size:13.5px; background:var(--cream); color:var(--ink); font-weight:700;
+    transition:border-color .15s, background .15s;
+  }
+  .price-mgmt-input:focus{ outline:none; border-color:var(--leaf); }
+  .price-mgmt-input.saved{ background:#e3f6e6; border-color:var(--leaf); }
+  .price-mgmt-save-btn{
+    background:var(--leaf); color:#fff; border:none; border-radius:8px; padding:6px 10px;
+    font-family:inherit; font-size:11.5px; font-weight:700; cursor:pointer; white-space:nowrap; margin-left:6px;
+  }
+  .price-mgmt-save-btn:active{ opacity:0.85; }
+  .analysis-range-btn{
+    background:var(--cream-2); color:var(--pine); border:1.5px solid var(--paper-line); border-radius:999px;
+    padding:7px 14px; font-family:inherit; font-size:12px; font-weight:700; cursor:pointer;
+  }
+  .analysis-range-btn.active{ background:var(--leaf); color:#fff; border-color:var(--leaf); }
+  .analysis-summary{
+    display:flex; gap:10px; flex-wrap:wrap;
+  }
+  .analysis-stat{
+    flex:1; min-width:100px; background:var(--cream-2); border-radius:12px; padding:12px 14px; text-align:center;
+  }
+  .analysis-stat .label{ font-size:11px; color:#8a8272; font-weight:600; margin-bottom:4px; }
+  .analysis-stat .value{ font-size:17px; font-weight:700; color:var(--ink); }
+  .analysis-stat .value.up{ color:#c0392b; }
+  .analysis-stat .value.down{ color:#1b5e20; }
   .form-card, .summary-card{
     background:#fff; border-radius:16px; padding:18px; box-shadow:var(--shadow); margin-bottom:18px;
   }
@@ -1141,7 +1194,17 @@
     <button class="back-btn" id="adminBackBtn">‹</button>
     <h2>এডমিন প্যানেল — পণ্য ব্যবস্থাপনা</h2>
   </div>
+  <div class="admin-tabbar" id="adminTabbar">
+    <button class="admin-tab-btn active" data-tab="orders" type="button">📋 অর্ডার</button>
+    <button class="admin-tab-btn" data-tab="addproduct" type="button">➕ পণ্য যোগ</button>
+    <button class="admin-tab-btn" data-tab="pricemgmt" type="button">💰 মূল্য ব্যবস্থাপনা</button>
+    <button class="admin-tab-btn" data-tab="analysis" type="button">📊 বাজার বিশ্লেষণ</button>
+    <button class="admin-tab-btn" data-tab="packages" type="button">📦 প্যাকেজসমূহ</button>
+    <button class="admin-tab-btn" data-tab="addpackage" type="button">➕ প্যাকেজ যোগ</button>
+    <button class="admin-tab-btn" data-tab="productlist" type="button">📝 পণ্য তালিকা</button>
+  </div>
   <div class="confirm-body">
+    <div class="admin-tab-panel active" data-tab-panel="orders">
     <div class="form-card">
       <h3>📋 অর্ডারসমূহ <span id="orderCountTag" style="font-size:12px; font-weight:700; color:var(--leaf); background:var(--cream-2); padding:3px 10px; border-radius:999px; margin-left:6px;"></span></h3>
       <div id="adminOrdersList"></div>
@@ -1150,6 +1213,8 @@
     <div class="admin-note">
       এখানে পণ্যের নাম, মূল্য ও স্টক বদলাতে পারবেন, নতুন পণ্য যোগ করতে পারবেন, অথবা যেকোনো পণ্য মুছে ফেলতে পারবেন। ছবি এখন সরাসরি ফোল্ডার থেকে যুক্ত হয়, তাই ছবি ব্যবস্থাপনা এখান থেকে সরিয়ে দেওয়া হয়েছে। পরিবর্তন এই ব্রাউজারে সংরক্ষিত থাকবে।
     </div>
+    </div>
+    <div class="admin-tab-panel" data-tab-panel="addproduct">
     <div class="form-card">
       <h3>➕ নতুন পণ্য যোগ করুন</h3>
       <div class="field">
@@ -1204,10 +1269,57 @@
       </div>
       <button class="pdf-btn" id="addProductBtn" style="margin-top:6px;">➕ পণ্য যোগ করুন</button>
     </div>
+    </div>
+    <div class="admin-tab-panel" data-tab-panel="pricemgmt">
+    <div class="form-card">
+      <h3>💰 মূল্য ব্যবস্থাপনা</h3>
+      <div class="field" style="margin-bottom:10px;">
+        <input type="text" id="priceMgmtSearch" class="admin-url-input" placeholder="🔍 পণ্যের নাম দিয়ে খুঁজুন..." style="font-size:13.5px; padding:9px 12px;">
+      </div>
+      <div class="field" style="margin-bottom:12px;">
+        <select id="priceMgmtCatFilter" style="width:100%; border:1.5px solid var(--paper-line); border-radius:8px; padding:9px 12px; font-size:12.5px; font-family:inherit; background:var(--cream); color:var(--ink); font-weight:700;"></select>
+      </div>
+      <div id="priceMgmtCount" style="font-size:11.5px; color:var(--leaf); font-weight:700; margin-bottom:8px;"></div>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+        <label style="display:flex; align-items:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--ink); cursor:pointer;">
+          <input type="checkbox" id="priceMgmtSelectAll"> সব নির্বাচন করুন
+        </label>
+        <button type="button" id="priceMgmtGenCardBtn" class="pdf-btn" style="width:auto; padding:8px 16px; font-size:12.5px;" disabled>📸 ছবি কার্ড তৈরি করুন (<span id="priceMgmtSelCount">0</span>)</button>
+      </div>
+      <table class="price-mgmt-table">
+        <thead><tr><th style="width:34px;"></th><th>পণ্যের নাম</th><th>মূল্য (৳)</th></tr></thead>
+        <tbody id="priceMgmtBody"></tbody>
+      </table>
+    </div>
+    </div>
+    <div class="admin-tab-panel" data-tab-panel="analysis">
+    <div class="form-card">
+      <h3>📊 বাজার বিশ্লেষণ</h3>
+      <div class="field">
+        <label>পণ্য নির্বাচন করুন</label>
+        <select id="analysisProdSelect"></select>
+      </div>
+      <div style="display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap;">
+        <button type="button" class="analysis-range-btn active" data-range="7">সাপ্তাহিক (৭ দিন)</button>
+        <button type="button" class="analysis-range-btn" data-range="30">মাসিক (৩০ দিন)</button>
+        <button type="button" class="analysis-range-btn" data-range="all">সব সময়</button>
+      </div>
+      <div id="analysisSummary" class="analysis-summary"></div>
+      <div style="position:relative; height:220px; margin-top:14px;">
+        <canvas id="analysisChart"></canvas>
+      </div>
+      <div id="analysisEmptyMsg" style="display:none; text-align:center; font-size:12.5px; color:#8a8272; padding:30px 0;">
+        এই পণ্যের জন্য এখনো কোনো মূল্য পরিবর্তনের রেকর্ড নেই। "মূল্য ব্যবস্থাপনা" থেকে দাম বদলালে এখানে রেকর্ড জমা হতে শুরু করবে।
+      </div>
+    </div>
+    </div>
+    <div class="admin-tab-panel" data-tab-panel="packages">
     <div class="form-card">
       <h3>📦 প্যাকেজ ব্যবস্থাপনা — বর্তমান প্যাকেজসমূহ</h3>
       <div id="adminPkgList"></div>
     </div>
+    </div>
+    <div class="admin-tab-panel" data-tab-panel="addpackage">
     <div class="form-card">
       <h3>➕ নতুন প্যাকেজ যোগ করুন</h3>
       <div class="field">
@@ -1235,6 +1347,8 @@
       </div>
       <button class="pdf-btn" id="addPackageBtn" style="margin-top:6px;">➕ প্যাকেজ যোগ করুন</button>
     </div>
+    </div>
+    <div class="admin-tab-panel" data-tab-panel="productlist">
     <div class="form-card">
       <h3>পণ্যের তালিকা — ছবি, মূল্য, স্টক ও মুছে ফেলা</h3>
       <div class="field" style="margin-bottom:10px;">
@@ -1245,6 +1359,50 @@
       </div>
       <div id="adminProdCount" style="font-size:11.5px; color:var(--leaf); font-weight:700; margin-bottom:8px;"></div>
       <div id="adminProdList"></div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICE CARD TEMPLATE (off-screen, used for html2canvas capture) -->
+<div id="priceCardTemplate" style="position:fixed; left:-9999px; top:0; width:640px; background:#fdf8ee; font-family:'Tiro Bangla',serif;">
+  <div style="border:6px solid #1b5e20; border-radius:4px; overflow:hidden;">
+    <div style="background:linear-gradient(135deg, #1b5e20 0%, #2e7d32 55%, #1b5e20 100%); padding:26px 24px 22px; text-align:center; position:relative;">
+      <div style="width:74px; height:74px; background:#fff; border-radius:50%; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,0.25);">
+        <img src="logo.svg" alt="logo" style="height:50px; width:50px; object-fit:contain;" onerror="this.style.display='none'">
+      </div>
+      <div style="font-size:30px; font-weight:700; color:#fff; letter-spacing:0.5px; line-height:1.2;">সুফ্ফা সুপারশপ</div>
+      <div style="display:inline-block; margin-top:8px; background:rgba(255,255,255,0.18); border:1.5px solid rgba(255,255,255,0.55); border-radius:999px; padding:5px 18px; font-size:14px; font-weight:700; color:#fff; letter-spacing:0.3px;">
+        🛒 আজকের বাজার দর
+      </div>
+    </div>
+    <div style="background:#fdf8ee; padding:22px 26px 24px;">
+      <div id="priceCardDate" style="text-align:center; font-size:14px; font-weight:700; color:#8a5a1e; margin-bottom:18px; background:#fff3d6; display:inline-block; padding:5px 16px; border-radius:8px; border:1px dashed #d8b46a;"></div>
+      <table style="width:100%; border-collapse:collapse; font-size:16px; margin-top:6px;">
+        <thead>
+          <tr>
+            <th style="text-align:left; padding:9px 12px; background:#1b5e20; color:#fff; border-radius:8px 0 0 8px; font-size:14px;">পণ্যের নাম</th>
+            <th style="text-align:right; padding:9px 12px; background:#1b5e20; color:#fff; border-radius:0 8px 8px 0; font-size:14px;">মূল্য</th>
+          </tr>
+        </thead>
+        <tbody id="priceCardBody"></tbody>
+      </table>
+      <div style="text-align:center; font-size:12px; color:#9a927e; margin-top:20px; border-top:1px solid #ddd3b8; padding-top:12px;">
+        সুফফাতুল মুহাজিরীন এর কর্ম ও জীবিকা শিক্ষা বিভাগ থেকে পরিচালিত একটি উদ্যোগ
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICE CARD PREVIEW MODAL -->
+<div class="admin-lock-backdrop" id="priceCardModal">
+  <div class="admin-lock-card" style="max-width:420px; width:92%;">
+    <div class="lock-emoji">📸</div>
+    <p>মূল্য তালিকার ছবি কার্ড তৈরি হয়ে গেছে</p>
+    <img id="priceCardPreviewImg" style="width:100%; border-radius:10px; margin:10px 0; border:1px solid var(--paper-line);">
+    <div class="admin-lock-btns">
+      <button class="admin-lock-cancel" id="priceCardCloseBtn" type="button">বন্ধ করুন</button>
+      <a class="admin-lock-submit" id="priceCardDownloadBtn" download="suffa-price-list.png" style="text-decoration:none; text-align:center; display:inline-block; padding:10px; border-radius:8px;">ডাউনলোড করুন</a>
     </div>
   </div>
 </div>
@@ -1984,6 +2142,37 @@ function saveOverridesToStorage(ovr){
 let imageOverrides = loadOverrides();
 if(!imageOverrides.cat) imageOverrides.cat = {};
 if(!imageOverrides.prod) imageOverrides.prod = {};
+
+const PRICE_HISTORY_KEY = 'suffaPriceHistory';
+function loadPriceHistory(){
+  try{
+    const raw = localStorage.getItem(PRICE_HISTORY_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){ return {}; }
+}
+function savePriceHistoryToStorage(hist){
+  try{ localStorage.setItem(PRICE_HISTORY_KEY, JSON.stringify(hist)); }catch(e){ /* storage unavailable */ }
+}
+let priceHistory = loadPriceHistory();
+function todayISO(){
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function recordPriceHistory(productId, price){
+  const key = String(productId);
+  if(!priceHistory[key]) priceHistory[key] = [];
+  const list = priceHistory[key];
+  const today = todayISO();
+  const lastEntry = list[list.length - 1];
+  if(lastEntry && lastEntry.date === today){
+    lastEntry.price = price;
+  }else{
+    list.push({date: today, price});
+  }
+  if(list.length > 200) list.splice(0, list.length - 200);
+  savePriceHistoryToStorage(priceHistory);
+  try{ db && db.collection('priceHistory').doc(key).set({entries: list}, {merge:true}); }catch(e){ /* offline / no db */ }
+}
 CATEGORIES.forEach(c=>{ if(imageOverrides.cat && imageOverrides.cat[c.id]) c.img = imageOverrides.cat[c.id]; });
 PRODUCTS.forEach(p=>{
   const ov = imageOverrides.prod && imageOverrides.prod[p.id];
@@ -2957,6 +3146,16 @@ adminLockInput.addEventListener('keydown', e=>{ if(e.key === 'Enter') tryAdminUn
 
 document.getElementById('adminBackBtn').addEventListener('click', ()=> adminOverlay.classList.remove('show'));
 
+document.querySelectorAll('.admin-tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.admin-tab-btn').forEach(b=> b.classList.toggle('active', b===btn));
+    document.querySelectorAll('.admin-tab-panel').forEach(p=> p.classList.toggle('active', p.dataset.tabPanel===tab));
+    btn.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'});
+  });
+});
+
+
 /* ---- Add new product ---- */
 const newProdCatSel = document.getElementById('newProdCat');
 const newProdSubSel = document.getElementById('newProdSub');
@@ -3266,6 +3465,7 @@ function buildAdminProductRow(p){
       price: p.price, stock: p.stock, unitType: p.unitType, unit: p.unit, cat: p.cat, sub: p.sub,
       variants: p.variants.length ? p.variants.map(v=>({...v})) : []
     });
+    recordPriceHistory(p.id, p.price);
 
     // also keep admin-added custom products' saved copy in sync
     const custom = loadCustomProducts();
@@ -3572,6 +3772,7 @@ function renderAdmin(){
   renderAdminProdList();
   renderAdminPackages();
   refreshNewPkgProdOptions();
+  renderPriceManagement();
 }
 
 const adminProdSearch = document.getElementById('adminProdSearch');
@@ -3613,6 +3814,306 @@ function renderAdminProdList(){
 }
 adminProdSearch.addEventListener('input', renderAdminProdList);
 adminProdCatFilter.addEventListener('change', renderAdminProdList);
+
+/* ---- Price management ---- */
+const priceMgmtSearch = document.getElementById('priceMgmtSearch');
+const priceMgmtCatFilter = document.getElementById('priceMgmtCatFilter');
+const priceMgmtCount = document.getElementById('priceMgmtCount');
+const priceMgmtBody = document.getElementById('priceMgmtBody');
+
+function refreshPriceMgmtCatFilterOptions(){
+  priceMgmtCatFilter.innerHTML = '';
+  const allOpt = document.createElement('option');
+  allOpt.value = 'all';
+  allOpt.textContent = 'সব ক্যাটাগরি';
+  priceMgmtCatFilter.appendChild(allOpt);
+  CATEGORIES.filter(c=>c.id!=='all').forEach(c=>{
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = c.label;
+    priceMgmtCatFilter.appendChild(opt);
+  });
+}
+refreshPriceMgmtCatFilterOptions();
+
+function savePriceForProduct(p, newPrice, inputEl){
+  p.price = newPrice;
+  const existingOv = (imageOverrides.prod && imageOverrides.prod[p.id]) || {};
+  imageOverrides.prod[p.id] = {
+    ...existingOv,
+    price: p.price, stock: p.stock, unitType: p.unitType, unit: p.unit, cat: p.cat, sub: p.sub,
+    variants: p.variants.length ? p.variants.map(v=>({...v})) : undefined
+  };
+  saveOverridesToStorage(imageOverrides);
+  fsSaveProduct(p.id, { price: p.price });
+  recordPriceHistory(p.id, p.price);
+
+  const custom = loadCustomProducts();
+  const cIdx = custom.findIndex(x=>x.id===p.id);
+  if(cIdx > -1){ custom[cIdx] = {...p, variants: p.variants.map(v=>({...v}))}; saveCustomProducts(custom); }
+
+  inputEl.classList.add('saved');
+  setTimeout(()=> inputEl.classList.remove('saved'), 1200);
+  renderFerdo();
+  showToast(`${p.name} — মূল্য ৳${toBn(newPrice)} সংরক্ষণ হয়েছে`);
+}
+
+const priceMgmtSelectAll = document.getElementById('priceMgmtSelectAll');
+const priceMgmtGenCardBtn = document.getElementById('priceMgmtGenCardBtn');
+const priceMgmtSelCount = document.getElementById('priceMgmtSelCount');
+const selectedPriceProductIds = new Set();
+
+function updatePriceMgmtSelectionUI(){
+  priceMgmtSelCount.textContent = toBn(selectedPriceProductIds.size);
+  priceMgmtGenCardBtn.disabled = selectedPriceProductIds.size === 0;
+}
+
+function getFilteredPriceMgmtProducts(){
+  const term = priceMgmtSearch.value.trim();
+  const catFilter = priceMgmtCatFilter.value || 'all';
+  return PRODUCTS.filter(p=>{
+    const inCat = catFilter==='all' || p.cat===catFilter;
+    const inSearch = !term || p.name.includes(term);
+    return inCat && inSearch;
+  });
+}
+
+function syncPriceMgmtSelectAllCheckbox(filtered){
+  priceMgmtSelectAll.checked = filtered.length>0 && filtered.every(fp=> selectedPriceProductIds.has(fp.id));
+}
+
+function renderPriceManagement(){
+  const filtered = getFilteredPriceMgmtProducts();
+  priceMgmtBody.innerHTML = '';
+  priceMgmtCount.textContent = `${toBn(filtered.length)} টি পণ্য পাওয়া গেছে`;
+  if(filtered.length === 0){
+    priceMgmtBody.innerHTML = '<tr><td colspan="3" style="padding:12px 0; color:#8a8272; font-size:12.5px;">কোনো পণ্য পাওয়া যায়নি</td></tr>';
+    priceMgmtSelectAll.checked = false;
+    return;
+  }
+  const catLabelMap = {};
+  CATEGORIES.forEach(c=> catLabelMap[c.id] = c.label);
+  filtered.forEach(p=>{
+    const tr = document.createElement('tr');
+
+    const tdCheck = document.createElement('td');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'price-mgmt-row-check';
+    checkbox.checked = selectedPriceProductIds.has(p.id);
+    checkbox.addEventListener('change', function(){
+      if(this.checked){ selectedPriceProductIds.add(p.id); }
+      else{ selectedPriceProductIds.delete(p.id); }
+      syncPriceMgmtSelectAllCheckbox(getFilteredPriceMgmtProducts());
+      updatePriceMgmtSelectionUI();
+    });
+    tdCheck.appendChild(checkbox);
+
+    const tdName = document.createElement('td');
+    tdName.innerHTML = `<span class="price-mgmt-row-name">${p.name}</span><span class="price-mgmt-row-cat">${catLabelMap[p.cat] || p.cat}</span>`;
+
+    const tdPrice = document.createElement('td');
+    tdPrice.innerHTML = `
+        <div class="price-mgmt-input-wrap">
+          <span class="taka">৳</span>
+          <input type="number" class="price-mgmt-input" min="0" step="1" value="${p.price}">
+          <button type="button" class="price-mgmt-save-btn">সংরক্ষণ</button>
+        </div>`;
+    const input = tdPrice.querySelector('.price-mgmt-input');
+    const saveBtn = tdPrice.querySelector('.price-mgmt-save-btn');
+    function commit(){
+      const val = Number(input.value);
+      if(isNaN(val) || val < 0){ input.value = p.price; showToast('সঠিক মূল্য দিন'); return; }
+      if(val === p.price){ showToast('মূল্য অপরিবর্তিত আছে'); return; }
+      savePriceForProduct(p, val, input);
+    }
+    saveBtn.addEventListener('click', commit);
+    input.addEventListener('keydown', e=>{ if(e.key==='Enter'){ commit(); } });
+
+    tr.appendChild(tdCheck);
+    tr.appendChild(tdName);
+    tr.appendChild(tdPrice);
+    priceMgmtBody.appendChild(tr);
+  });
+  syncPriceMgmtSelectAllCheckbox(filtered);
+  updatePriceMgmtSelectionUI();
+}
+priceMgmtSearch.addEventListener('input', renderPriceManagement);
+priceMgmtCatFilter.addEventListener('change', renderPriceManagement);
+
+priceMgmtSelectAll.addEventListener('change', function(){
+  const filtered = getFilteredPriceMgmtProducts();
+  if(this.checked){ filtered.forEach(p=> selectedPriceProductIds.add(p.id)); }
+  else{ filtered.forEach(p=> selectedPriceProductIds.delete(p.id)); }
+  renderPriceManagement();
+});
+
+
+const BN_MONTHS = ['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+function todayBnDate(){
+  const d = new Date();
+  return `${toBn(d.getDate())} ${BN_MONTHS[d.getMonth()]}, ${toBn(d.getFullYear())}`;
+}
+
+const priceCardModal = document.getElementById('priceCardModal');
+const priceCardBody = document.getElementById('priceCardBody');
+const priceCardDate = document.getElementById('priceCardDate');
+const priceCardPreviewImg = document.getElementById('priceCardPreviewImg');
+const priceCardDownloadBtn = document.getElementById('priceCardDownloadBtn');
+
+document.getElementById('priceMgmtGenCardBtn').addEventListener('click', async ()=>{
+  if(selectedPriceProductIds.size === 0) return;
+  const selectedProducts = PRODUCTS.filter(p=> selectedPriceProductIds.has(p.id));
+  priceCardDate.textContent = todayBnDate();
+  priceCardBody.innerHTML = selectedProducts.map((p,i)=> `
+    <tr style="background:${i%2===0 ? '#fdf8ee' : '#f3ead4'};">
+      <td style="padding:8px 10px; border-bottom:1px solid #e6dcc0;">${p.name}</td>
+      <td style="padding:8px 10px; border-bottom:1px solid #e6dcc0; text-align:right; font-weight:700; color:#1b5e20;">৳ ${toBn(p.price)} <span style="font-size:11px; color:#9a927e; font-weight:400;">/ ${p.unit.replace('প্রতি ','')}</span></td>
+    </tr>`).join('');
+  const btn = document.getElementById('priceMgmtGenCardBtn');
+  const originalLabel = btn.innerHTML;
+  btn.disabled = true;
+  btn.textContent = 'তৈরি হচ্ছে...';
+  try{
+    const template = document.getElementById('priceCardTemplate');
+    const canvas = await html2canvas(template, {scale:2, backgroundColor:'#fdf8ee', useCORS:true});
+    const dataUrl = canvas.toDataURL('image/png');
+    priceCardPreviewImg.src = dataUrl;
+    priceCardDownloadBtn.href = dataUrl;
+    priceCardDownloadBtn.download = `suffa-price-list-${Date.now()}.png`;
+    priceCardModal.classList.add('show');
+  }catch(e){
+    showToast('ছবি তৈরি করতে সমস্যা হয়েছে, আবার চেষ্টা করুন');
+  }finally{
+    btn.disabled = selectedPriceProductIds.size === 0;
+    btn.innerHTML = originalLabel;
+  }
+});
+document.getElementById('priceCardCloseBtn').addEventListener('click', ()=> priceCardModal.classList.remove('show'));
+
+/* ---- Market analysis ---- */
+const analysisProdSelect = document.getElementById('analysisProdSelect');
+const analysisSummary = document.getElementById('analysisSummary');
+const analysisEmptyMsg = document.getElementById('analysisEmptyMsg');
+const analysisChartCanvas = document.getElementById('analysisChart');
+let analysisChartInstance = null;
+let analysisRange = '7';
+
+function refreshAnalysisProdOptions(){
+  analysisProdSelect.innerHTML = '';
+  const catLabelMap = {};
+  CATEGORIES.forEach(c=> catLabelMap[c.id] = c.label);
+  const byCat = {};
+  PRODUCTS.forEach(p=>{ (byCat[p.cat] = byCat[p.cat] || []).push(p); });
+  CATEGORIES.filter(c=>c.id!=='all').forEach(c=>{
+    const items = byCat[c.id];
+    if(!items || !items.length) return;
+    const grp = document.createElement('optgroup');
+    grp.label = c.label;
+    items.forEach(p=>{
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.name;
+      grp.appendChild(opt);
+    });
+    analysisProdSelect.appendChild(grp);
+  });
+}
+refreshAnalysisProdOptions();
+
+document.querySelectorAll('.analysis-range-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.analysis-range-btn').forEach(b=> b.classList.toggle('active', b===btn));
+    analysisRange = btn.dataset.range;
+    renderAnalysis();
+  });
+});
+analysisProdSelect.addEventListener('change', renderAnalysis);
+
+function fmtDateShort(iso){
+  const [y,m,d] = iso.split('-');
+  return `${toBn(d)}/${toBn(m)}`;
+}
+
+function renderAnalysis(){
+  const pid = analysisProdSelect.value;
+  if(!pid) return;
+  const p = PRODUCTS.find(x=> String(x.id)===String(pid));
+  if(!p) return;
+  let entries = (priceHistory[String(pid)] || []).slice();
+  if(analysisRange !== 'all'){
+    const days = Number(analysisRange);
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - days);
+    const cutoffISO = todayISOFor(cutoff);
+    entries = entries.filter(e=> e.date >= cutoffISO);
+  }
+  if(entries.length === 0){
+    analysisSummary.innerHTML = '';
+    analysisEmptyMsg.style.display = 'block';
+    analysisChartCanvas.style.display = 'none';
+    if(analysisChartInstance){ analysisChartInstance.destroy(); analysisChartInstance = null; }
+    return;
+  }
+  analysisEmptyMsg.style.display = 'none';
+  analysisChartCanvas.style.display = 'block';
+
+  const startPrice = entries[0].price;
+  const endPrice = entries[entries.length-1].price;
+  const diff = endPrice - startPrice;
+  const pct = startPrice ? ((diff/startPrice)*100) : 0;
+  const diffClass = diff > 0 ? 'up' : (diff < 0 ? 'down' : '');
+  const diffSign = diff > 0 ? '+' : '';
+  analysisSummary.innerHTML = `
+    <div class="analysis-stat"><div class="label">শুরুর মূল্য</div><div class="value">৳${toBn(startPrice)}</div></div>
+    <div class="analysis-stat"><div class="label">বর্তমান মূল্য</div><div class="value">৳${toBn(endPrice)}</div></div>
+    <div class="analysis-stat"><div class="label">পরিবর্তন</div><div class="value ${diffClass}">${diffSign}৳${toBn(Math.abs(diff))} (${diffSign}${toBn(Math.abs(pct).toFixed(1))}%)</div></div>
+  `;
+
+  const labels = entries.map(e=> fmtDateShort(e.date));
+  const dataPoints = entries.map(e=> e.price);
+
+  if(analysisChartInstance) analysisChartInstance.destroy();
+  analysisChartInstance = new Chart(analysisChartCanvas, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: p.name,
+        data: dataPoints,
+        borderColor: '#1b5e20',
+        backgroundColor: 'rgba(46,125,50,0.12)',
+        borderWidth: 2.5,
+        pointRadius: 4,
+        pointBackgroundColor: '#1b5e20',
+        tension: 0.25,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: false, ticks: { callback: v => '৳'+v } }
+      }
+    }
+  });
+}
+
+function todayISOFor(d){
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+document.querySelector('.admin-tab-btn[data-tab="analysis"]').addEventListener('click', ()=>{
+  refreshAnalysisProdOptions();
+  renderAnalysis();
+});
+
+
+
+document.querySelector('.admin-tab-btn[data-tab="pricemgmt"]').addEventListener('click', renderPriceManagement);
+
 </script>
 </body>
 </html>
