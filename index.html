@@ -664,6 +664,12 @@
     transform:translateX(100%); transition:transform .4s cubic-bezier(.2,.9,.3,1);
   }
   .overlay.show{ transform:translateX(0); }
+
+  /* ---------- Public shareable customer form (?form=grahok) ---------- */
+  .public-form-page{
+    display:none; position:fixed; inset:0; background:var(--cream); z-index:500; overflow-y:auto;
+  }
+  .public-form-page.show{ display:block; }
   .confirm-top{
     background:var(--pine); color:#fff; padding:16px 18px; display:flex; align-items:center; gap:12px;
     position:sticky; top:0; z-index:5;
@@ -1196,6 +1202,7 @@
   </div>
   <div class="admin-tabbar" id="adminTabbar">
     <button class="admin-tab-btn active" data-tab="orders" type="button">📋 অর্ডার</button>
+    <button class="admin-tab-btn" data-tab="customers" type="button">👥 গ্রাহক ব্যবস্থাপনা</button>
     <button class="admin-tab-btn" data-tab="addproduct" type="button">➕ পণ্য যোগ</button>
     <button class="admin-tab-btn" data-tab="pricemgmt" type="button">💰 মূল্য ব্যবস্থাপনা</button>
     <button class="admin-tab-btn" data-tab="analysis" type="button">📊 বাজার বিশ্লেষণ</button>
@@ -1212,6 +1219,23 @@
     </div>
     <div class="admin-note">
       এখানে পণ্যের নাম, মূল্য ও স্টক বদলাতে পারবেন, নতুন পণ্য যোগ করতে পারবেন, অথবা যেকোনো পণ্য মুছে ফেলতে পারবেন। ছবি এখন সরাসরি ফোল্ডার থেকে যুক্ত হয়, তাই ছবি ব্যবস্থাপনা এখান থেকে সরিয়ে দেওয়া হয়েছে। পরিবর্তন এই ব্রাউজারে সংরক্ষিত থাকবে।
+    </div>
+    </div>
+    <div class="admin-tab-panel" data-tab-panel="customers">
+    <div class="form-card">
+      <h3>👥 গ্রাহক ব্যবস্থাপনা <span id="customerCountTag" style="font-size:12px; font-weight:700; color:var(--leaf); background:var(--cream-2); padding:3px 10px; border-radius:999px; margin-left:6px;"></span></h3>
+      <button type="button" id="addCustomerBtn" class="pdf-btn" style="width:100%; padding:10px; font-size:13px; margin-bottom:8px;">➕ নতুন গ্রাহক যোগ করুন</button>
+      <button type="button" id="shareCustomerFormBtn" class="pdf-btn" style="width:100%; padding:10px; font-size:13px; margin-bottom:12px; background:var(--pine-2);">🔗 গ্রাহক ফর্মের লিংক শেয়ার করুন</button>
+      <div class="field" style="margin-bottom:12px;">
+        <input type="text" id="customerSearch" class="admin-url-input" placeholder="🔍 নাম, মোবাইল বা ঠিকানা দিয়ে খুঁজুন..." style="font-size:13.5px; padding:9px 12px;">
+      </div>
+      <table class="price-mgmt-table">
+        <thead><tr><th>নাম</th><th>মোবাইল / হোয়াটসঅ্যাপ</th><th>ঠিকানা</th><th style="text-align:center;">অর্ডার</th></tr></thead>
+        <tbody id="adminCustomersBody"></tbody>
+      </table>
+    </div>
+    <div class="admin-note">
+      এই তালিকা অর্ডার থেকে স্বয়ংক্রিয়ভাবে তৈরি হয় — একই মোবাইল নম্বরে একাধিক অর্ডার করলে একজন গ্রাহক হিসেবেই দেখাবে (সর্বশেষ নাম/ঠিকানা সহ)। মোবাইল নম্বরটিই হোয়াটসঅ্যাপ নম্বর হিসেবে ব্যবহার হয়েছে — পাশের বাটনে চাপ দিলে সরাসরি সেই গ্রাহকের সাথে হোয়াটসঅ্যাপে যোগাযোগ করা যাবে।
     </div>
     </div>
     <div class="admin-tab-panel" data-tab-panel="addproduct">
@@ -1421,6 +1445,37 @@
     </div>
   </div>
 </div>
+
+<!-- ADD NEW CUSTOMER MODAL -->
+<div class="admin-lock-backdrop" id="addCustomerModal">
+  <div class="admin-lock-card" style="max-width:420px; width:92%; text-align:left;">
+    <div style="text-align:center; margin-bottom:10px;">
+      <img src="logo.svg" alt="সুফ্ফা সুপারশপ" style="height:44px; width:auto; object-fit:contain; margin-bottom:6px;" onerror="this.style.display='none'">
+      <div style="font-family:'Tiro Bangla',serif; font-weight:900; color:var(--pine); font-size:17px; line-height:1.2;">সুফ্ফা সুপারশপ</div>
+    </div>
+    <p style="text-align:center; font-weight:700; color:var(--ink); margin:0 0 16px; font-size:14px;">আসসালামু আলাইকুম</p>
+    <div class="field" id="f-cust-name">
+      <label>নাম</label>
+      <input type="text" id="newCustName" placeholder="গ্রাহকের পূর্ণ নাম">
+      <div class="err-msg">অনুগ্রহ করে নাম লিখুন</div>
+    </div>
+    <div class="field" id="f-cust-mobile">
+      <label>মোবাইল / হোয়াটসঅ্যাপ</label>
+      <input type="tel" id="newCustMobile" placeholder="01XXXXXXXXX">
+      <div class="err-msg">সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন</div>
+    </div>
+    <div class="field" id="f-cust-address">
+      <label>ঠিকানা</label>
+      <textarea id="newCustAddress" rows="2" placeholder="বাসা/রোড/এলাকা, থানা, জেলা"></textarea>
+      <div class="err-msg">অনুগ্রহ করে ঠিকানা লিখুন</div>
+    </div>
+    <div class="admin-lock-btns">
+      <button class="admin-lock-cancel" id="newCustCancelBtn" type="button">বাতিল</button>
+      <button class="admin-lock-submit" id="newCustConfirmBtn" type="button">নিশ্চিত করুন</button>
+    </div>
+  </div>
+</div>
+
 
 <div class="toast" id="toast"></div>
 
@@ -2242,6 +2297,10 @@ async function fsClearAllOrders(){
     snap.forEach(doc=> batch.delete(doc.ref));
     await batch.commit();
   }catch(e){ console.error('Firestore clear orders failed', e); }
+}
+async function fsSaveCustomer(cust){
+  try{ await db.collection('customers').doc(cust.mobile).set(cust, {merge:true}); }
+  catch(e){ console.error('Firestore customer save failed', e); }
 }
 
 /* পেজ লোড হওয়ার সময় Firestore থেকে দাম/স্টক/প্যাকেজ টেনে এনে সাইটে বসিয়ে দেয়,
@@ -3757,6 +3816,7 @@ function renderAdminOrders(){
   // প্রথমে স্থানীয় (ক্যাশ করা) তালিকা দেখানো হয়, দ্রুত দেখানোর জন্য
   const localOrders = loadOrders();
   renderOrdersList(localOrders);
+  renderAdminCustomers(localOrders);
   // তারপর Firestore থেকে সব ডিভাইসের অর্ডার টেনে এনে আপডেট করা হয়
   // (db না থাকলে বা Firestore ব্যর্থ হলেও যেন এডমিন প্যানেল ভেঙে না যায়, তাই try/catch)
   try{
@@ -3766,6 +3826,7 @@ function renderAdminOrders(){
       if(cloudOrders.length){
         saveOrdersToStorage(cloudOrders);
         renderOrdersList(cloudOrders);
+        renderAdminCustomers(cloudOrders);
       }
     }).catch(e=> console.error('Firestore থেকে অর্ডার আনতে সমস্যা হয়েছে', e));
   }catch(e){
@@ -3778,6 +3839,125 @@ document.getElementById('clearAllOrdersBtn').addEventListener('click', ()=>{
   fsClearAllOrders();
   renderOrdersList([]);
   showToast('সব অর্ডার মুছে ফেলা হয়েছে');
+});
+
+/* ---- গ্রাহক ব্যবস্থাপনা (Customer management — derived from orders + manually added) ---- */
+const MANUAL_CUSTOMERS_KEY = 'suffaManualCustomers';
+function loadManualCustomers(){
+  try{ const raw = localStorage.getItem(MANUAL_CUSTOMERS_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; }
+}
+function saveManualCustomersToStorage(list){
+  try{ localStorage.setItem(MANUAL_CUSTOMERS_KEY, JSON.stringify(list)); }catch(e){ /* storage unavailable */ }
+}
+function addManualCustomer(cust){
+  const list = loadManualCustomers().filter(c=> c.mobile !== cust.mobile);
+  list.unshift(cust);
+  saveManualCustomersToStorage(list);
+}
+let customersOrdersCache = [];
+function waLink(mobile){
+  return 'https://wa.me/880' + String(mobile || '').replace(/^0/, '');
+}
+function getUniqueCustomers(orders){
+  const map = new Map();
+  orders.forEach(o=>{
+    if(!o.mobile) return;
+    if(map.has(o.mobile)){
+      map.get(o.mobile).orderCount += 1;
+    }else{
+      map.set(o.mobile, { name:o.name, mobile:o.mobile, address:o.address, orderCount:1 });
+    }
+  });
+  loadManualCustomers().forEach(c=>{
+    if(!c.mobile || map.has(c.mobile)) return;
+    map.set(c.mobile, { name:c.name, mobile:c.mobile, address:c.address, orderCount:0 });
+  });
+  return Array.from(map.values());
+}
+function renderCustomersTable(customers, totalCount){
+  const tbody = document.getElementById('adminCustomersBody');
+  const countTag = document.getElementById('customerCountTag');
+  countTag.textContent = totalCount ? `${toBn(totalCount)} জন` : '';
+  tbody.innerHTML = '';
+  if(customers.length === 0){
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:#8a8272;">কোনো গ্রাহক পাওয়া যায়নি</td></tr>';
+    return;
+  }
+  customers.forEach(c=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${c.name}</td>
+      <td>${c.mobile}<br><a href="${waLink(c.mobile)}" target="_blank" style="font-size:11px; color:var(--leaf); font-weight:700; text-decoration:none;">💬 WhatsApp</a></td>
+      <td>${c.address}</td>
+      <td style="text-align:center;">${toBn(c.orderCount)}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+function applyCustomerFilter(){
+  const term = (document.getElementById('customerSearch').value || '').trim().toLowerCase();
+  const customers = getUniqueCustomers(customersOrdersCache);
+  const filtered = term ? customers.filter(c=>
+    (c.name||'').toLowerCase().includes(term) || (c.mobile||'').includes(term) || (c.address||'').toLowerCase().includes(term)
+  ) : customers;
+  renderCustomersTable(filtered, customers.length);
+}
+function renderAdminCustomers(orders){
+  customersOrdersCache = orders;
+  applyCustomerFilter();
+  try{
+    db.collection('customers').get().then(snap=>{
+      const cloudManual = snap.docs.map(d=>d.data());
+      if(cloudManual.length){
+        saveManualCustomersToStorage(cloudManual);
+        applyCustomerFilter();
+      }
+    }).catch(e=> console.error('Firestore থেকে গ্রাহক আনতে সমস্যা হয়েছে', e));
+  }catch(e){
+    console.error('Firestore সংযোগ করা যায়নি (গ্রাহক)', e);
+  }
+}
+document.getElementById('customerSearch').addEventListener('input', applyCustomerFilter);
+
+const addCustomerModal = document.getElementById('addCustomerModal');
+document.getElementById('addCustomerBtn').addEventListener('click', ()=>{
+  document.getElementById('newCustName').value = '';
+  document.getElementById('newCustMobile').value = '';
+  document.getElementById('newCustAddress').value = '';
+  ['f-cust-name','f-cust-mobile','f-cust-address'].forEach(id=> document.getElementById(id).classList.remove('error'));
+  addCustomerModal.classList.add('show');
+});
+document.getElementById('newCustCancelBtn').addEventListener('click', ()=> addCustomerModal.classList.remove('show'));
+
+document.getElementById('shareCustomerFormBtn').addEventListener('click', async ()=>{
+  const link = `${window.location.origin}${window.location.pathname}?form=grahok`;
+  try{
+    await navigator.clipboard.writeText(link);
+    showToast('লিংক কপি হয়েছে ✓');
+  }catch(e){
+    window.prompt('লিংকটি কপি করুন:', link);
+  }
+});
+function validateNewCustomerForm(){
+  const name = document.getElementById('newCustName').value.trim();
+  const address = document.getElementById('newCustAddress').value.trim();
+  const mobile = document.getElementById('newCustMobile').value.trim();
+  let ok = true;
+  toggleErr('f-cust-name', name.length < 2); if(name.length < 2) ok = false;
+  toggleErr('f-cust-address', address.length < 5); if(address.length < 5) ok = false;
+  const mobileOk = /^(01[3-9][0-9]{8})$/.test(mobile);
+  toggleErr('f-cust-mobile', !mobileOk); if(!mobileOk) ok = false;
+  return ok ? {name, address, mobile} : null;
+}
+document.getElementById('newCustConfirmBtn').addEventListener('click', ()=>{
+  const data = validateNewCustomerForm();
+  if(!data){ showToast('তথ্যগুলো সঠিকভাবে পূরণ করুন'); return; }
+  const cust = { name:data.name, mobile:data.mobile, address:data.address, addedAt:new Date().toISOString() };
+  addManualCustomer(cust);
+  fsSaveCustomer(cust);
+  addCustomerModal.classList.remove('show');
+  applyCustomerFilter();
+  showToast(`${data.name} যোগ করা হয়েছে`);
 });
 
 function renderAdmin(){
@@ -4127,6 +4307,92 @@ document.querySelector('.admin-tab-btn[data-tab="analysis"]').addEventListener('
 
 document.querySelector('.admin-tab-btn[data-tab="pricemgmt"]').addEventListener('click', renderPriceManagement);
 
+</script>
+<!-- PUBLIC CUSTOMER FORM (shareable link: yoursite.com/?form=grahok) -->
+<div class="public-form-page" id="customerFormPage">
+  <div style="max-width:420px; margin:0 auto; padding:34px 20px 50px;">
+    <div style="text-align:center; margin-bottom:18px;">
+      <img src="logo.svg" alt="সুফ্ফা সুপারশপ" style="height:56px; width:auto; object-fit:contain; margin-bottom:10px;" onerror="this.style.display='none'">
+      <div style="font-family:'Tiro Bangla',serif; font-weight:900; color:var(--pine); font-size:22px; line-height:1.2;">সুফ্ফা সুপারশপ</div>
+    </div>
+    <div id="pubFormStep">
+      <div class="form-card">
+        <p style="text-align:center; font-weight:700; color:var(--ink); margin:0 0 6px; font-size:15px;">আসসালামু আলাইকুম</p>
+        <p style="text-align:center; font-size:12.5px; color:#8a8272; margin:0 0 18px; line-height:1.6;">
+          আপনার তথ্যগুলো নিচে দিন — আমরা আপনার সাথে যোগাযোগ রাখতে পারবো।
+        </p>
+        <div class="field" id="f-pub-name">
+          <label>নাম</label>
+          <input type="text" id="pubCustName" placeholder="আপনার পূর্ণ নাম">
+          <div class="err-msg">অনুগ্রহ করে নাম লিখুন</div>
+        </div>
+        <div class="field" id="f-pub-mobile">
+          <label>মোবাইল / হোয়াটসঅ্যাপ</label>
+          <input type="tel" id="pubCustMobile" placeholder="01XXXXXXXXX">
+          <div class="err-msg">সঠিক ১১ ডিজিটের মোবাইল নম্বর দিন</div>
+        </div>
+        <div class="field" id="f-pub-address">
+          <label>ঠিকানা</label>
+          <textarea id="pubCustAddress" rows="2" placeholder="বাসা/রোড/এলাকা, থানা, জেলা"></textarea>
+          <div class="err-msg">অনুগ্রহ করে ঠিকানা লিখুন</div>
+        </div>
+        <button type="button" id="pubCustSubmitBtn" class="pdf-btn" style="width:100%; padding:12px; font-size:14.5px; margin-top:6px;">নিশ্চিত করুন</button>
+      </div>
+    </div>
+    <div id="pubFormSuccess" style="display:none; text-align:center; padding:40px 10px;">
+      <div style="font-size:44px; margin-bottom:10px;">✅</div>
+      <div style="font-family:'Tiro Bangla',serif; font-weight:900; color:var(--leaf); font-size:19px; margin-bottom:8px;">ধন্যবাদ!</div>
+      <p style="font-size:13.5px; color:#5c5648; line-height:1.6;">আপনার তথ্য সংরক্ষণ করা হয়েছে। ইনশাআল্লাহ আমরা শীঘ্রই যোগাযোগ করবো।</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ PUBLIC SHAREABLE CUSTOMER FORM ============
+   Link format: yoursite.com/?form=grahok
+   কোনো পাসওয়ার্ড ছাড়াই যে কেউ এই লিংকে ঢুকে নিজের তথ্য জমা দিতে পারবে,
+   যা সরাসরি Firestore-এর 'customers' collection-এ চলে যায় — এডমিন প্যানেলের
+   'গ্রাহক ব্যবস্থাপনা'-তে সাথে সাথে দেখা যাবে। */
+(function(){
+  const params = new URLSearchParams(window.location.search);
+  if(params.get('form') !== 'grahok') return;
+  document.getElementById('customerFormPage').classList.add('show');
+
+  function toggleFieldErr(id, isErr){
+    const el = document.getElementById(id);
+    if(el) el.classList.toggle('error', isErr);
+  }
+  function validatePubForm(){
+    const name = document.getElementById('pubCustName').value.trim();
+    const address = document.getElementById('pubCustAddress').value.trim();
+    const mobile = document.getElementById('pubCustMobile').value.trim();
+    let ok = true;
+    toggleFieldErr('f-pub-name', name.length < 2); if(name.length < 2) ok = false;
+    toggleFieldErr('f-pub-address', address.length < 5); if(address.length < 5) ok = false;
+    const mobileOk = /^(01[3-9][0-9]{8})$/.test(mobile);
+    toggleFieldErr('f-pub-mobile', !mobileOk); if(!mobileOk) ok = false;
+    return ok ? {name, address, mobile} : null;
+  }
+  document.getElementById('pubCustSubmitBtn').addEventListener('click', async ()=>{
+    const data = validatePubForm();
+    if(!data) return;
+    const btn = document.getElementById('pubCustSubmitBtn');
+    const originalLabel = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'জমা হচ্ছে...';
+    const cust = { name:data.name, mobile:data.mobile, address:data.address, addedAt:new Date().toISOString() };
+    try{
+      await db.collection('customers').doc(cust.mobile).set(cust, {merge:true});
+      document.getElementById('pubFormStep').style.display = 'none';
+      document.getElementById('pubFormSuccess').style.display = 'block';
+    }catch(e){
+      console.error('Firestore customer save failed', e);
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+      showToast('তথ্য জমা দিতে সমস্যা হয়েছে, আবার চেষ্টা করুন');
+    }
+  });
+})();
 </script>
 </body>
 </html>
