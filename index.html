@@ -1507,8 +1507,8 @@ function cldUrl(path){
   if(!path) return path;
   if(/^https?:\/\//.test(path)) return path;
   const stripExt = p => p.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '');
-  if(path.startsWith('products/')) return CLOUDINARY_BASE + stripExt(path);
-  return CLOUDINARY_BASE + 'banners/' + stripExt(path);
+  const baseName = p => p.split('/').pop();
+  return CLOUDINARY_BASE + stripExt(baseName(path));
 }
 
 const bannerFiles = [
