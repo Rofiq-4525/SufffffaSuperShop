@@ -4362,7 +4362,7 @@ document.querySelector('.admin-tab-btn[data-tab="pricemgmt"]').addEventListener(
 <div class="public-form-page" id="customerFormPage">
   <div style="max-width:420px; margin:0 auto; padding:34px 20px 50px;">
     <div style="text-align:center; margin-bottom:18px;">
-      <img src="logo.svg" alt="সুফ্ফা সুপারশপ" style="height:56px; width:auto; object-fit:contain; margin-bottom:10px;" onerror="this.style.display='none'">
+      <img src="logo.svg" alt="সুফ্ফা সুপারশপ" style="height:88px; width:auto; object-fit:contain; margin-bottom:10px;" onerror="this.style.display='none'">
       <div style="font-family:'Tiro Bangla',serif; font-weight:900; color:var(--pine); font-size:22px; line-height:1.2;">সুফ্ফা সুপারশপ</div>
     </div>
     <div id="pubFormStep">
@@ -4410,7 +4410,14 @@ document.querySelector('.admin-tab-btn[data-tab="pricemgmt"]').addEventListener(
   if(params.get('form') !== 'grahok') return;
   document.getElementById('customerFormPage').classList.add('show');
   const pubFormBannerImg = document.getElementById('pubFormBannerImg');
-  if(pubFormBannerImg) pubFormBannerImg.src = cldUrl('banner_3');
+  if(pubFormBannerImg && bannerFiles.length){
+    let formBannerIdx = 0;
+    pubFormBannerImg.src = cldUrl(bannerFiles[formBannerIdx]);
+    setInterval(()=>{
+      formBannerIdx = (formBannerIdx + 1) % bannerFiles.length;
+      pubFormBannerImg.src = cldUrl(bannerFiles[formBannerIdx]);
+    }, 3000);
+  }
 
   function toggleFieldErr(id, isErr){
     const el = document.getElementById(id);
