@@ -1033,7 +1033,7 @@
 <!-- HOME PAGE BANNER -->
 <div class="banner-wrap">
   <div class="banner-viewport" id="bannerViewport">
-    <img class="banner-img" id="homeBannerImg" src="https://res.cloudinary.com/d5vjnkoy/image/upload/f_auto,q_auto/banners/banner%202.jpg" alt="সুফ্ফা সুপারশপ ব্যানার" loading="lazy" onerror="this.style.display='none'">
+    <img class="banner-img" id="homeBannerImg" alt="সুফ্ফা সুপারশপ ব্যানার" loading="lazy" onerror="this.style.display='none'">
   </div>
 </div>
 
@@ -1514,12 +1514,16 @@ function cldUrl(path){
 }
 
 const bannerFiles = [
-  'banner 2.jpg',
-  'banner 3.png',
-  'banner 4.png'
+  'banner',
+  'banner_2',
+  'banner_3',
+  'banner_4'
 ];
 let currentBannerIndex = 0;
 const homeBannerImg = document.getElementById('homeBannerImg');
+if(homeBannerImg && bannerFiles.length){
+  homeBannerImg.src = cldUrl(bannerFiles[currentBannerIndex]);
+}
 
 function rotateHomeBanner(){
   if (!homeBannerImg || !bannerFiles.length) return;
@@ -1532,7 +1536,7 @@ setInterval(rotateHomeBanner, 30000);
 
 /* ============ DATA ============ */
 const CATEGORIES = [
-  {id:'all', label:'সব', img:'logo.svg', icon:'🏠', subcats:[]},
+  {id:'all', label:'সকল পণ্য', img:'logo.svg', icon:'🏠', subcats:[]},
   {id:'meat', label:'গোশত বাজার', img:'products/c1.jpg', icon:'🥩', subcats:[
     {id:'beef', label:'গরু/খাশি/মহিষ'}, {id:'chicken', label:'মুরগি'}, {id:'duck', label:'হাঁস'},
     {id:'nihari', label:'নিহারি'}, {id:'fat', label:'চর্বি'}, {id:'tripe', label:'ভূড়ি'}, {id:'head', label:'মাথা'}
@@ -3937,11 +3941,51 @@ document.getElementById('newCustCancelBtn').addEventListener('click', ()=> addCu
 
 document.getElementById('shareCustomerFormBtn').addEventListener('click', async ()=>{
   const link = `${window.location.origin}${window.location.pathname}?form=grahok`;
-  try{
-    await navigator.clipboard.writeText(link);
+
+  if(navigator.share){
+    try{
+      await navigator.share({
+        title: 'সুফ্ফা সুপারশপ — গ্রাহক ফর্ম',
+        text: 'সুফ্ফা সুপারশপের মেম্বারশিপ ফর্মটি পূরণ করুন:',
+        url: link
+      });
+      return;
+    }catch(e){
+      if(e && e.name === 'AbortError') return; // user cancelled the share sheet
+      /* share failed for another reason, fall through to copy */
+    }
+  }
+
+  function legacyCopy(text){
+    try{
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.left = '-9999px';
+      ta.style.top = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      return ok;
+    }catch(e){ return false; }
+  }
+
+  let copied = false;
+  if(navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext){
+    try{
+      await navigator.clipboard.writeText(link);
+      copied = true;
+    }catch(e){ copied = false; }
+  }
+  if(!copied){
+    copied = legacyCopy(link);
+  }
+  if(copied){
     showToast('লিংক কপি হয়েছে ✓');
-  }catch(e){
-    window.prompt('লিংকটি কপি করুন:', link);
+  }else{
+    window.prompt('লিংকটি ম্যানুয়ালি কপি করুন (Ctrl+C):', link);
   }
 });
 function validateNewCustomerForm(){
@@ -4323,9 +4367,11 @@ document.querySelector('.admin-tab-btn[data-tab="pricemgmt"]').addEventListener(
     </div>
     <div id="pubFormStep">
       <div class="form-card">
-        <p style="text-align:center; font-weight:700; color:var(--ink); margin:0 0 6px; font-size:15px;">আসসালামু আলাইকুম</p>
-        <p style="text-align:center; font-size:12.5px; color:#8a8272; margin:0 0 18px; line-height:1.6;">
-          আপনার তথ্যগুলো নিচে দিন — আমরা আপনার সাথে যোগাযোগ রাখতে পারবো।
+        <p style="text-align:center; font-weight:700; color:var(--ink); margin:0 0 14px; font-size:15px;">আসসালামু আলাইকুম</p>
+        <img src="" id="pubFormBannerImg" alt="সুফ্ফা সুপারশপ" style="width:100%; border-radius:12px; margin-bottom:14px; display:block;" onerror="this.style.display='none'">
+        <p style="text-align:center; font-size:13px; color:var(--ink); margin:0 0 18px; line-height:1.7;">
+          সুফ্ফা সুপারশপের মেম্বারশিপ গ্রহণ করার জন্য ধন্যবাদ।<br>
+          ডেলিভারির ক্ষেত্রে আমরা আমাদের সম্মানিত মেম্বারদেরকে অগ্রাধিকার দিয়ে থাকি।
         </p>
         <div class="field" id="f-pub-name">
           <label>নাম</label>
@@ -4363,6 +4409,8 @@ document.querySelector('.admin-tab-btn[data-tab="pricemgmt"]').addEventListener(
   const params = new URLSearchParams(window.location.search);
   if(params.get('form') !== 'grahok') return;
   document.getElementById('customerFormPage').classList.add('show');
+  const pubFormBannerImg = document.getElementById('pubFormBannerImg');
+  if(pubFormBannerImg) pubFormBannerImg.src = cldUrl('banner_3');
 
   function toggleFieldErr(id, isErr){
     const el = document.getElementById(id);
