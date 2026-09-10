@@ -2538,6 +2538,10 @@ function getCategoryIcon(catId){
   const cat = CATEGORIES.find(c => c.id === catId);
   return cat && cat.icon ? cat.icon : '•';
 }
+function getCategoryImg(catId){
+  const cat = CATEGORIES.find(c => c.id === catId);
+  return cat && cat.img ? cat.img : '';
+}
 
 /* ============ IMAGE EXTENSION FALLBACK ============
    ছবির ফাইল .jpg না হয়ে .png/.jpeg/.webp ইত্যাদি অন্য ফরম্যাটে থাকলেও যেন
@@ -2555,6 +2559,13 @@ function imgFallback(img){
     img.src = img.dataset.imgBase + '.' + IMG_EXT_FALLBACKS[idx];
   }else{
     img.onerror = null;
+    const catImg = img.dataset.fallbackCatImg;
+    if(catImg && !img.dataset.triedCatImg){
+      img.dataset.triedCatImg = '1';
+      img.src = cldUrl(catImg);
+      img.onerror = ()=> imgFallback(img);
+      return;
+    }
     const icon = img.dataset.fallbackIcon;
     const cls = img.dataset.fallbackClass || 'prod-emoji';
     if(icon){
@@ -2568,9 +2579,9 @@ function imgFallback(img){
   }
 }
 
-function thumbHtml(img, alt, icon, emojiClass){
+function thumbHtml(img, alt, icon, emojiClass, catImg){
   if(img){
-    return `<img src="${cldUrl(img)}" alt="${alt}" loading="lazy" onerror="imgFallback(this)" data-fallback-icon="${icon || '•'}" data-fallback-class="${emojiClass}">`;
+    return `<img src="${cldUrl(img)}" alt="${alt}" loading="lazy" onerror="imgFallback(this)" data-fallback-icon="${icon || '•'}" data-fallback-class="${emojiClass}"${catImg ? ` data-fallback-cat-img="${catImg}"` : ''}>`;
   }
   return `<span class="${emojiClass}">${icon || '•'}</span>`;
 }
@@ -2586,7 +2597,7 @@ function buildFerdoRow(p){
     row.className = 'ferdo-row has-variants';
     const totalVariantStock = p.variants.reduce((s,v)=> s + Math.max(0, v.stock), 0);
     row.innerHTML = `
-      <div class="prod-thumb">${thumbHtml(p.img, p.name, getCategoryIcon(p.cat), 'prod-emoji')}</div>
+      <div class="prod-thumb">${thumbHtml(p.img, p.name, getCategoryIcon(p.cat), 'prod-emoji', getCategoryImg(p.cat))}</div>
       <div class="prod-info">
         <div class="name">${p.name}</div>
         <div class="unit">${p.unit}</div>
@@ -2608,7 +2619,7 @@ function buildFerdoRow(p){
       const vrow = document.createElement('div');
       vrow.className = 'variant-row' + (vOut ? ' out-of-stock' : '');
       vrow.innerHTML = `
-        <div class="variant-thumb">${thumbHtml(v.img || p.img, v.name, getCategoryIcon(p.cat), 'variant-emoji')}</div>
+        <div class="variant-thumb">${thumbHtml(v.img || p.img, v.name, getCategoryIcon(p.cat), 'variant-emoji', getCategoryImg(p.cat))}</div>
         <div class="variant-info">
           <div class="vname">${v.name}</div>
           ${vOut ? '<div class="stock-tag out">স্টক নেই</div>' : ''}
@@ -2630,7 +2641,7 @@ function buildFerdoRow(p){
     if(qtyDraft[p.id] > p.stock) qtyDraft[p.id] = Math.max(1, p.stock);
     row.className = 'ferdo-row' + (outOfStock ? ' out-of-stock' : '');
     row.innerHTML = `
-      <div class="prod-thumb">${thumbHtml(p.img, p.name, getCategoryIcon(p.cat), 'prod-emoji')}</div>
+      <div class="prod-thumb">${thumbHtml(p.img, p.name, getCategoryIcon(p.cat), 'prod-emoji', getCategoryImg(p.cat))}</div>
       <div class="prod-info">
         <div class="name">${p.name}</div>
         <div class="unit">${p.unit}</div>
