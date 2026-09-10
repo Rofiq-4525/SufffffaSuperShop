@@ -239,6 +239,7 @@
     overflow:hidden; display:flex; align-items:center; justify-content:center;
   }
   .cat-card .cat-icon img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .cat-card .cat-icon img.cat-icon-logo{ object-fit:contain; padding:14%; background:#fff; }
   .cat-card .cat-icon .cat-emoji{
     font-size:42px; line-height:1; display:block;
   }
@@ -1506,6 +1507,7 @@ const CLOUDINARY_BASE = `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/image/up
 function cldUrl(path){
   if(!path) return path;
   if(/^https?:\/\//.test(path)) return path;
+  if(/\.svg$/i.test(path)) return path;
   const stripExt = p => p.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '');
   const baseName = p => p.split('/').pop();
   return CLOUDINARY_BASE + stripExt(baseName(path));
@@ -1530,7 +1532,7 @@ setInterval(rotateHomeBanner, 30000);
 
 /* ============ DATA ============ */
 const CATEGORIES = [
-  {id:'all', label:'সব', img:'', icon:'🏠', subcats:[]},
+  {id:'all', label:'সব', img:'logo.svg', icon:'🏠', subcats:[]},
   {id:'meat', label:'গোশত বাজার', img:'products/c1.jpg', icon:'🥩', subcats:[
     {id:'beef', label:'গরু/খাশি/মহিষ'}, {id:'chicken', label:'মুরগি'}, {id:'duck', label:'হাঁস'},
     {id:'nihari', label:'নিহারি'}, {id:'fat', label:'চর্বি'}, {id:'tripe', label:'ভূড়ি'}, {id:'head', label:'মাথা'}
@@ -2411,7 +2413,10 @@ CATEGORIES.forEach(c=>{
   btn.className = 'cat-card' + (c.id==='all' ? ' active' : '');
   btn.dataset.cat = c.id;
   btn.innerHTML = `
-    <span class="cat-icon">${c.img ? `<img src="${cldUrl(c.img)}" alt="${c.label}" loading="lazy" onerror="imgFallback(this)" data-fallback-icon="${c.icon || '•'}" data-fallback-class="cat-emoji">` : `<span class="cat-emoji">${c.icon || '•'}</span>`}</span>
+    <span class="cat-icon">${c.img ? (c.id==='all'
+      ? `<img src="${c.img}" alt="${c.label}" loading="lazy" class="cat-icon-logo" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'cat-emoji',textContent:'${c.icon || '•'}'}))">`
+      : `<img src="${cldUrl(c.img)}" alt="${c.label}" loading="lazy" onerror="imgFallback(this)" data-fallback-icon="${c.icon || '•'}" data-fallback-class="cat-emoji">`)
+      : `<span class="cat-emoji">${c.icon || '•'}</span>`}</span>
     <span class="cat-label">${c.label}</span>
     <span class="cat-count">${toBn(countFor(c.id))} টি পণ্য</span>
   `;
