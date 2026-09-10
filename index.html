@@ -669,6 +669,7 @@
   /* ---------- Public shareable customer form (?form=grahok) ---------- */
   .public-form-page{
     display:none; position:fixed; inset:0; background:var(--cream); z-index:500; overflow-y:auto;
+    height:100vh; height:100dvh;
   }
   .public-form-page.show{ display:block; }
   .confirm-top{
@@ -4409,6 +4410,10 @@ document.querySelector('.admin-tab-btn[data-tab="pricemgmt"]').addEventListener(
   const params = new URLSearchParams(window.location.search);
   if(params.get('form') !== 'grahok') return;
   document.getElementById('customerFormPage').classList.add('show');
+  document.documentElement.style.overflow = 'hidden';
+  document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.width = '100%';
   const pubFormBannerImg = document.getElementById('pubFormBannerImg');
   if(pubFormBannerImg && bannerFiles.length){
     let formBannerIdx = 0;
