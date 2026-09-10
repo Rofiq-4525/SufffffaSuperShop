@@ -1506,8 +1506,9 @@ const CLOUDINARY_BASE = `https://res.cloudinary.com/${CLOUDINARY_CLOUD}/image/up
 function cldUrl(path){
   if(!path) return path;
   if(/^https?:\/\//.test(path)) return path;
-  if(path.startsWith('products/')) return CLOUDINARY_BASE + path;
-  return CLOUDINARY_BASE + 'banners/' + path;
+  const stripExt = p => p.replace(/\.(jpg|jpeg|png|webp|gif)$/i, '');
+  if(path.startsWith('products/')) return CLOUDINARY_BASE + stripExt(path);
+  return CLOUDINARY_BASE + 'banners/' + stripExt(path);
 }
 
 const bannerFiles = [
